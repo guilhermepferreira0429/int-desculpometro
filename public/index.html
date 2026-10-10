@@ -308,6 +308,7 @@
     <div class="acoes">
       <button id="enviarBtn" class="enviar" data-t="enviar"></button>
       <button id="copiar" class="verde" data-t="copiar"></button>
+      <button id="tribunalBtn" class="branco" data-t="tribunal"></button>
       <button id="outra" class="azul" data-t="outra"></button>
       <button id="verdadeBtn" class="branco" data-t="verdade"></button>
     </div>
@@ -317,6 +318,8 @@
       <div class="msg verdade card" id="msgVerdade"></div>
       <div class="acoes"><button id="copiarV" class="verde" data-t="copiarV"></button></div>
     </div>
+
+    <div id="secTribunal" class="hidden"></div>
 
     <div id="secParodia" class="hidden">
       <div id="jornalWrap">
@@ -332,6 +335,7 @@
 <script type="module">
 import { DESTINATARIOS, PERSONAGENS } from './catalogo.js';
 import { abrirMessenger, fecharMessenger } from './messenger.js';
+import { iniciarCronometro, pararCronometro, abrirTribunal } from './extras.js';
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
@@ -342,7 +346,7 @@ const TEXTOS = {
   pt: {
     locale: 'pt-PT', lingua: '🌐 English',
     menu_inicio: '🔎 Desculpómetro', menu_catalogo: '📚 Catálogo', menu_ferramentas: '🛠️ Como funciona',
-    d_outro: '✏️ Outra pessoa...', d_outro_label: '✏️ Quem é', outro_ph: 'ex: o meu dentista', enviar: '📲 Enviar e ver o que acontece',
+    d_outro: '✏️ Outra pessoa...', d_outro_label: '✏️ Quem é', outro_ph: 'ex: o meu dentista', enviar: '📲 Enviar e ver o que acontece', tribunal: '⚖️ Levar a tribunal',
     tag: 'Um agente de IA investiga o teu caminho e monta a desculpa mais credível possível. Só com factos verdadeiros.',
     tipo_atraso: '⏰ Vou chegar atrasado', tipo_fuga: '🏃 Quero fugir de um compromisso',
     origem: '📍 Onde estás', destino_atraso: '🏁 Para onde vais', destino_fuga: '📌 Onde é', minutos: '⏰ Atraso (min)',
@@ -374,7 +378,7 @@ const TEXTOS = {
   en: {
     locale: 'en-GB', lingua: '🌐 Português',
     menu_inicio: '🔎 Desculpómetro', menu_catalogo: '📚 Catalogue', menu_ferramentas: '🛠️ How it works',
-    d_outro: '✏️ Someone else...', d_outro_label: '✏️ Who is it', outro_ph: 'e.g. my dentist', enviar: '📲 Send it and see what happens',
+    d_outro: '✏️ Someone else...', d_outro_label: '✏️ Who is it', outro_ph: 'e.g. my dentist', enviar: '📲 Send it and see what happens', tribunal: '⚖️ Take it to court',
     tag: 'An AI agent investigates your route and builds the most believable excuse possible. Using only true facts.',
     tipo_atraso: "⏰ I'm running late", tipo_fuga: '🏃 I want to get out of something',
     origem: '📍 Where are you', destino_atraso: '🏁 Where are you going', destino_fuga: '📌 Where is it', minutos: '⏰ Delay (min)',
@@ -613,6 +617,8 @@ function mostrarFinal(d) {
     </div>`).join('');
   $('msg').textContent = d.mensagem || '';
   ultimoResultado = d;
+  $('secTribunal').classList.add('hidden');
+  iniciarCronometro({ onde: document.querySelector('.lado'), lang, tipo: pedidoAtual?.tipo, minutos: pedidoAtual?.minutos, credibilidade: d.credibilidade, destinatario: pedidoAtual?.destinatario || '' });
   historico.push(d.desculpa_absurda?.titulo ? `${d.desculpa_absurda.titulo}: ${d.mensagem}` : d.mensagem);
 
   const desespero = !!d.modo_desespero, a = d.desculpa_absurda;
@@ -649,7 +655,7 @@ async function pedir(corpo, onEvento) {
 }
 
 function bloquear(on) {
-  for (const id of ['go', 'outra', 'verdadeBtn', 'lingua', 'enviarBtn']) $(id).disabled = on;
+  for (const id of ['go', 'outra', 'verdadeBtn', 'lingua', 'enviarBtn', 'tribunalBtn']) $(id).disabled = on;
   $('go').textContent = on ? t('go_busy') : t('go');
 }
 
@@ -657,6 +663,7 @@ const cartaoErro = msg => `<div class="tool card err"><div class="ico" style="ba
 
 async function investigar(corpo) {
   bloquear(true);
+  pararCronometro(true);
   modoDesespero(false);
   $('secRes').classList.add('hidden');
   $('invest').innerHTML = `<div class="pens" id="abrir">${esc(t('abrir'))}</div>`;
@@ -731,11 +738,18 @@ $('enviarBtn').onclick = () => {
   if (!ultimoResultado || !pedidoAtual) return;
   const d = DESTINATARIOS.find(x => x.id === pedidoAtual.destinatario_id);
   const p = ultimoResultado.desculpa_absurda?.personagem;
+  pararCronometro();
   abrirMessenger({
     lang, resultado: ultimoResultado,
     destinatario: pedidoAtual.destinatario, destinatario_id: pedidoAtual.destinatario_id, emoji: d?.emoji || '🙂',
     gaivotaSVG, emojiPersonagem: p && p !== 'gaivota' ? PERSONAGENS[p]?.emoji : null,
   });
+};
+$('tribunalBtn').onclick = async () => {
+  if (!ultimoResultado) return;
+  $('tribunalBtn').disabled = true;
+  try { await abrirTribunal({ onde: $('secTribunal'), lang, resultado: ultimoResultado }); }
+  finally { $('tribunalBtn').disabled = false; }
 };
 document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharMessenger(); });
 

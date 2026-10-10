@@ -95,6 +95,44 @@ app.post('/conversa', async (req, res) => {
   }
 });
 
+// Tribunal das Desculpas: três juízes independentes, cada um uma chamada à IA, em paralelo
+const JUIZES = {
+  avo: 'És a Avó Rosa, 84 anos, juíza no Tribunal das Desculpas. Tens um coração mole, perdoas quase tudo a quem comeu bem, mas não suportas mentiras à mãe nem desculpas sem educação. Falas com carinho e ditados populares.',
+  gaivota: 'És a Juíza Gertrudes, gaivota-de-patas-amarelas da Ribeira, juíza no Tribunal das Desculpas. És arrogante e territorial. Avalias sobretudo como as gaivotas são retratadas: se a desculpa culpa uma gaivota sem respeito, chumbas; se a gaivota sai como génio do crime, adoras. Se não houver gaivotas, achas a desculpa aborrecida.',
+  chefe: 'És o Dr. Fernandes, diretor de departamento, juiz no Tribunal das Desculpas. Frio, analítico e desconfiado. Só te interessam factos verificáveis, fontes e a credibilidade. Dados simulados e personagens absurdas irritam-te.',
+};
+
+app.post('/tribunal', async (req, res) => {
+  const b = req.body || {};
+  const caso = [
+    `LÍNGUA: ${b.lang === 'en' ? 'inglês britânico' : 'português de Portugal (nunca do Brasil)'}.`,
+    `CREDIBILIDADE CALCULADA PELO AGENTE: ${Number(b.credibilidade) || 0}/100. MODO DESESPERO: ${b.modo_desespero ? 'sim' : 'não'}.`,
+    b.desculpa ? `DESCULPA ABSURDA USADA: ${limpar(b.desculpa, 300)}.` : '',
+    Array.isArray(b.provas) && b.provas.length ? `PROVAS APRESENTADAS:\n${b.provas.slice(0, 6).map(p => `- ${limpar(p, 200)}`).join('\n')}` : '',
+    `A DESCULPA ENVIADA:\n"""\n${limpar(b.mensagem, 2000)}\n"""`,
+    '\nDá o teu voto. Devolve APENAS JSON: {"voto": "passa" ou "chumba", "nota": inteiro de 0 a 10, "comentario": 1 a 2 frases curtas e engraçadas, na tua voz}',
+  ].filter(Boolean).join('\n');
+  try {
+    const votos = await Promise.all(Object.entries(JUIZES).map(async ([id, persona]) => {
+      try {
+        const r = await chamar({
+          model: MODEL, max_tokens: 800, output_config: { effort: 'low' },
+          system: `${persona} Isto é uma demo humorística de hackathon.`,
+          messages: [{ role: 'user', content: caso }],
+        });
+        const v = extrairJSON(r.content.filter(c => c.type === 'text').map(c => c.text).join(''));
+        return { id, voto: v.voto === 'passa' ? 'passa' : 'chumba', nota: Math.max(0, Math.min(10, Number(v.nota) || 0)), comentario: String(v.comentario || '') };
+      } catch (e) {
+        return { id, voto: 'chumba', nota: 0, comentario: '...', erro: e.message };
+      }
+    }));
+    res.json({ votos });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ erro: e.message });
+  }
+});
+
 // node server.js --prompt mostra o prompt do agente montado a partir do catálogo, sem arrancar o servidor
 if (process.argv.includes('--prompt')) { console.log(SYSTEM); process.exit(0); }
 
