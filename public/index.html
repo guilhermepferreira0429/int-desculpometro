@@ -4,133 +4,205 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Desculpómetro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#0f1220; --card:#1a1f35; --line:#2b3355; --txt:#e8ebf7; --mut:#9aa3c7; --acc:#ffcc33; --ok:#3ddc97; --bad:#ff4d5e; }
+  :root {
+    --bg:#fff6e0; --ink:#1d1b4b; --card:#ffffff; --mut:#6b6893;
+    --amarelo:#ffd23f; --rosa:#ff4f8b; --azul:#3a86ff; --verde:#06d6a0; --laranja:#ff8c42; --vermelho:#ef233c; --roxo:#8338ec;
+    --borda: 3px solid var(--ink); --sombra: 5px 5px 0 var(--ink);
+  }
   * { box-sizing:border-box; }
-  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background:var(--bg); color:var(--txt); transition: background .4s; }
-  main { max-width: 980px; margin: 0 auto; padding: 28px 18px 80px; }
-  h1 { font-size: 2.6rem; margin: 0; letter-spacing: -1px; }
-  h1 span { color: var(--acc); }
-  .sub { color: var(--mut); margin: 4px 0 22px; }
-  h2 { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; color: var(--mut); margin: 34px 0 12px; }
-  form { display:grid; grid-template-columns: 1fr 1fr 130px 180px; gap:10px; background:var(--card); padding:16px; border-radius:14px; border:1px solid var(--line); }
-  label { display:flex; flex-direction:column; gap:4px; font-size:.8rem; color:var(--mut); }
-  input, select { background:#0c0f1c; color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:10px; font-size:1rem; }
-  .linha2 { grid-column: 1 / -1; display:flex; justify-content:space-between; align-items:center; gap:10px; }
-  .chk { flex-direction:row; align-items:center; gap:8px; }
-  button { background:var(--acc); color:#1b1b1b; border:0; border-radius:10px; padding:12px 22px; font-weight:700; font-size:1rem; cursor:pointer; }
-  button:disabled { opacity:.5; cursor:wait; }
-  button.sec { background:transparent; color:var(--txt); border:1px solid var(--line); }
+  html { font-size: 19px; }
+  body { margin:0; font-family: "Baloo 2", "Trebuchet MS", system-ui, sans-serif; background: var(--bg); color: var(--ink);
+         background-image: radial-gradient(#1d1b4b14 1.5px, transparent 1.5px); background-size: 22px 22px; }
+  main { max-width: 1120px; margin: 0 auto; padding: 26px 18px 90px; position:relative; z-index:2; }
   .hidden { display:none !important; }
 
-  /* investigação */
-  #invest { display:grid; gap:10px; }
-  .tool { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--acc); border-radius:10px; padding:12px 14px; animation: entra .35s ease-out; }
-  .tool.done { border-left-color: var(--ok); }
-  .tool.err { border-left-color: var(--bad); }
-  .tool .nome { font-family: ui-monospace, Consolas, monospace; font-weight:700; }
-  .tool .args { color: var(--mut); font-family: ui-monospace, Consolas, monospace; font-size:.85rem; }
-  .tool .res { margin-top:6px; font-size:.92rem; }
-  .pens { color:var(--mut); font-style:italic; font-size:.92rem; padding: 2px 4px; animation: entra .35s; }
-  .spin { display:inline-block; width:12px; height:12px; border:2px solid var(--acc); border-top-color:transparent; border-radius:50%; animation: roda .8s linear infinite; margin-right:6px; vertical-align:-1px; }
-  @keyframes roda { to { transform: rotate(360deg); } }
-  @keyframes entra { from { opacity:0; transform: translateY(8px); } }
+  header { display:flex; align-items:center; gap:16px; margin-bottom:18px; }
+  .logo { font-size: 3.4rem; font-weight:800; line-height:1; margin:0; letter-spacing:-1px; }
+  .logo .o { color: var(--rosa); display:inline-block; animation: abana 2.5s ease-in-out infinite; }
+  @keyframes abana { 50% { transform: rotate(-12deg) translateY(-4px); } }
+  .tag { margin:4px 0 0; font-size:1.1rem; color: var(--mut); font-weight:500; }
 
-  /* medidor */
-  .medidor { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px; text-align:center; }
-  .num { font-size:4rem; font-weight:800; line-height:1; }
-  .veredito { font-size:1.2rem; margin: 6px 0 16px; color: var(--acc); font-weight:700; }
-  .barra { position:relative; height:22px; border-radius:11px; background: linear-gradient(90deg, #ff4d5e, #ff9f43, #ffd93d, #3ddc97, #2bb3ff); }
-  .agulha { position:absolute; top:-8px; width:6px; height:38px; background:#fff; border-radius:3px; box-shadow:0 0 10px #fff; left:0; transition: left 2s cubic-bezier(.2,.9,.2,1); transform: translateX(-3px); }
-  .escala { display:flex; justify-content:space-between; color:var(--mut); font-size:.8rem; margin-top:8px; }
+  .card { background: var(--card); border: var(--borda); border-radius: 18px; box-shadow: var(--sombra); }
+  h2 { font-size: 1.35rem; margin: 30px 0 12px; font-weight:800; display:flex; align-items:center; gap:10px; }
+  h2 .pill { font-size:.7rem; background:var(--amarelo); border:2px solid var(--ink); border-radius:99px; padding:0 10px; font-weight:700; }
 
-  /* provas */
-  #provas { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap:12px; }
-  .prova { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; animation: entra .4s both; }
-  .prova h3 { margin:0 0 6px; font-size:1rem; }
-  .prova p { margin:0 0 10px; color:#cfd5ef; font-size:.93rem; }
-  .prova .fonte { font-size:.75rem; color:var(--mut); border-top:1px dashed var(--line); padding-top:6px; }
+  /* formulário */
+  form.card { display:grid; grid-template-columns: 1fr 1fr 150px 210px; gap:14px; padding:18px; background: var(--amarelo); }
+  label { display:flex; flex-direction:column; gap:4px; font-weight:700; font-size:.9rem; }
+  input, select { font: inherit; font-size:1.05rem; font-weight:500; color: var(--ink); background:#fff; border: var(--borda); border-radius:12px; padding:9px 12px; }
+  input:focus, select:focus { outline: 3px solid var(--rosa); outline-offset: 2px; }
+  .linha2 { grid-column: 1 / -1; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+  .chk { flex-direction:row; align-items:center; gap:8px; font-weight:500; }
+  .chk input { width:22px; height:22px; accent-color: var(--vermelho); }
 
-  /* mensagem */
-  .msg { background:#fffdf5; color:#222; border-radius:14px; padding:20px; font-size:1.05rem; line-height:1.55; white-space:pre-wrap; box-shadow: 0 8px 30px #0006; }
-  .acoes { display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
-  .verdade { background:#eaf7ff; }
+  button { font: inherit; font-weight:800; font-size:1.1rem; color: var(--ink); background: var(--rosa); color:#fff; border: var(--borda); border-radius:14px;
+           padding: 10px 22px; box-shadow: 4px 4px 0 var(--ink); cursor:pointer; transition: transform .1s, box-shadow .1s; }
+  button:hover { transform: translate(-1px,-1px); box-shadow: 6px 6px 0 var(--ink); }
+  button:active { transform: translate(3px,3px); box-shadow: 1px 1px 0 var(--ink); }
+  button:disabled { opacity:.6; cursor:wait; transform:none; }
+  button.azul { background: var(--azul); }
+  button.verde { background: var(--verde); color: var(--ink); }
+  button.branco { background:#fff; color: var(--ink); }
+  #go { font-size:1.25rem; padding: 12px 30px; }
+
+  /* palco: investigação + medidor */
+  .palco { display:grid; grid-template-columns: 1fr 400px; gap:22px; align-items:start; }
+  .lado { position: sticky; top: 14px; }
+  #invest { display:grid; gap:12px; }
+  .tool { display:grid; grid-template-columns: 62px 1fr; gap:12px; align-items:center; padding:12px 14px; animation: salta .5s cubic-bezier(.2,1.6,.4,1) both; }
+  @keyframes salta { from { opacity:0; transform: translateX(-30px) scale(.9); } }
+  .ico { width:62px; height:62px; border: var(--borda); border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:2rem; }
+  .tool.aberto .ico { animation: pulsa 1s ease-in-out infinite; }
+  @keyframes pulsa { 50% { transform: scale(1.1) rotate(-6deg); } }
+  .ico svg { width:46px; }
+  .tool .nome { font-weight:800; font-size:1.05rem; }
+  .tool .args { color: var(--mut); font-size:.8rem; font-family: ui-monospace, Consolas, monospace; word-break: break-all; }
+  .tool .res { font-size:.92rem; line-height:1.35; margin-top:2px; }
+  .tool .res i { color: var(--mut); }
+  .tool .estado { float:right; font-size:.75rem; font-weight:800; border:2px solid var(--ink); border-radius:99px; padding:0 8px; background: var(--amarelo); }
+  .tool.done .estado { background: var(--verde); }
+  .tool.err .estado { background: var(--vermelho); color:#fff; }
+  .pens { color: var(--mut); font-style: italic; font-size:.92rem; padding: 0 6px; animation: salta .4s both; }
+  .vazio { color: var(--mut); padding: 30px; text-align:center; border: 3px dashed #1d1b4b55; border-radius:18px; }
+
+  /* velocímetro */
+  .medidor { padding: 14px 14px 18px; text-align:center; position:relative; overflow:hidden; }
+  .medidor svg { width:100%; display:block; }
+  #ponteiro { transform-box: view-box; transform-origin: 170px 170px; transform: rotate(-90deg); transition: transform 1.4s cubic-bezier(.3,1.4,.5,1); }
+  .medidor.final #ponteiro { transition: transform 2.6s cubic-bezier(.2,1.3,.4,1); }
+  .num { font-size: 3.4rem; font-weight:800; line-height:1; margin-top:-6px; }
+  .veredito { font-size: 1.3rem; font-weight:800; }
+  .aovivo { font-size:.8rem; color: var(--mut); font-weight:700; }
+  .aovivo::before { content:'●'; color: var(--vermelho); margin-right:5px; animation: pisca 1s steps(2) infinite; }
+  @keyframes pisca { 50% { opacity:0; } }
+  .carimbo { position:absolute; top: 44%; left:50%; transform: translate(-50%,-50%) rotate(-14deg); border: 6px double var(--vermelho); color: var(--vermelho);
+             font-weight:800; font-size: 2.6rem; letter-spacing: 3px; padding: 0 16px; border-radius: 10px; background: #fff8; pointer-events:none;
+             mix-blend-mode: multiply; animation: carimba .45s cubic-bezier(.2,1.8,.4,1) both; }
+  @keyframes carimba { from { transform: translate(-50%,-50%) rotate(-14deg) scale(3); opacity:0; } }
+
+  /* resultado */
+  #provas { display:grid; grid-template-columns: repeat(auto-fill, minmax(250px,1fr)); gap:14px; }
+  .prova { padding: 14px 16px; animation: salta .5s both; }
+  .prova:nth-child(4n+1) { border-top: 12px solid var(--azul); }
+  .prova:nth-child(4n+2) { border-top: 12px solid var(--laranja); }
+  .prova:nth-child(4n+3) { border-top: 12px solid var(--verde); }
+  .prova:nth-child(4n+4) { border-top: 12px solid var(--roxo); }
+  .prova h3 { margin:0 0 4px; font-size:1.1rem; line-height:1.2; }
+  .prova p { margin:0 0 10px; font-size:.95rem; line-height:1.4; }
+  .prova .fonte { font-size:.75rem; color: var(--mut); border-top: 2px dashed #1d1b4b33; padding-top:6px; }
+  .msg { padding: 22px 24px; font-size: 1.12rem; line-height:1.6; white-space: pre-wrap; background:#fff; position:relative; }
+  .msg::before { content:'💬'; position:absolute; top:-22px; left:18px; font-size:2rem; }
+  .verdade { background: #e6f7ff; }
+  .verdade::before { content:'😇'; }
+  .acoes { display:flex; gap:12px; margin-top:16px; flex-wrap:wrap; }
+  .absurda { display:inline-block; background: var(--vermelho); color:#fff; border: var(--borda); border-radius: 12px; padding: 4px 14px; font-weight:800; margin-bottom: 12px; box-shadow: 3px 3px 0 var(--ink); }
 
   /* MODO DESESPERO */
-  body.desespero { animation: alarme 1s steps(2) infinite; }
-  @keyframes alarme { 0% { background:#5a0010; } 50% { background:#b3001b; } }
-  @media (prefers-reduced-motion: reduce) { body.desespero { animation:none; background:#7a0014; } }
-  #faixa { position:fixed; top:0; left:0; right:0; background:#ff1f3d; color:#fff; text-align:center; font-weight:900; letter-spacing:4px; padding:8px; z-index:20; font-size:1.1rem; }
-  #gaivota { position:fixed; top:90px; left:-220px; width:200px; z-index:21; pointer-events:none; animation: voa 7s linear infinite; }
-  @keyframes voa { 0% { left:-220px; transform: translateY(0) rotate(-4deg); } 25% { transform: translateY(40px) rotate(4deg); } 50% { transform: translateY(-10px) rotate(-4deg); } 75% { transform: translateY(50px) rotate(4deg); } 100% { left:110vw; transform: translateY(0) rotate(-4deg); } }
-  #gaivota .asa { transform-origin: 95px 60px; animation: bate .35s ease-in-out infinite alternate; }
-  @keyframes bate { to { transform: scaleY(-.6); } }
+  #flash { position:fixed; inset:0; background: var(--vermelho); z-index:1; opacity:0; pointer-events:none; }
+  body.desespero #flash { animation: alarme 1.1s ease-in-out infinite; }
+  @keyframes alarme { 50% { opacity:.55; } }
+  @media (prefers-reduced-motion: reduce) { body.desespero #flash { animation:none; opacity:.3; } }
+  #sirene { position:fixed; top: 8px; right: 18px; z-index: 30; width: 110px; text-align:center; }
+  #sirene .luz { position:relative; width: 80px; height: 56px; margin: 0 auto; background: var(--vermelho); border: var(--borda); border-radius: 40px 40px 6px 6px; overflow:hidden; box-shadow: 0 0 40px 12px #ef233caa; animation: brilho .5s steps(2) infinite; }
+  #sirene .luz::after { content:''; position:absolute; inset:-60px; background: conic-gradient(transparent 0 300deg, #fff 330deg, transparent 360deg); animation: roda .6s linear infinite; }
+  #sirene .base { width: 100px; height: 16px; margin: -2px auto 0; background: var(--ink); border-radius: 4px; }
+  #sirene .txt { margin-top:6px; background: var(--ink); color: var(--amarelo); font-weight:800; font-size:.75rem; border-radius:8px; padding: 2px 6px; letter-spacing:1px; }
+  @keyframes brilho { 50% { box-shadow: 0 0 10px 2px #ef233c66; } }
+  @keyframes roda { to { transform: rotate(360deg); } }
+  #gaivota { position:fixed; top: 110px; left:-240px; width: 220px; z-index: 29; pointer-events:none; animation: voa 7s linear infinite; filter: drop-shadow(4px 6px 0 #0003); }
+  @keyframes voa { 0% { left:-240px; transform: translateY(0) rotate(-4deg); } 25% { transform: translateY(60px) rotate(5deg); } 50% { transform: translateY(-10px) rotate(-4deg); } 75% { transform: translateY(70px) rotate(5deg); } 100% { left: 110vw; transform: translateY(0) rotate(-4deg); } }
+  .asa { transform-box: fill-box; transform-origin: bottom center; animation: bate .32s ease-in-out infinite alternate; }
+  @keyframes bate { to { transform: scaleY(-.5); } }
 
-  /* Diário do Bico (tabloide inventado) */
-  .jornal { background:#f4efe1; color:#111; font-family: Georgia, "Times New Roman", serif; padding:18px 22px 26px; border-radius:4px; box-shadow:0 10px 40px #000a; transform: rotate(-.6deg); }
-  .jornal .aviso { font-family: system-ui, sans-serif; font-size:.72rem; text-transform:uppercase; letter-spacing:2px; text-align:center; border-bottom:1px solid #111; padding-bottom:6px; }
-  .jornal .cab { display:flex; align-items:center; justify-content:center; gap:14px; border-bottom:6px double #111; padding:8px 0; }
-  .jornal .titulo-j { font-family: Impact, "Arial Black", sans-serif; font-size:3.2rem; color:#d10f1f; letter-spacing:1px; text-transform:uppercase; }
-  .jornal .meta { display:flex; justify-content:space-between; font-family: system-ui, sans-serif; font-size:.75rem; padding:4px 0; border-bottom:1px solid #111; }
-  .jornal .manchete { font-family: Impact, "Arial Black", sans-serif; font-size:2.6rem; line-height:1.02; margin:14px 0 6px; text-transform:uppercase; }
-  .jornal .subt { font-size:1.15rem; font-style:italic; margin:0 0 12px; }
-  .jornal .grelha { display:grid; grid-template-columns: 1.4fr 1fr; gap:18px; }
+  /* Diário do Bico, tabloide inventado */
+  .jornal { background:#f4efe1; color:#111; font-family: Georgia, "Times New Roman", serif; padding: 18px 22px 24px; border: 3px solid #111; box-shadow: 8px 8px 0 #111; transform: rotate(-.7deg); }
+  .jornal .aviso { font-family: system-ui, sans-serif; font-size:.65rem; text-transform:uppercase; letter-spacing:2px; text-align:center; border-bottom:1px solid #111; padding-bottom:6px; }
+  .jornal .titulo-j { font-family: Impact, "Arial Black", sans-serif; font-size: 3.4rem; color:#d10f1f; text-transform:uppercase; text-align:center; border-bottom: 6px double #111; line-height:1.15; padding: 4px 0; }
+  .jornal .meta { display:flex; justify-content:space-between; font-family: system-ui, sans-serif; font-size:.7rem; padding:4px 0; border-bottom:1px solid #111; }
+  .jornal .manchete { font-family: Impact, "Arial Black", sans-serif; font-size: 2.5rem; line-height:1.02; margin: 14px 0 6px; text-transform:uppercase; }
+  .jornal .subt { font-size: 1.1rem; font-style: italic; margin: 0 0 12px; }
+  .jornal .grelha { display:grid; grid-template-columns: 1.4fr 1fr; gap: 18px; }
+  .jornal .corpo p { margin:0 0 10px; text-align: justify; font-size:.92rem; line-height:1.45; }
   .jornal .lead { font-weight:700; }
-  .jornal .corpo p { margin:0 0 10px; text-align:justify; }
   .jornal .foto { background:#d8d1bd; border:2px solid #111; height:170px; display:flex; align-items:center; justify-content:center; }
-  .jornal .legenda { font-size:.8rem; font-style:italic; margin:4px 0 12px; }
-  .jornal .caixa { background:#ffe14d; border:3px solid #111; padding:10px 12px; font-family: system-ui, sans-serif; font-size:.85rem; }
-  .jornal .caixa b { display:block; font-family: Impact, sans-serif; font-size:1.1rem; margin-bottom:4px; text-transform:uppercase; }
-  .jornal .caixa li { margin-bottom:5px; }
-  .jornal .rodape { margin-top:14px; font-family: system-ui, sans-serif; font-size:.7rem; text-align:center; border-top:1px solid #111; padding-top:6px; }
+  .jornal .foto svg { width:180px; }
+  .jornal .legenda { font-size:.75rem; font-style: italic; margin: 4px 0 12px; }
+  .jornal .caixa { background: #ffe14d; border: 3px solid #111; padding: 10px 12px; font-family: system-ui, sans-serif; font-size: .8rem; }
+  .jornal .caixa b { display:block; font-family: Impact, sans-serif; font-size: 1.05rem; text-transform: uppercase; margin-bottom: 4px; }
+  .jornal .caixa li { margin-bottom: 5px; }
+  .jornal .rodape { margin-top: 14px; font-family: system-ui, sans-serif; font-size: .65rem; text-align:center; border-top: 1px solid #111; padding-top: 6px; }
 
-  .entrevista { background:#fff; color:#1a1a1a; border-radius:12px; padding:20px 24px; box-shadow:0 10px 40px #000a; }
-  .entrevista h3 { margin:0 0 4px; font-size:1.5rem; }
-  .entrevista .tag { display:inline-block; background:#d10f1f; color:#fff; font-size:.7rem; font-weight:800; letter-spacing:2px; padding:3px 8px; border-radius:3px; margin-bottom:10px; }
-  .entrevista .p { font-weight:800; margin:14px 0 4px; }
-  .entrevista .r { margin:0; padding-left:12px; border-left:3px solid #d10f1f; }
+  /* Entrevista exclusiva */
+  .entrevista { padding: 22px 26px; background:#fff; }
+  .entrevista .topo { display:flex; gap:16px; align-items:center; margin-bottom: 8px; }
+  .avatar { width: 92px; height: 92px; flex: none; border: var(--borda); border-radius: 50%; background: var(--amarelo); display:flex; align-items:center; justify-content:center; font-size: 3rem; overflow:hidden; }
+  .avatar svg { width: 84px; }
+  .entrevista .selo { display:inline-block; background: var(--vermelho); color:#fff; font-size:.7rem; font-weight:800; letter-spacing:2px; padding: 1px 10px; border-radius: 6px; }
+  .entrevista h3 { margin: 4px 0 0; font-size: 1.5rem; line-height:1.15; }
+  .entrevista .quem { color: var(--mut); font-size:.9rem; }
+  .entrevista .p { font-weight: 800; margin: 16px 0 4px; }
+  .entrevista .r { margin:0; padding: 8px 14px; background: var(--bg); border-left: 6px solid var(--rosa); border-radius: 0 12px 12px 0; }
+  .ficcao { font-size:.75rem; color: var(--mut); margin-top: 14px; }
 
-  @media (max-width: 760px) { form { grid-template-columns: 1fr; } .jornal .grelha { grid-template-columns: 1fr; } .jornal .manchete { font-size:1.9rem; } }
+  @media (max-width: 900px) {
+    form { grid-template-columns: 1fr 1fr; }
+    .palco { grid-template-columns: 1fr; }
+    .lado { position: static; order: -1; }
+    .jornal .grelha { grid-template-columns: 1fr; }
+    .jornal .manchete { font-size: 1.8rem; }
+    .logo { font-size: 2.5rem; }
+  }
 </style>
 </head>
 <body>
-<div id="faixa" class="hidden">⚠ MODO DESESPERO ATIVADO ⚠</div>
-<svg id="gaivota" class="hidden" viewBox="0 0 200 130" aria-hidden="true">
-  <g>
-    <path class="asa" d="M95 60 Q60 10 10 25 Q55 40 80 68 Z" fill="#cfd6dd" stroke="#333" stroke-width="2"/>
-    <ellipse cx="105" cy="72" rx="48" ry="20" fill="#fff" stroke="#333" stroke-width="2"/>
-    <path d="M60 70 L30 62 L36 80 Z" fill="#9aa5ae" stroke="#333" stroke-width="2"/>
-    <circle cx="150" cy="58" r="16" fill="#fff" stroke="#333" stroke-width="2"/>
-    <circle cx="155" cy="54" r="3" fill="#111"/>
-    <path d="M163 58 L190 62 L163 66 Z" fill="#f5c400" stroke="#333" stroke-width="2"/>
-    <circle cx="183" cy="63" r="2" fill="#d10f1f"/>
-    <path d="M95 60 Q120 15 165 15 Q130 35 112 64 Z" fill="#b9c2ca" stroke="#333" stroke-width="2" class="asa"/>
-    <!-- as chaves roubadas -->
-    <g transform="translate(176,66)">
-      <line x1="0" y1="0" x2="0" y2="14" stroke="#555" stroke-width="2"/>
-      <circle cx="0" cy="20" r="6" fill="none" stroke="#e0a800" stroke-width="3"/>
-      <rect x="-2" y="26" width="4" height="16" fill="#e0a800"/>
-      <rect x="2" y="36" width="5" height="3" fill="#e0a800"/>
+<div id="flash"></div>
+<div id="sirene" class="hidden"><div class="luz"></div><div class="base"></div><div class="txt">MODO DESESPERO</div></div>
+
+<!-- Gaivota com as chaves no bico (reutilizada no jornal, no avatar e no ícone) -->
+<svg id="gaivota" class="hidden" viewBox="0 0 210 140" aria-hidden="true">
+  <g id="gaivotaArte">
+    <path class="asa" d="M95 64 Q62 8 8 22 Q52 40 80 70 Z" fill="#cfd6dd" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M60 74 L28 64 L34 86 Z" fill="#8d99a6" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="105" cy="76" rx="50" ry="21" fill="#fff" stroke="#1d1b4b" stroke-width="3"/>
+    <circle cx="152" cy="60" r="17" fill="#fff" stroke="#1d1b4b" stroke-width="3"/>
+    <circle cx="157" cy="55" r="3.5" fill="#1d1b4b"/>
+    <path d="M150 50 L164 48" stroke="#1d1b4b" stroke-width="3" stroke-linecap="round"/>
+    <path d="M166 60 L196 64 L166 69 Z" fill="#ffd23f" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="189" cy="65.5" r="2.5" fill="#ef233c"/>
+    <path class="asa" d="M98 64 Q122 14 168 14 Q132 36 114 68 Z" fill="#b9c2ca" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M100 96 L95 114 M114 96 L119 114" stroke="#ffd23f" stroke-width="4" stroke-linecap="round"/>
+    <g transform="translate(182,68)">
+      <line x1="0" y1="0" x2="0" y2="12" stroke="#555" stroke-width="2.5"/>
+      <circle cx="0" cy="19" r="7" fill="none" stroke="#e0a800" stroke-width="3.5"/>
+      <rect x="-2.5" y="25" width="5" height="20" rx="1" fill="#e0a800"/>
+      <rect x="2.5" y="36" width="6" height="3.5" fill="#e0a800"/>
+      <rect x="2.5" y="41" width="4" height="3" fill="#e0a800"/>
     </g>
-    <path d="M100 92 L96 108 M112 92 L116 108" stroke="#f5c400" stroke-width="3"/>
   </g>
 </svg>
 
 <main>
-  <h1>Desculp<span>ó</span>metro</h1>
-  <p class="sub">Um agente de IA investiga o que se passa mesmo no teu caminho e monta a desculpa mais credível possível. Só com factos.</p>
+  <header>
+    <div>
+      <h1 class="logo">Desculp<span class="o">ó</span>metro</h1>
+      <p class="tag">Um agente de IA investiga o teu caminho e monta a desculpa mais credível possível. Só com factos verdadeiros.</p>
+    </div>
+  </header>
 
-  <form id="f">
-    <label>Onde estás
-      <input name="origem" required value="Porto" placeholder="ex: Porto, Boavista">
+  <form id="f" class="card">
+    <label>📍 Onde estás
+      <input name="origem" required value="Porto" placeholder="ex: Porto">
     </label>
-    <label>Para onde vais
+    <label>🏁 Para onde vais
       <input name="destino" required value="Matosinhos" placeholder="ex: Matosinhos">
     </label>
-    <label>Minutos de atraso
+    <label>⏰ Atraso (min)
       <input name="minutos" type="number" min="1" max="999" required value="25">
     </label>
-    <label>A quem tens de explicar
+    <label>🙈 Tens de explicar a
       <select name="destinatario">
         <option value="chefe">Chefe</option>
         <option value="mãe">Mãe</option>
@@ -139,45 +211,60 @@
       </select>
     </label>
     <div class="linha2">
-      <label class="chk"><input type="checkbox" name="forcar_desespero"> Forçar modo desespero (demo)</label>
-      <button id="go">Gerar desculpa</button>
+      <label class="chk"><input type="checkbox" name="forcar_desespero"> Forçar modo desespero (para a demo)</label>
+      <button id="go">Gerar desculpa 🔎</button>
     </div>
   </form>
 
-  <section id="secInvest" class="hidden">
-    <h2>O agente está a investigar...</h2>
-    <div id="invest"></div>
-  </section>
+  <div class="palco">
+    <section>
+      <h2>🕵️ O agente está a investigar...</h2>
+      <div id="invest"><div class="vazio">Preenche o formulário e o agente vai consultar o tempo, o trânsito, os transportes e os eventos no teu caminho.</div></div>
+    </section>
+    <aside class="lado">
+      <h2>📈 Credibilidade</h2>
+      <div class="medidor card" id="medidor">
+        <svg viewBox="-50 -12 440 204" aria-hidden="true">
+          <g id="arcos"></g>
+          <g id="etiquetas" font-family="Baloo 2, sans-serif" font-weight="800" font-size="12" fill="#1d1b4b" text-anchor="middle"></g>
+          <g id="ponteiro">
+            <polygon points="164,170 176,170 170,58" fill="#1d1b4b"/>
+          </g>
+          <circle cx="170" cy="170" r="14" fill="#ff4f8b" stroke="#1d1b4b" stroke-width="3"/>
+        </svg>
+        <div class="num" id="num">?</div>
+        <div class="veredito" id="veredito">à espera de factos</div>
+        <div class="aovivo hidden" id="aovivo">estimativa ao vivo</div>
+        <div id="carimboSlot"></div>
+      </div>
+    </aside>
+  </div>
 
   <section id="secRes" class="hidden">
-    <h2>Credibilidade</h2>
-    <div class="medidor">
-      <div class="num" id="num">0</div>
-      <div class="veredito" id="veredito">...</div>
-      <div class="barra"><div class="agulha" id="agulha"></div></div>
-      <div class="escala"><span>ninguém acredita</span><span>duvidoso</span><span>plausível</span><span>convincente</span><span>irrefutável</span></div>
-    </div>
-
-    <h2>Provas</h2>
+    <div id="absurdaSlot"></div>
+    <h2>🧾 As provas</h2>
     <div id="provas"></div>
 
-    <h2>A mensagem</h2>
-    <div class="msg" id="msg"></div>
+    <h2>✉️ A mensagem</h2>
+    <div class="msg card" id="msg"></div>
     <div class="acoes">
-      <button id="copiar">Copiar mensagem</button>
-      <button id="verdadeBtn" class="sec">Ou então diz a verdade</button>
+      <button id="copiar" class="verde">📋 Copiar mensagem</button>
+      <button id="outra" class="azul">🎲 Gerar outra desculpa</button>
+      <button id="verdadeBtn" class="branco">😇 Ou então diz a verdade</button>
     </div>
 
     <div id="secVerdade" class="hidden">
-      <h2>A versão honesta</h2>
-      <div class="msg verdade" id="msgVerdade"></div>
-      <div class="acoes"><button id="copiarV">Copiar versão honesta</button></div>
+      <h2>😇 A versão honesta</h2>
+      <div class="msg verdade card" id="msgVerdade"></div>
+      <div class="acoes"><button id="copiarV" class="verde">📋 Copiar versão honesta</button></div>
     </div>
 
     <div id="secParodia" class="hidden">
-      <h2>Prova n.º 1: imprensa especializada (paródia, totalmente fictícia)</h2>
-      <div id="jornal"></div>
-      <h2>Prova n.º 2: entrevista exclusiva (paródia, totalmente fictícia)</h2>
+      <div id="jornalWrap">
+        <h2>🗞️ Prova de paródia: imprensa especializada <span class="pill">ficção</span></h2>
+        <div id="jornal"></div>
+      </div>
+      <h2>🎤 Prova de paródia: entrevista exclusiva <span class="pill">ficção</span></h2>
       <div id="entrevista"></div>
     </div>
   </section>
@@ -186,62 +273,142 @@
 <script>
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-let ultimoPedido = null;
+const gaivotaSVG = (w = 46) => `<svg viewBox="0 0 210 140" width="${w}">${$('gaivotaArte').outerHTML.replace('id="gaivotaArte"', '')}</svg>`;
 
-const ICONES = { geocode:'📍', get_weather:'🌦️', get_traffic:'🚗', get_transport_status:'🚇', get_events_nearby:'🏟️', get_seagull_facts:'🐦' };
+let pedidoAtual = null, historico = [], estimativa = 8, oscilador = null;
+
+/* ---------- velocímetro ---------- */
+const CX = 170, CY = 170, R = 125;
+const ponto = (v, r = R) => { const a = Math.PI - v / 100 * Math.PI; return [CX + r * Math.cos(a), CY - r * Math.sin(a)]; };
+const ZONAS = [
+  { de: 0, ate: 20, cor: '#ef233c', nome: ['ninguém', 'acredita'] },
+  { de: 20, ate: 50, cor: '#ff8c42', nome: ['talvez', 'cole'] },
+  { de: 50, ate: 80, cor: '#3a86ff', nome: ['convincente'] },
+  { de: 80, ate: 100, cor: '#06d6a0', nome: ['irrefutável'] },
+];
+(function desenharMedidor() {
+  $('arcos').innerHTML = ZONAS.map(z => {
+    const [x1, y1] = ponto(z.de), [x2, y2] = ponto(z.ate);
+    return `<path d="M${x1} ${y1} A${R} ${R} 0 0 1 ${x2} ${y2}" fill="none" stroke="${z.cor}" stroke-width="30"/>`;
+  }).join('') + `<path d="M${ponto(0, R + 15)} A${R + 15} ${R + 15} 0 0 1 ${ponto(100, R + 15)}" fill="none" stroke="#1d1b4b" stroke-width="3"/>` +
+    `<path d="M${ponto(0, R - 15)} A${R - 15} ${R - 15} 0 0 1 ${ponto(100, R - 15)}" fill="none" stroke="#1d1b4b" stroke-width="3"/>` +
+    Array.from({ length: 11 }, (_, i) => { const [a, b] = ponto(i * 10, R - 15), [c, d] = ponto(i * 10, R - 26); return `<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="#1d1b4b" stroke-width="3"/>`; }).join('');
+  $('etiquetas').innerHTML = ZONAS.map(z => {
+    const [x, y] = ponto((z.de + z.ate) / 2, R + 44);
+    return `<text x="${x}" y="${y - (z.nome.length - 1) * 6}">${z.nome.map((l, i) => `<tspan x="${x}" dy="${i ? 13 : 0}">${l}</tspan>`).join('')}</text>`;
+  }).join('');
+})();
+
+const veredito = n => n < 20 ? 'Ninguém acredita' : n < 50 ? 'Talvez cole' : n < 80 ? 'Convincente' : 'Irrefutável';
+function moverPonteiro(v) { $('ponteiro').style.transform = `rotate(${-90 + Math.max(0, Math.min(100, v)) * 1.8}deg)`; }
+
+// Enquanto o agente investiga, o ponteiro tremelica à volta de uma estimativa feita com os factos já recolhidos
+function comecarOscilar() {
+  pararOscilar();
+  $('medidor').classList.remove('final');
+  $('aovivo').classList.remove('hidden');
+  $('carimboSlot').innerHTML = '';
+  oscilador = setInterval(() => {
+    const v = estimativa + (Math.random() * 12 - 6);
+    moverPonteiro(v);
+    $('num').textContent = Math.round(Math.max(0, v));
+    $('veredito').textContent = 'a pesar as provas...';
+  }, 1100);
+}
+function pararOscilar() { clearInterval(oscilador); oscilador = null; $('aovivo').classList.add('hidden'); }
+
+function atualizarEstimativa(nome, r, minutos) {
+  if (!r || r.erro) return;
+  if (nome === 'get_traffic') estimativa += Math.min(40, (r.atraso_transito_min || 0) / Math.max(1, minutos) * 40);
+  if (nome === 'get_transport_status') estimativa += Math.min(24, r.linhas.filter(l => l.estado !== 'normal').length * 12);
+  if (nome === 'get_events_nearby') estimativa += Math.min(18, r.eventos.length * 9);
+  if (nome === 'get_weather') {
+    if (r.agora.precipitacao_mm > 0 || /chuva|aguaceiro|trovoada|chuvisco/.test(r.agora.estado)) estimativa += 15;
+    if (r.agora.rajadas_kmh > 50) estimativa += 8;
+  }
+  estimativa = Math.min(92, estimativa);
+}
+
+function mostrarCredibilidade(alvo) {
+  pararOscilar();
+  $('medidor').classList.add('final');
+  moverPonteiro(alvo);
+  const de = parseInt($('num').textContent) || 0, t0 = performance.now();
+  (function passo(t) {
+    const p = Math.min(1, (t - t0) / 2600), v = Math.round(de + (alvo - de) * (1 - Math.pow(1 - p, 3)));
+    $('num').textContent = v; $('veredito').textContent = veredito(v);
+    $('veredito').style.color = ZONAS.find(z => v < z.ate || z.ate === 100).cor;
+    if (p < 1) requestAnimationFrame(passo);
+    else if (alvo > 80) $('carimboSlot').innerHTML = '<div class="carimbo">IRREFUTÁVEL</div>';
+  })(t0);
+}
+
+/* ---------- cartões das ferramentas ---------- */
+const ICONES = {
+  geocode: { i: '📍', cor: '#ffd23f', nome: 'A localizar' },
+  get_weather: { i: '☁️', cor: '#8ecdff', nome: 'Meteorologia' },
+  get_traffic: { i: '🚗', cor: '#ff8c42', nome: 'Trânsito' },
+  get_transport_status: { i: '🚇', cor: '#c3a6ff', nome: 'Transportes' },
+  get_events_nearby: { i: '🏟️', cor: '#06d6a0', nome: 'Eventos' },
+  get_seagull_facts: { i: null, cor: '#ff9db5', nome: 'Inteligência sobre gaivotas' },
+};
 
 function resumo(nome, r) {
   if (r.erro) return `Erro: ${esc(r.erro)}`;
   switch (nome) {
-    case 'geocode': return `${esc(r.encontrado)} (${r.lat.toFixed(3)}, ${r.lon.toFixed(3)})`;
-    case 'get_weather': return `Agora: ${esc(r.agora.estado)}, ${r.agora.temperatura_c}°C, rajadas de ${r.agora.rajadas_kmh} km/h, ${r.agora.precipitacao_mm} mm`;
-    case 'get_traffic': return `${r.tempo_com_transito_min} min com trânsito (+${r.atraso_transito_min} min)${r.incidentes ? ' · ' + esc(r.incidentes.join(', ')) : ''} <i>· ${esc(r.fonte)}</i>`;
+    case 'geocode': return `${esc(r.encontrado)}`;
+    case 'get_weather': return `Agora: <b>${esc(r.agora.estado)}</b>, ${r.agora.temperatura_c}°C, rajadas de ${r.agora.rajadas_kmh} km/h, ${r.agora.precipitacao_mm} mm de chuva <i>· ${esc(r.fonte)}</i>`;
+    case 'get_traffic': return `<b>${r.tempo_com_transito_min} min</b> com trânsito (+${r.atraso_transito_min} min)${r.incidentes ? '<br>⚠️ ' + esc(r.incidentes.join(', ')) : ''} <i>· ${esc(r.fonte)}</i>`;
     case 'get_transport_status': return r.linhas.map(l => `${l.estado === 'normal' ? '🟢' : '🔴'} ${esc(l.linha)}${l.estado !== 'normal' ? ': ' + esc(l.detalhe) : ''}`).join('<br>') + ` <i>· ${esc(r.fonte)}</i>`;
-    case 'get_events_nearby': return r.eventos.map(e => `${esc(e.evento)} às ${esc(e.hora)}: ${esc(e.impacto)}`).join('<br>') + ` <i>· ${esc(r.fonte)}</i>`;
-    case 'get_seagull_facts': return r.artigos.map(a => `📖 ${esc(a.titulo)}`).join(', ') + ' (Wikipédia)';
+    case 'get_events_nearby': return r.eventos.map(e => `🎟️ ${esc(e.evento)} às ${esc(e.hora)}: ${esc(e.impacto)}`).join('<br>') + ` <i>· ${esc(r.fonte)}</i>`;
+    case 'get_seagull_facts': return r.artigos.map(a => `📖 ${esc(a.titulo)}`).join(', ') + ' <i>· Wikipédia</i>';
     default: return esc(JSON.stringify(r).slice(0, 200));
   }
 }
 
-function veredito(n) {
-  if (n < 20) return 'Ninguém acredita';
-  if (n < 40) return 'Duvidoso';
-  if (n < 60) return 'Plausível';
-  if (n < 85) return 'Convincente';
-  return 'Irrefutável';
+function cartaoInicio(e) {
+  const m = ICONES[e.name] || { i: '🔧', cor: '#eee', nome: e.name };
+  $('invest').insertAdjacentHTML('beforeend', `
+    <div class="tool card aberto" id="t-${e.id}">
+      <div class="ico" style="background:${m.cor}">${m.i ?? gaivotaSVG()}</div>
+      <div>
+        <span class="estado">a consultar</span>
+        <div class="nome">${esc(m.nome)}</div>
+        <div class="args">${esc(e.name)}(${esc(Object.values(e.input || {}).join(', '))})</div>
+        <div class="res">...</div>
+      </div>
+    </div>`);
+  $('t-' + e.id).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function cartaoFim(e) {
+  const el = $('t-' + e.id); if (!el) return;
+  el.classList.remove('aberto'); el.classList.add(e.erro ? 'err' : 'done');
+  el.querySelector('.estado').textContent = e.erro ? 'falhou' : 'feito ✓';
+  el.querySelector('.res').innerHTML = resumo(e.name, e.result);
 }
 
-function animarMedidor(alvo) {
-  $('agulha').style.left = '0%';
-  requestAnimationFrame(() => requestAnimationFrame(() => { $('agulha').style.left = alvo + '%'; }));
-  const t0 = performance.now();
-  (function passo(t) {
-    const p = Math.min(1, (t - t0) / 2000), v = Math.round(alvo * (1 - Math.pow(1 - p, 3)));
-    $('num').textContent = v; $('veredito').textContent = veredito(v);
-    if (p < 1) requestAnimationFrame(passo);
-  })(t0);
-}
-
+/* ---------- modo desespero e paródias ---------- */
 function modoDesespero(on) {
   document.body.classList.toggle('desespero', on);
-  $('faixa').classList.toggle('hidden', !on);
+  $('sirene').classList.toggle('hidden', !on);
   $('gaivota').classList.toggle('hidden', !on);
   $('secParodia').classList.toggle('hidden', !on);
 }
 
+const AVATARES = { gaivota: null, turista: '📸', vizinha: '🙋‍♀️', avo: '👵', maquinista: '🚇', padeira: '🥐', tuna: '🎸', gato: '🐈', senhor_do_cafe: '☕', outro: '🎤' };
+
 function renderJornal(j) {
-  if (!j) return '';
-  const hoje = new Date().toLocaleDateString('pt-PT', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const hoje = new Date().toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   return `<article class="jornal">
     <div class="aviso">Diário do Bico, jornal oficial das gaivotas do Porto · publicação fictícia e humorística</div>
-    <div class="cab"><span class="titulo-j">Diário do Bico</span></div>
+    <div class="titulo-j">Diário do Bico</div>
     <div class="meta"><span>${esc(hoje)}</span><span>Edição de telhado</span><span>Preço: 1 batata frita</span></div>
     <div class="manchete">${esc(j.manchete)}</div>
     <p class="subt">${esc(j.subtitulo)}</p>
     <div class="grelha">
       <div class="corpo"><p class="lead">${esc(j.lead)}</p>${(j.corpo || []).map(p => `<p>${esc(p)}</p>`).join('')}</div>
       <div>
-        <div class="foto"><svg viewBox="0 0 200 130" width="170">${$('gaivota').innerHTML}</svg></div>
+        <div class="foto">${gaivotaSVG(180)}</div>
         <div class="legenda">${esc(j.legenda_foto)}</div>
         <div class="caixa"><b>Factos verdadeiros (Wikipédia)</b><ul>${(j.caixa_factos || []).map(f => `<li>${esc(f)}</li>`).join('')}</ul></div>
       </div>
@@ -250,44 +417,56 @@ function renderJornal(j) {
   </article>`;
 }
 
-function renderEntrevista(e) {
-  if (!e) return '';
-  return `<article class="entrevista">
-    <span class="tag">EXCLUSIVO · FICÇÃO</span>
-    <h3>${esc(e.titulo)}</h3>
-    <div style="color:#666">Entrevistada: ${esc(e.entrevistada)}</div>
+function renderEntrevista(e, personagem) {
+  const av = AVATARES[personagem] === undefined ? '🎤' : AVATARES[personagem];
+  return `<article class="entrevista card">
+    <div class="topo">
+      <div class="avatar">${av ?? gaivotaSVG(84)}</div>
+      <div>
+        <span class="selo">ENTREVISTA EXCLUSIVA</span>
+        <h3>${esc(e.titulo)}</h3>
+        <div class="quem">Entrevistada: ${esc(e.entrevistada)}</div>
+      </div>
+    </div>
     ${(e.perguntas || []).map(q => `<div class="p">— ${esc(q.p)}</div><p class="r">${esc(q.r)}</p>`).join('')}
+    <div class="ficcao">Entrevista fictícia e humorística. Qualquer semelhança com vizinhas, avós ou gaivotas reais é pura coincidência.</div>
   </article>`;
 }
 
+/* ---------- resultado ---------- */
 function mostrarFinal(d) {
   $('secRes').classList.remove('hidden');
   $('secVerdade').classList.add('hidden');
-  const cred = Math.max(0, Math.min(100, Number(d.credibilidade) || 0));
-  animarMedidor(cred);
+  mostrarCredibilidade(Math.max(0, Math.min(100, Number(d.credibilidade) || 0)));
   $('provas').innerHTML = (d.provas || []).map((p, i) => `
-    <div class="prova" style="animation-delay:${i * 0.12}s">
+    <div class="prova card" style="animation-delay:${i * 0.12}s">
       <h3>${esc(p.titulo)}</h3><p>${esc(p.detalhe)}</p><div class="fonte">Fonte: ${esc(p.fonte)}</div>
     </div>`).join('');
   $('msg').textContent = d.mensagem || '';
+  historico.push(d.desculpa_absurda?.titulo ? `${d.desculpa_absurda.titulo}: ${d.mensagem}` : d.mensagem);
+
   const desespero = !!d.modo_desespero;
   modoDesespero(desespero);
+  $('absurdaSlot').innerHTML = desespero && d.desculpa_absurda
+    ? `<div class="absurda">🚨 Desculpa de emergência${d.desculpa_absurda.numero ? ' n.º ' + esc(d.desculpa_absurda.numero) : ''}: ${esc(d.desculpa_absurda.titulo)}</div>` : '';
   if (desespero) {
-    $('jornal').innerHTML = renderJornal(d.diario_do_bico);
-    $('entrevista').innerHTML = renderEntrevista(d.entrevista);
+    const personagem = d.desculpa_absurda?.personagem || (d.diario_do_bico ? 'gaivota' : 'outro');
+    $('jornalWrap').classList.toggle('hidden', !d.diario_do_bico);
+    $('jornal').innerHTML = d.diario_do_bico ? renderJornal(d.diario_do_bico) : '';
+    $('entrevista').innerHTML = d.entrevista ? renderEntrevista(d.entrevista, personagem) : '';
   }
-  $('secRes').scrollIntoView({ behavior: 'smooth' });
+  setTimeout(() => $('secRes').scrollIntoView({ behavior: 'smooth' }), 600);
 }
 
-// Lê a resposta NDJSON linha a linha à medida que chega
+// Lê a resposta NDJSON linha a linha, à medida que o servidor a envia
 async function pedir(corpo, onEvento) {
-  const r = await fetch('/desculpa', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(corpo) });
+  const r = await fetch('/desculpa', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) });
   const leitor = r.body.getReader(), dec = new TextDecoder();
   let buf = '';
   for (;;) {
     const { value, done } = await leitor.read();
     if (done) break;
-    buf += dec.decode(value, { stream:true });
+    buf += dec.decode(value, { stream: true });
     let i;
     while ((i = buf.indexOf('\n')) >= 0) {
       const linha = buf.slice(0, i).trim(); buf = buf.slice(i + 1);
@@ -296,66 +475,68 @@ async function pedir(corpo, onEvento) {
   }
 }
 
-$('f').addEventListener('submit', async ev => {
-  ev.preventDefault();
-  const fd = new FormData($('f'));
-  ultimoPedido = { origem: fd.get('origem'), destino: fd.get('destino'), minutos: +fd.get('minutos'), destinatario: fd.get('destinatario'), forcar_desespero: fd.get('forcar_desespero') === 'on' };
-  $('go').disabled = true; $('go').textContent = 'A investigar...';
+function bloquear(on) {
+  for (const id of ['go', 'outra', 'verdadeBtn']) $(id).disabled = on;
+  $('go').textContent = on ? 'A investigar... 🕵️' : 'Gerar desculpa 🔎';
+}
+
+async function investigar(corpo) {
+  bloquear(true);
   modoDesespero(false);
   $('secRes').classList.add('hidden');
-  $('secInvest').classList.remove('hidden');
-  $('invest').innerHTML = '<div class="pens" id="abrir"><span class="spin"></span>A abrir o processo...</div>';
-
+  $('invest').innerHTML = '<div class="pens" id="abrir">🗂️ A abrir o processo...</div>';
+  $('invest').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  estimativa = 8; $('veredito').style.color = '';
+  comecarOscilar();
+  let terminou = false;
   try {
-    await pedir(ultimoPedido, e => {
-      const inv = $('invest');
+    await pedir(corpo, e => {
       $('abrir')?.remove();
-      if (e.type === 'pensamento') inv.insertAdjacentHTML('beforeend', `<div class="pens">💭 ${esc(e.text)}</div>`);
-      if (e.type === 'tool_start') {
-        inv.insertAdjacentHTML('beforeend', `<div class="tool" id="t-${e.id}">
-          <div><span class="spin"></span>${ICONES[e.name] || '🔧'} <span class="nome">${esc(e.name)}</span> <span class="args">${esc(JSON.stringify(e.input))}</span></div>
-          <div class="res">a consultar...</div></div>`);
-      }
-      if (e.type === 'tool_result') {
-        const el = $('t-' + e.id);
-        el.classList.add(e.erro ? 'err' : 'done');
-        el.querySelector('.spin')?.remove();
-        el.querySelector('.res').innerHTML = resumo(e.name, e.result);
-      }
-      if (e.type === 'final') {
-        inv.insertAdjacentHTML('beforeend', `<div class="pens">✅ Investigação concluída.</div>`);
-        mostrarFinal(e.data);
-      }
-      if (e.type === 'error') inv.insertAdjacentHTML('beforeend', `<div class="tool err">❌ ${esc(e.message)}</div>`);
+      if (e.type === 'pensamento') $('invest').insertAdjacentHTML('beforeend', `<div class="pens">💭 ${esc(e.text)}</div>`);
+      if (e.type === 'tool_start') cartaoInicio(e);
+      if (e.type === 'tool_result') { cartaoFim(e); atualizarEstimativa(e.name, e.result, corpo.minutos); }
+      if (e.type === 'final') { terminou = true; $('invest').insertAdjacentHTML('beforeend', '<div class="pens">✅ Investigação concluída. Processo arquivado.</div>'); mostrarFinal(e.data); }
+      if (e.type === 'error') $('invest').insertAdjacentHTML('beforeend', `<div class="tool card err"><div class="ico" style="background:#ef233c">❌</div><div>${esc(e.message)}</div></div>`);
     });
   } catch (err) {
-    $('invest').insertAdjacentHTML('beforeend', `<div class="tool err">❌ ${esc(err.message)}</div>`);
+    $('invest').insertAdjacentHTML('beforeend', `<div class="tool card err"><div class="ico" style="background:#ef233c">❌</div><div>${esc(err.message)}</div></div>`);
   } finally {
-    $('go').disabled = false; $('go').textContent = 'Gerar desculpa';
+    if (!terminou) { pararOscilar(); $('veredito').textContent = 'investigação interrompida'; }
+    bloquear(false);
   }
+}
+
+$('f').addEventListener('submit', ev => {
+  ev.preventDefault();
+  const fd = new FormData($('f'));
+  pedidoAtual = { origem: fd.get('origem'), destino: fd.get('destino'), minutos: +fd.get('minutos'), destinatario: fd.get('destinatario'), forcar_desespero: fd.get('forcar_desespero') === 'on' };
+  historico = [];
+  investigar(pedidoAtual);
 });
+
+$('outra').onclick = () => { if (pedidoAtual) investigar({ ...pedidoAtual, evitar: historico }); };
 
 async function copiar(id, btn) {
   await navigator.clipboard.writeText($(id).textContent);
-  const t = btn.textContent; btn.textContent = 'Copiado ✓'; setTimeout(() => btn.textContent = t, 1500);
+  const t = btn.textContent; btn.textContent = '✅ Copiado!'; setTimeout(() => btn.textContent = t, 1500);
 }
-$('copiar').onclick = e => copiar('msg', e.target);
-$('copiarV').onclick = e => copiar('msgVerdade', e.target);
+$('copiar').onclick = e => copiar('msg', e.currentTarget);
+$('copiarV').onclick = e => copiar('msgVerdade', e.currentTarget);
 
 $('verdadeBtn').onclick = async () => {
-  if (!ultimoPedido) return;
-  const b = $('verdadeBtn'); b.disabled = true; b.textContent = 'A ganhar coragem...';
+  if (!pedidoAtual) return;
+  const b = $('verdadeBtn'); bloquear(true); b.textContent = '😬 A ganhar coragem...';
   try {
-    await pedir({ ...ultimoPedido, modo: 'verdade' }, e => {
+    await pedir({ ...pedidoAtual, modo: 'verdade' }, e => {
       if (e.type === 'verdade') {
         modoDesespero(false);
         $('secVerdade').classList.remove('hidden');
         $('msgVerdade').textContent = e.data.mensagem;
-        $('secVerdade').scrollIntoView({ behavior:'smooth' });
+        $('secVerdade').scrollIntoView({ behavior: 'smooth' });
       }
       if (e.type === 'error') alert(e.message);
     });
-  } finally { b.disabled = false; b.textContent = 'Ou então diz a verdade'; }
+  } finally { bloquear(false); b.textContent = '😇 Ou então diz a verdade'; }
 };
 </script>
 </body>

@@ -121,7 +121,7 @@ export async function get_transport_status({ cidade }) {
   const rnd = seeded('transp' + cidade + new Date().toDateString() + new Date().getHours());
   const porto = /porto|gaia|matosinhos|maia/i.test(cidade);
   const linhas = porto
-    ? ['Metro do Porto, linha A (Azul)', 'Metro do Porto, linha D (Amarela)', 'STCP 500', 'CP Urbanos do Porto, linha de Braga']
+    ? ['Metro do Porto, linha A (Azul)', 'Metro do Porto, linha B (Vermelha, até à Póvoa de Varzim)', 'Metro do Porto, linha D (Amarela)', 'STCP 500', 'CP Urbanos do Porto, linha de Braga']
     : ['Metro de Lisboa, linha Verde', 'Metro de Lisboa, linha Azul', 'Carris 728', 'CP Urbanos de Lisboa, linha de Sintra'];
   const problemas = ['avaria técnica numa composição', 'perturbação por pessoa na via', 'greve parcial de maquinistas', 'falha de sinalização', 'intervalos alargados por falta de material'];
   return {
@@ -199,7 +199,7 @@ export const toolDefs = [
   },
   {
     name: 'get_seagull_facts',
-    description: 'Factos reais sobre gaivotas do Porto, da Wikipédia em português. Só usar no MODO DESESPERO (credibilidade abaixo de 20).',
+    description: 'Factos reais sobre gaivotas do Porto, da Wikipédia em português. Só usar no MODO DESESPERO (credibilidade abaixo de 20) quando a desculpa absurda envolver gaivotas.',
     input_schema: { type: 'object', properties: {} },
   },
 ];
