@@ -99,6 +99,13 @@
   .verdade::before { content:'😇'; }
   .acoes { display:flex; gap:12px; margin-top:16px; flex-wrap:wrap; }
   .absurda { display:inline-block; background: var(--vermelho); color:#fff; border: var(--borda); border-radius: 12px; padding: 4px 14px; font-weight:800; margin-bottom: 12px; box-shadow: 3px 3px 0 var(--ink); }
+  .absurda.irref { background: var(--verde); color: var(--ink); }
+  .exemplos { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin: 0 0 14px; }
+  .exemplos > span { font-weight:800; font-size:.95rem; margin-right:4px; }
+  .exemplos button { background:#fff; color: var(--ink); font-size:.92rem; padding: 6px 12px; box-shadow: 3px 3px 0 var(--ink); }
+  .exemplos button small { display:block; font-size:.68rem; font-weight:700; color: var(--mut); }
+  #go.pronto { animation: pronto .6s ease-in-out 3; }
+  @keyframes pronto { 50% { transform: scale(1.08); box-shadow: 0 0 0 8px #ff4f8b55; } }
   .absurda.ultimo { background: #111; color: var(--amarelo); font-size: 1.15rem; animation: treme .25s linear infinite; }
   @keyframes treme { 25% { transform: translate(-1px,1px) rotate(-.5deg); } 75% { transform: translate(1px,-1px) rotate(.5deg); } }
   .chk select { font-size:.9rem; padding:5px 8px; }
@@ -235,6 +242,8 @@
     <a href="ferramentas.html" data-t="menu_ferramentas"></a>
   </nav>
 
+  <div class="exemplos"><span data-t="exemplos"></span><span id="exemplosLista" style="display:contents"></span></div>
+
   <form id="f" class="card">
     <div class="tipos">
       <button type="button" data-tipo="atraso" data-t="tipo_atraso"></button>
@@ -269,6 +278,8 @@
       <label class="chk"><span data-t="demo"></span>
         <select name="forcar_desespero">
           <option value="" data-t="demo_normal"></option>
+          <option value="aborrecido" data-t="demo_aborrecido"></option>
+          <option value="maluco" data-t="demo_maluco"></option>
           <option value="desespero" data-t="demo_desespero"></option>
           <option value="ultimo" data-t="demo_ultimo"></option>
         </select>
@@ -338,7 +349,7 @@
 </main>
 
 <script type="module">
-import { DESTINATARIOS, PERSONAGENS } from './catalogo.js';
+import { DESTINATARIOS, PERSONAGENS, EXEMPLOS } from './catalogo.js';
 import { abrirMessenger, fecharMessenger } from './messenger.js';
 import { iniciarCronometro, pararCronometro, abrirTribunal } from './extras.js';
 import { boneco } from './bonecos.js';
@@ -362,7 +373,8 @@ const TEXTOS = {
     contexto: '✍️ Conta-me o contexto (opcional)',
     contexto_ph: 'ex: não me apetece nada ir ao jantar com a família da minha namorada, já faltei ao último e ela vai desconfiar...',
     contexto_ajuda: 'O agente usa isto para acertar no tom e na desculpa. Não conta como prova: as provas vêm só das ferramentas.',
-    demo: '🎬 Modo demo', demo_normal: 'normal (o agente decide)', demo_desespero: 'forçar desespero', demo_ultimo: 'forçar último recurso (credibilidade 0)',
+    demo: '🎬 Modo demo', demo_normal: '🎲 o agente decide', demo_aborrecido: '😴 aborrecido (só factos, tipo trânsito)', demo_maluco: '🤪 maluco mas irrefutável', exemplos: '⚡ Exemplos:', irref: '🤪 Maluca mas irrefutável',
+    modos: { aborrecido: 'aborrecido', maluco: 'maluco', desespero: 'desespero', ultimo: 'último recurso', '': 'o agente decide' }, demo_desespero: 'forçar desespero', demo_ultimo: 'forçar último recurso (credibilidade 0)',
     go: 'Gerar desculpa 🔎', go_busy: 'A investigar... 🕵️',
     h_invest: '🕵️ O agente está a investigar...', vazio: 'Preenche o formulário e o agente vai consultar o tempo, o trânsito, os transportes e os eventos no teu caminho.',
     h_cred: '📈 Credibilidade', a_espera: 'à espera de factos', aovivo: 'estimativa ao vivo', a_pesar: 'a pesar as provas...', interrompida: 'investigação interrompida',
@@ -394,7 +406,8 @@ const TEXTOS = {
     contexto: '✍️ Tell me the context (optional)',
     contexto_ph: "e.g. I really don't feel like going to dinner with my girlfriend's family, I skipped the last one and she'll get suspicious...",
     contexto_ajuda: 'The agent uses this to get the tone and the excuse right. It does not count as evidence: evidence only comes from the tools.',
-    demo: '🎬 Demo mode', demo_normal: 'normal (the agent decides)', demo_desespero: 'force desperation', demo_ultimo: 'force last resort (credibility 0)',
+    demo: '🎬 Demo mode', demo_normal: '🎲 the agent decides', demo_aborrecido: '😴 boring (facts only, like traffic)', demo_maluco: '🤪 crazy but irrefutable', exemplos: '⚡ Examples:', irref: '🤪 Crazy but irrefutable',
+    modos: { aborrecido: 'boring', maluco: 'crazy', desespero: 'desperation', ultimo: 'last resort', '': 'the agent decides' }, demo_desespero: 'force desperation', demo_ultimo: 'force last resort (credibility 0)',
     go: 'Generate excuse 🔎', go_busy: 'Investigating... 🕵️',
     h_invest: '🕵️ The agent is investigating...', vazio: 'Fill in the form and the agent will check the weather, traffic, public transport and events along your way.',
     h_cred: '📈 Credibility', a_espera: 'waiting for facts', aovivo: 'live estimate', a_pesar: 'weighing the evidence...', interrompida: 'investigation interrupted',
@@ -429,6 +442,7 @@ function aplicarLingua() {
   const sel = $('destSel'), atual = sel.value;
   sel.innerHTML = DESTINATARIOS.map(d => `<option value="${d.id}">${d.emoji} ${esc(d[lang])}</option>`).join('') + `<option value="outro">${esc(t('d_outro'))}</option>`;
   if (atual) sel.value = atual;
+  $('exemplosLista').innerHTML = EXEMPLOS.map((e, i) => `<button type="button" data-ex="${i}">${e.emoji} ${esc(e[lang])}<small>${esc(t('modos')[e.modo] || '')}</small></button>`).join('');
   document.querySelectorAll('nav.menu a').forEach(a => { a.href = a.getAttribute('href').split('?')[0] + '?lang=' + lang; });
 }
 
@@ -570,12 +584,13 @@ function desfile(on, culpado, ultimo) {
   }).join('');
 }
 
-function modoDesespero(on, culpado = 'gaivota', ultimo = false) {
-  desfile(on, culpado, ultimo);
+// parodia: mostra desfile e provas de paródia (modos maluco, desespero, último); on: sirene e ecrã vermelho
+function modoDesespero(on, culpado = 'gaivota', ultimo = false, parodia = on) {
+  desfile(parodia, culpado, ultimo);
   document.body.classList.toggle('desespero', on);
   $('sirene').classList.toggle('hidden', !on);
-  $('gaivota').classList.toggle('hidden', !on || culpado !== 'gaivota');
-  $('secParodia').classList.toggle('hidden', !on);
+  $('gaivota').classList.toggle('hidden', !parodia || culpado !== 'gaivota');
+  $('secParodia').classList.toggle('hidden', !parodia);
 }
 
 
@@ -631,13 +646,14 @@ function mostrarFinal(d) {
   historico.push(d.desculpa_absurda?.titulo ? `${d.desculpa_absurda.titulo}: ${d.mensagem}` : d.mensagem);
 
   const desespero = !!d.modo_desespero, a = d.desculpa_absurda;
-  modoDesespero(desespero, a?.personagem || 'gaivota', !!(a && (a.ultimo_recurso || (a.numero >= 11 && a.numero <= 20))));
+  const maluco = !desespero && !!a && (d.modo === 'maluco' || a.irrefutavel || (a.numero >= 31 && a.numero <= 40));
+  modoDesespero(desespero, a?.personagem || 'gaivota', !!(a && (a.ultimo_recurso || (a.numero >= 11 && a.numero <= 20))), desespero || maluco);
   const num = a?.numero ? ` ${t('numero')} ${esc(a.numero)}` : '';
-  $('absurdaSlot').innerHTML = desespero && a
+  $('absurdaSlot').innerHTML = maluco ? `<div class="absurda irref">${esc(t('irref'))}${num}: ${esc(a.titulo)}</div>` : desespero && a
     ? (a.ultimo_recurso || (a.numero >= 11 && a.numero <= 20)
       ? `<div class="absurda ultimo">${esc(t('ultimo'))}${num}: ${esc(a.titulo)}</div>`
       : `<div class="absurda">${esc(t('emergencia'))}${num}: ${esc(a.titulo)}</div>`) : '';
-  if (desespero) {
+  if (desespero || maluco) {
     const personagem = a?.personagem || (d.diario_do_bico ? 'gaivota' : 'outro');
     mostrarVideo($('video'), { lang, personagem, video: d.video || {}, minutos: pedidoAtual?.minutos, fuga: pedidoAtual?.tipo === 'fuga' });
     $('jornalWrap').classList.toggle('hidden', !d.diario_do_bico);
@@ -740,6 +756,20 @@ $('verdadeBtn').onclick = async () => {
       if (e.type === 'error') alert(e.message);
     });
   } finally { bloquear(false); b.textContent = t('verdade'); }
+};
+
+$('exemplosLista').onclick = ev => {
+  const b = ev.target.closest('button[data-ex]'); if (!b) return;
+  const e = EXEMPLOS[+b.dataset.ex], campo = n => document.querySelector(`[name=${n}]`);
+  mudarTipo(e.tipo);
+  campo('origem').value = e.origem; campo('destino').value = e.destino;
+  campo('minutos').value = e.minutos || '';
+  campo('evento').value = e['evento_' + lang] || ''; campo('quando').value = e['quando_' + lang] || '';
+  $('destSel').value = e.destinatario; $('outroWrap').classList.add('hidden');
+  campo('contexto').value = e['contexto_' + lang] || '';
+  campo('forcar_desespero').value = e.modo;
+  $('go').classList.remove('pronto'); void $('go').offsetWidth; $('go').classList.add('pronto');
+  $('go').scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
 
 $('destSel').onchange = () => $('outroWrap').classList.toggle('hidden', $('destSel').value !== 'outro');

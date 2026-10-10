@@ -246,6 +246,37 @@ B.chefe = () => pessoa({ cabelo: 'curto', corCabelo: '#9e9e9e', roupa: '#2b2d42'
   mao: `<rect x="80" y="88" width="18" height="14" rx="2" fill="#8a5a2b" ${S} stroke-width="2"/><path d="M86 88 v-3 h6 v3" fill="none" ${S} stroke-width="2"/>` });
 // a gaivota guarda da prisão, com boné
 B.guarda = () => B.gaivota().replace('</svg>', `<path d="M74 46 Q86 30 100 44 Z" fill="#1d1b4b" ${S}/><path d="M96 44 h12" ${S} stroke-width="5"/><circle cx="86" cy="40" r="3" fill="#ffd23f"/></svg>`);
+// personagens das desculpas malucas mas irrefutáveis
+B.guarda_chuva = () => svg(`
+  <g class="corpo">
+    <g class="cauda" ${org(60, 60)}>
+      <path d="M14 60 Q16 22 60 20 Q104 22 106 60 Q96 52 86 60 Q76 52 60 60 Q44 52 34 60 Q24 52 14 60 Z" fill="#ef233c" ${S}/>
+      <path d="M60 20 V14" ${S}/><path d="M38 58 Q46 30 60 20 M82 58 Q74 30 60 20" fill="none" ${S} stroke-width="2"/>
+    </g>
+    <path d="M60 60 V112 Q60 122 50 120" fill="none" ${S} stroke-width="5"/>
+    ${olhos(52, 68, 44, 3)}
+  </g>
+  <path class="vapor" d="M10 88 h18 M2 100 h20 M12 112 h14" stroke="#8ecdff" stroke-width="4" stroke-linecap="round"/>`);
+B.adepto = () => pessoa({ cabelo: 'curto', corCabelo: '#3b2a1a', roupa: '#3a86ff', calcas: '#1d1b4b', acena: true,
+  extra: `<path d="M46 54 Q60 64 74 54 L74 60 Q60 70 46 60 Z" fill="#fff" ${S} stroke-width="2"/><path d="M50 58 l0 18 M70 58 l-2 22" stroke="#3a86ff" stroke-width="6" stroke-linecap="round"/><path d="M50 66 h4 M66 72 h4" stroke="#fff" stroke-width="3"/>`,
+  mao: `<path d="M86 88 L104 70" ${S} stroke-width="3"/><path d="M104 70 l-14 -6 l6 14 Z" fill="#fff" ${S} stroke-width="2"/>` });
+B.rabelo = () => svg(`
+  <g class="corpo">
+    <path d="M60 22 V84" ${S} stroke-width="4"/>
+    <path d="M62 24 Q92 40 90 76 L62 76 Z" fill="#fff6e0" ${S}/><path d="M66 44 h18 M66 58 h22" stroke="#c0392b" stroke-width="3"/>
+    <path d="M10 84 Q60 96 110 84 L100 104 Q60 112 20 104 Z" fill="#8a5a2b" ${S}/>
+    <path d="M24 92 h72" stroke="#5a3b22" stroke-width="2"/>
+    ${olhos(32, 44, 94, 3)}
+    <g class="cauda" ${org(104, 90)}><path d="M104 90 L118 112" ${S} stroke-width="5"/></g>
+  </g>
+  <path class="vapor" d="M0 118 q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0" fill="none" stroke="#3a86ff" stroke-width="4"/>`);
+B.cone = () => objeto(`
+  <g class="acena" ${org(42, 70)}><path d="M42 70 L26 56" ${S} stroke-width="6"/></g>
+  <g class="bb" ${org(78, 70)}><path d="M78 70 L94 84" ${S} stroke-width="6"/></g>
+  <path d="M60 18 L84 98 H36 Z" fill="#ff8c42" ${S}/>
+  <path d="M48 58 H72 L76 72 H44 Z" fill="#fff"/>
+  <rect x="26" y="96" width="68" height="8" rx="3" fill="#ff8c42" ${S}/>`,
+  { pernasY: 104, comp: 22, olhosXY: [54, 66, 44] });
 // o protagonista (quem dá a desculpa), usado nos vídeos
 B.tu = () => pessoa({ cabelo: 'curto', corCabelo: '#2b2b2b', roupa: '#9aa3b5', calcas: '#3a3a5a', pele: '#f1c27d' });
 

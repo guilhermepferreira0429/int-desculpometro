@@ -47,6 +47,10 @@ export const PERSONAGENS = {
   mapa: { emoji: '🗺️', pt: 'Mapa de turista', en: 'Tourist map', desc_pt: 'Impossível de dobrar. 45 minutos de luta.', desc_en: 'Impossible to fold. A 45-minute fight.' },
   gps: { emoji: '📡', pt: 'GPS', en: 'Sat nav', desc_pt: 'Mandou virar à direita no Douro.', desc_en: 'Said to turn right into the Douro.' },
   motorista: { emoji: '🚍', pt: 'Motorista do autocarro', en: 'Bus driver', desc_pt: 'Não te acordou. Acordaste em Espanha.', desc_en: 'Did not wake you. You woke up in Spain.' },
+  guarda_chuva: { emoji: '☂️', pt: 'Guarda-chuva fugitivo', en: 'Runaway umbrella', desc_pt: 'Com rajadas a sério, voa até à Foz e não olha para trás.', desc_en: 'In real gusts, it flies to Foz and never looks back.' },
+  adepto: { emoji: '🧣', pt: 'Adepto em dia de jogo', en: 'Match-day fan', desc_pt: 'Com 50 mil a cantar, leva-te em ombros para onde ele vai.', desc_en: 'With 50,000 singing, carries you shoulder-high wherever he goes.' },
+  rabelo: { emoji: '⛵', pt: 'Barco rabelo', en: 'Rabelo boat', desc_pt: 'Quando a rua vira Douro, é o único transporte que funciona.', desc_en: 'When the street turns into the Douro, the only transport still running.' },
+  cone: { emoji: '🚧', pt: 'Cone das obras', en: 'Roadworks cone', desc_pt: 'Desvia-te, e desvia-te, e desvia-te outra vez.', desc_en: 'Diverts you, and diverts you, and diverts you again.' },
   pombo: { emoji: '🕊️', pt: 'Pombo da Ribeira', en: 'Ribeira pigeon', desc_pt: 'Rival histórico das gaivotas. Luta por pastéis de nata.', desc_en: 'Historic rival of the gulls. Fights over custard tarts.' },
 };
 
@@ -82,6 +86,46 @@ export const DESCULPAS = [
   { n: 28, tier: 'desespero', p: 'vendedora', pt: 'Uma senhora no mercado do Bolhão pôs-me a provar queijos e não aceita um não', en: 'A lady at the Bolhão market made me taste cheeses and will not take no for an answer' },
   { n: 29, tier: 'desespero', p: 'carro', pt: 'Perdi as chaves, encontrei as chaves, perdi o carro, ainda não encontrei o carro', en: 'I lost my keys, found my keys, lost my car, still have not found my car' },
   { n: 30, tier: 'desespero', p: 'gaivota', pt: 'Uma gaivota reconheceu-me de outra vida e tivemos de pôr a conversa em dia', en: 'A gull recognised me from a past life and we had to catch up' },
+];
+
+// Malucas mas irrefutáveis: absurdas, mas cada uma é consequência de um facto real que as ferramentas têm de devolver.
+// "facto" diz que tipo de facto a desculpa exige. tier "irrefutavel": credibilidade 20 ou mais.
+DESCULPAS.push(
+  { n: 31, tier: 'irrefutavel', facto: 'vento', p: 'guarda_chuva', pt: 'As rajadas levaram-me o guarda-chuva e persegui-o até à Foz, porque era da minha avó', en: "The gusts took my umbrella and I chased it to Foz, because it was my granny's" },
+  { n: 32, tier: 'irrefutavel', facto: 'chuva', p: 'rabelo', pt: 'Choveu tanto que a rua virou Douro e tive de esperar por um barco rabelo', en: 'It rained so much the street turned into the Douro and I had to wait for a rabelo boat' },
+  { n: 33, tier: 'irrefutavel', facto: 'evento', p: 'adepto', pt: 'Fiquei no meio dos adeptos a caminho do jogo e levaram-me em ombros até ao estádio', en: 'I got caught among the fans heading to the match and they carried me shoulder-high to the stadium' },
+  { n: 34, tier: 'irrefutavel', facto: 'transportes', p: 'maquinista', pt: 'O metro avariou e os passageiros elegeram-me porta-voz para negociar com a central', en: 'The metro broke down and the passengers elected me spokesperson to negotiate with control' },
+  { n: 35, tier: 'irrefutavel', facto: 'transito', p: 'carro', pt: 'Estive tanto tempo parado no trânsito que fiz amizade com o condutor do lado e já combinámos um jantar', en: 'I sat in traffic so long I befriended the driver next to me and we have already planned a dinner' },
+  { n: 36, tier: 'irrefutavel', facto: 'sol', p: 'senhor_do_cafe', pt: 'Estava tanto sol que uma esplanada inteira me raptou para um fino', en: 'It was so sunny that an entire café terrace kidnapped me for a small beer' },
+  { n: 37, tier: 'irrefutavel', facto: 'nevoeiro', p: 'gaivota', pt: 'Havia tanto nevoeiro que segui uma gaivota a pensar que era o GPS', en: 'The fog was so thick I followed a gull thinking it was the sat nav' },
+  { n: 38, tier: 'irrefutavel', facto: 'gaivotas', p: 'gaivota', pt: 'Uma gaivota com metro e meio de envergadura fez sombra ao carro e o sensor achou que era noite', en: 'A gull with a wingspan of a metre and a half shaded my car and the sensor thought it was night' },
+  { n: 39, tier: 'irrefutavel', facto: 'transportes', p: 'excursao', pt: 'Com a greve fui a pé e um grupo de peregrinos adotou-me pelo caminho', en: 'With the strike I walked and a group of pilgrims adopted me on the way' },
+  { n: 40, tier: 'irrefutavel', facto: 'transito', p: 'cone', pt: 'As obras desviaram-me tantas vezes que descobri uma rua do Porto que não está no mapa', en: 'The roadworks diverted me so many times I discovered a street in Porto that is not on the map' },
+);
+
+// Exemplos prontos: preenchem o formulário e dizem ao agente que modo usar ('' = o agente decide)
+export const EXEMPLOS = [
+  { emoji: '😴', pt: 'Trânsito para o trabalho', en: 'Traffic on the way to work', modo: 'aborrecido',
+    tipo: 'atraso', origem: 'Porto', destino: 'Matosinhos', minutos: 15, destinatario: 'chefe',
+    contexto_pt: 'Reunião às 9h30, quero só uma desculpa sóbria.', contexto_en: 'Meeting at 9:30, I just want a sober excuse.' },
+  { emoji: '🤪', pt: 'Jantar com os sogros', en: 'Dinner with the in-laws', modo: 'maluco',
+    tipo: 'fuga', origem: 'Porto', destino: 'Vila Nova de Gaia', evento_pt: 'jantar com os sogros', evento_en: 'dinner with the in-laws',
+    quando_pt: 'hoje às 20h', quando_en: 'tonight at 8pm', destinatario: 'sogra',
+    contexto_pt: 'Já faltei ao último jantar. O sogro só fala de pesca.', contexto_en: 'I skipped the last dinner. My father-in-law only talks about fishing.' },
+  { emoji: '🚨', pt: '2 horas atrasado para a mãe', en: '2 hours late for Mum', modo: 'desespero',
+    tipo: 'atraso', origem: 'Porto', destino: 'Póvoa de Varzim', minutos: 120, destinatario: 'mae',
+    contexto_pt: 'É o almoço de domingo e ela fez cabrito.', contexto_en: 'It is Sunday lunch and she made roast kid.' },
+  { emoji: '☠️', pt: 'Faltei ao casamento do primo', en: "I missed my cousin's wedding", modo: 'ultimo',
+    tipo: 'fuga', origem: 'Porto', destino: 'Braga', evento_pt: 'casamento do primo', evento_en: "my cousin's wedding",
+    quando_pt: 'há duas horas', quando_en: 'two hours ago', destinatario: 'grupo',
+    contexto_pt: 'Era o padrinho.', contexto_en: 'I was the best man.' },
+  { emoji: '💘', pt: 'Primeiro encontro', en: 'First date', modo: '',
+    tipo: 'atraso', origem: 'Matosinhos', destino: 'Porto', minutos: 30, destinatario: 'namorada',
+    contexto_pt: 'Primeiro encontro, não posso estragar isto.', contexto_en: 'First date, I cannot ruin this.' },
+  { emoji: '🏋️', pt: 'Fugir do ginásio', en: 'Skipping the gym', modo: 'maluco',
+    tipo: 'fuga', origem: 'Porto', destino: 'Porto', evento_pt: 'treino de pernas', evento_en: 'leg day',
+    quando_pt: 'daqui a uma hora', quando_en: 'in an hour', destinatario: 'treinador',
+    contexto_pt: 'Odeio o dia de pernas.', contexto_en: 'I hate leg day.' },
 ];
 
 // Incidentes que as ferramentas simuladas podem devolver (dados sintéticos)

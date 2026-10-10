@@ -3,7 +3,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { toolDefs, handlers } from './tools.js';
 import { DESCULPAS, PERSONAGENS, DESTINATARIOS } from './public/catalogo.js';
 
-const listaDesculpas = tier => DESCULPAS.filter(d => d.tier === tier).map(d => `  ${d.n}. ${d.pt} [${d.p}]`).join('\n');
+const listaDesculpas = tier => DESCULPAS.filter(d => d.tier === tier).map(d => `  ${d.n}. ${d.pt} [${d.p}]${d.facto ? ` (exige facto: ${d.facto})` : ''}`).join('\n');
 const TONS = DESTINATARIOS.map(d => `- ${d.pt}: ${d.tom}`).join('\n');
 
 const MODEL = 'claude-sonnet-5-5';
@@ -27,6 +27,14 @@ Regras adicionais:
 - Em cada prova, a "fonte" é a que a ferramenta indicou, tal como veio (se diz "simulados", mantém).
 - A credibilidade deve refletir se os factos encontrados explicam mesmo os minutos de atraso. Um atraso grande sem nada que o justifique dá credibilidade baixa.
 - A mensagem é o texto pronto a enviar, na primeira pessoa, sem emojis em excesso. É uma mensagem de telemóvel: 2 a 3 frases curtas, no máximo 60 palavras. Sem cumprimentos longos nem despedidas formais.
+QUATRO MODOS (indica-o no campo "modo" do JSON):
+- "aborrecido": desculpa normal e sóbria, só com os factos (trânsito, tempo, transportes). Usa-o APENAS quando o pedido disser MODO FORÇADO: aborrecido. Nunca o escolhas por iniciativa própria: as desculpas de trânsito sem graça são o que o Desculpómetro existe para evitar.
+- "maluco": o modo por defeito quando os factos reais justificam (credibilidade 20 ou mais). Uma desculpa MALUCA MAS IRREFUTÁVEL: uma história absurda e engraçada que é consequência direta de um facto real que as ferramentas devolveram (a chuva, as rajadas, o jogo, a greve, o trânsito, as gaivotas...). Usa uma desta lista SÓ se o facto que ela exige apareceu mesmo nas ferramentas; senão cria uma no mesmo estilo a partir do facto mais forte. As provas são os factos reais, a credibilidade continua a medi-los (costuma ser alta, 80 ou mais quando os factos explicam bem). A mensagem conta a história com total seriedade.
+${listaDesculpas('irrefutavel')}
+- "desespero": credibilidade de 1 a 19 (lista abaixo).
+- "ultimo": credibilidade exatamente 0 (lista do último recurso).
+- "modo_desespero" é true só nos modos desespero e ultimo.
+
 MODO DESESPERO (credibilidade abaixo de 20):
 - Escolhe UMA destas desculpas absurdas, ou cria uma parecida no mesmo estilo portuense. VARIA: o pedido traz uma lista de sugestões sorteadas para esta vez; escolhe uma delas, a que melhor encaixar nos factos. Não repitas sempre a gaivota das chaves.
 ${listaDesculpas('desespero')}
@@ -35,8 +43,8 @@ ${listaDesculpas('desespero')}
 ${listaDesculpas('ultimo')}
 - Se a desculpa envolver gaivotas, chama get_seagull_facts e usa esses factos reais. Nas outras, mistura os factos reais que as outras ferramentas devolveram (tempo, trânsito, transportes, eventos).
 - A mensagem é escrita com total seriedade, como se fosse a coisa mais normal do mundo.
-- Acrescenta ao JSON estes campos de paródia, claramente fictícios e humorísticos:
-  "desculpa_absurda": { "numero": número da lista (ou 0 se for criada por ti), "titulo": frase curta da desculpa, "ultimo_recurso": true se for uma das 11 a 20, "personagem": uma de ${Object.keys(PERSONAGENS).join('|')}|outro }
+- Nos modos maluco, desespero e ultimo (nunca no aborrecido), acrescenta ao JSON estes campos de paródia, claramente fictícios e humorísticos:
+  "desculpa_absurda": { "numero": número da lista (ou 0 se for criada por ti), "titulo": frase curta da desculpa, "ultimo_recurso": true se for uma das 11 a 20, "irrefutavel": true no modo maluco, "personagem": uma de ${Object.keys(PERSONAGENS).join('|')}|outro }
   "video": { "cenario": um de ribeira|ponte|rua|cafe|casa|metro|mercado|supermercado|estrada, "objeto": um emoji do que foi roubado ou do que causou o problema (ex: 🔑, 🥪, 📱, 🧀, 🥐, 🃏), "legendas": [4 legendas muito curtas, até 8 palavras cada, que contam a cena por ordem, como num vídeo de câmara de vigilância] }
   "entrevista": { "titulo": string, "entrevistada": nome e descrição da personagem culpada, "perguntas": [5 a 6 objetos { "p": pergunta, "r": resposta } em que a personagem confessa tudo; se for gaivota, com arrogância] }
   Só quando a personagem for gaivota, acrescenta também:
@@ -180,8 +188,10 @@ function sugestoes(tier, n) {
 
 function pedidoUtilizador(b) {
   let t = situacao(b) + '\n\nInvestiga e monta a melhor desculpa.';
-  t += `\n\nSUGESTÕES SORTEADAS para o modo desespero, se for preciso: ${sugestoes('desespero', 4)}. Para o último recurso: ${sugestoes('ultimo', 3)}.`;
-  if (b.forcar_desespero === 'ultimo') t += '\n\n(Demonstração: considera que nenhum facto ajuda em nada. Credibilidade exatamente 0, MODO DESESPERO em ÚLTIMO RECURSO.)';
+  t += `\n\nSUGESTÕES SORTEADAS, se for preciso. Maluco: ${sugestoes('irrefutavel', 4)}. Desespero: ${sugestoes('desespero', 4)}. Último recurso: ${sugestoes('ultimo', 3)}.`;
+  if (b.forcar_desespero === 'aborrecido') t += '\n\nMODO FORÇADO: aborrecido. Desculpa sóbria só com os factos, sem campos de paródia.';
+  else if (b.forcar_desespero === 'maluco') t += `\n\nMODO FORÇADO: maluco. Desculpa maluca mas irrefutável, assente num facto real das ferramentas. Sugestões sorteadas: ${sugestoes('irrefutavel', 4)}.`;
+  else if (b.forcar_desespero === 'ultimo') t += '\n\n(Demonstração: considera que nenhum facto ajuda em nada. Credibilidade exatamente 0, MODO DESESPERO em ÚLTIMO RECURSO.)';
   else if (b.forcar_desespero) t += '\n\n(Demonstração: considera que nenhuma prova chega e ativa o MODO DESESPERO, credibilidade entre 1 e 19.)';
   if (Array.isArray(b.evitar) && b.evitar.length) {
     t += '\n\nJá usei estas desculpas e não as quero repetir. Gera uma diferente, com outro ângulo ou outras provas (no modo desespero, outra desculpa absurda da lista):\n' +

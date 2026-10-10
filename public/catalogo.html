@@ -152,6 +152,8 @@
       <input type="search" class="pesquisa" id="pesquisa" autocomplete="off">
       <div class="chips" id="chips"></div>
     </div>
+    <h3 class="grupo"><span data-t="grupo_irrefutavel"></span> <span class="pill" id="cont-irrefutavel"></span></h3>
+    <div class="lista" id="lista-irrefutavel"></div>
     <h3 class="grupo"><span data-t="grupo_desespero"></span> <span class="pill" id="cont-desespero"></span></h3>
     <div class="lista" id="lista-desespero"></div>
     <h3 class="grupo">☠️ <span data-t="grupo_ultimo"></span> <span class="pill" id="cont-ultimo"></span></h3>
@@ -192,6 +194,7 @@ const T = {
     n_desc: n => `${n} desculpas`,
     pesquisa: 'Pesquisar desculpas… (ex.: gaivota, Gaia, francesinha)',
     todas: 'Todas',
+    grupo_irrefutavel: '🤪 Malucas mas irrefutáveis (assentes num facto real, credibilidade 20 ou mais)',
     grupo_desespero: '🚨 Modo desespero (credibilidade 1 a 19)',
     grupo_ultimo: 'Último recurso (só com credibilidade 0)',
     mostra: (a, b) => `${a} de ${b}`,
@@ -221,6 +224,7 @@ const T = {
     n_desc: n => `${n} excuses`,
     pesquisa: 'Search excuses… (e.g. gull, Gaia, francesinha)',
     todas: 'All',
+    grupo_irrefutavel: '🤪 Crazy but irrefutable (built on a real fact, credibility 20 or more)',
     grupo_desespero: '🚨 Desperation mode (credibility 1 to 19)',
     grupo_ultimo: 'Last resort (only at credibility 0)',
     mostra: (a, b) => `${a} of ${b}`,
@@ -303,7 +307,7 @@ function desculpas() {
   const passa = d => (!filtro || d.p === filtro) &&
     (!q || norm(d[lang]).includes(q) || norm(PERSONAGENS[d.p]?.[lang] || '').includes(q));
   let total = 0;
-  for (const tier of ['desespero', 'ultimo']) {
+  for (const tier of ['irrefutavel', 'desespero', 'ultimo']) {
     const todas = DESCULPAS.filter(d => d.tier === tier).sort((a, b) => a.n - b.n);
     const vis = todas.filter(passa);
     total += vis.length;
