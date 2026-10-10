@@ -10,7 +10,7 @@ const MODEL = 'claude-sonnet-5-5';
 const client = new Anthropic(); // lê ANTHROPIC_API_KEY
 const app = express();
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static('public', { etag: false, lastModified: false, setHeaders: res => res.set('Cache-Control', 'no-store') }));
 
 const SYSTEM = `És o Desculpómetro, especialista em desculpas para atrasos. Investiga com as ferramentas o que se passa no caminho do utilizador. Usa só factos que as ferramentas devolverem, nunca inventes. Escolhe a combinação de provas mais forte, dá uma nota de credibilidade de 0 a 100 e escreve a mensagem no tom certo para o destinatário (ver TONS). Se a credibilidade ficar abaixo de 20, ativa o MODO DESESPERO: escolhe uma desculpa absurda do catálogo abaixo e constrói-a com total seriedade, apoiada em factos reais. No fim devolve JSON com: credibilidade, provas (lista com titulo, detalhe e fonte), mensagem, modo_desespero.
 
@@ -46,8 +46,9 @@ ${listaDesculpas('ultimo')}
 - A mensagem é escrita com total seriedade, como se fosse a coisa mais normal do mundo.
 - Nos modos maluco, desespero e ultimo (nunca no aborrecido), acrescenta ao JSON estes campos de paródia, claramente fictícios e humorísticos:
   "desculpa_absurda": { "numero": número da lista (ou 0 se for criada por ti), "titulo": frase curta da desculpa, "ultimo_recurso": true se for uma das 11 a 20, "irrefutavel": true no modo maluco, "personagem": uma de ${Object.keys(PERSONAGENS).join('|')}|outro }
-  "video": { "cenario": um de ribeira|ponte|rua|cafe|casa|metro|mercado|supermercado|estrada, "objeto": um emoji do que foi roubado ou do que causou o problema (ex: 🔑, 🥪, 📱, 🧀, 🥐, 🃏), "legendas": [4 legendas muito curtas, até 8 palavras cada, que contam a cena por ordem, como num vídeo de câmara de vigilância] }
-  "entrevista": { "titulo": string, "entrevistada": nome e descrição da personagem culpada, "perguntas": [3 objetos { "p": pergunta curta, "r": resposta até 20 palavras } em que a personagem confessa tudo; se for gaivota, com arrogância] }
+  "video": { "cenas": [3 a 5 cenas que contam a desculpa por ordem, como num filme curto. Cada cena: { "local": nome curto do sítio real dessa cena, coerente com o percurso e o compromisso do utilizador (ex.: "AV. DA BOAVISTA", "A28 · MATOSINHOS", "SANTUÁRIO DE FÁTIMA"), "cenario": um de ribeira|ponte|rua|cafe|casa|metro|mercado|supermercado|estrada|fatima|restaurante, "acao": uma de aproxima|rouba|rapta|viagem|come|conversa|persegue|preso|festa|chega, "legenda": até 8 palavras, "objeto": um emoji (o que é roubado, comido ou usado), "ajudantes": id de uma personagem que aparece em grupo nessa cena (ex.: avo para as reformadas da excursão) ou null, "n_ajudantes": 0 a 4, "noite": true se a cena for de noite }] }
+    Ações: aproxima (o culpado chega perto), rouba (leva o objeto e foge), rapta (os ajudantes ou o culpado levam-te), viagem (vão de veículo pela estrada), come (refeição à mesa), conversa (falam sem parar), persegue (corres atrás do culpado), preso (ficas preso ou às voltas), festa (celebração), chega (chegas por fim, cansado). Exemplo para a excursão de reformadas: rapta na estrada com 4 avó, viagem, chega a fatima, come no restaurante, chega de noite.
+  "entrevista": { "titulo": string, "entrevistada": nome e descrição da personagem culpada, "grupo": quantas pessoas dão a entrevista (1 a 4; mais de 1 quando a culpa é de um grupo, como as reformadas), "boneco": id da personagem que aparece no palco (normalmente a culpada; para a excursão usa avo), "perguntas": [3 objetos { "p": pergunta curta, "r": resposta até 20 palavras, "quem": nome de quem responde quando é um grupo } em que a personagem confessa tudo; se for gaivota, com arrogância] }
   Só quando a personagem for gaivota, acrescenta também:
   "diario_do_bico": { "manchete": string sensacionalista em maiúsculas, "subtitulo": string, "lead": string, "corpo": [2 parágrafos curtos (até 35 palavras cada) e absurdos, escritos por gaivotas, com factos reais da Wikipédia misturados], "caixa_factos": [3 factos reais da Wikipédia, curtos], "legenda_foto": string }
   O Diário do Bico é um tabloide inventado, escrito por gaivotas. Nunca menciones nem imites jornais, marcas ou órgãos de comunicação reais. As pessoas das entrevistas são inventadas (nunca figuras públicas reais).
@@ -78,6 +79,8 @@ Devolve APENAS JSON:
   "noticia_link": {"manchete": string sensacionalista curta, "lead": 1 frase} sobre a desculpa, para a página do link,
   "reacao_link": [1 a 3 objetos {"autor": string ou null, "texto": string}] depois de ler o link (vazio se duvida for false),
   "desfecho": "acredita" | "desiste" | "quer_falar",
+  "culpado": só quando o desfecho for "quer_falar": {"nome": nome da personagem culpada com um emoji, "mensagens": [1 a 2 objetos {"texto": string}] em que o culpado entra na conversa e confirma tudo, no seu estilo (a gaivota com arrogância, as reformadas todas a falar ao mesmo tempo...)},
+  "reacao_final": só quando houver culpado: [1 a 2 objetos {"autor": string ou null, "texto": string}] a reação depois de o culpado confirmar,
   "reacao": um emoji que a pessoa põe na desculpa quando a lê (ex.: 😂, 🤨, 😱, ❤️)
 }`;
 
@@ -89,7 +92,7 @@ app.post('/conversa', async (req, res) => {
     `LÍNGUA: ${b.lang === 'en' ? 'inglês britânico' : 'português de Portugal'}.`,
     `ÉS: ${limpar(b.destinatario, 60)}. ESTILO: ${estilo}.`,
     `CREDIBILIDADE DA DESCULPA: ${Number(b.credibilidade) || 0}/100. MODO DESESPERO: ${b.modo_desespero ? 'sim' : 'não'}.`,
-    b.desculpa ? `DESCULPA ABSURDA: ${limpar(b.desculpa, 300)} (personagem: ${limpar(b.personagem, 40) || 'nenhuma'}).` : '',
+    b.desculpa ? `DESCULPA ABSURDA: ${limpar(b.desculpa, 300)} (personagem: ${limpar(b.personagem, 40) || 'nenhuma'}${b.culpado_nome ? `, chamada ${limpar(b.culpado_nome, 80)}` : ''}).` : '',
     b.entrevista ? `A ENTREVISTA NO LINK: ${limpar(b.entrevista, 1500)}` : '',
     `MENSAGEM QUE RECEBESTE:\n"""\n${limpar(b.mensagem, 2000)}\n"""`,
   ].filter(Boolean).join('\n');
@@ -109,7 +112,7 @@ app.post('/conversa', async (req, res) => {
 // Tribunal das Desculpas: três juízes independentes, cada um uma chamada à IA, em paralelo
 const LINGUA_SISTEMA = lang => lang === 'en'
   ? ' IMPORTANT: reply ONLY in British English, even though these instructions are in Portuguese. Keep Portuguese place and food names as they are.'
-  : ' Responde só em português de Portugal (nunca do Brasil).';
+  : ' Responde só em português de Portugal (nunca do Brasil), com a ortografia atual do Acordo de 1990 (ótimo, ação, direção).';
 
 const JUIZES = {
   avo: 'És a Avó Rosa, 84 anos, juíza no Tribunal das Desculpas. Tens um coração mole, perdoas quase tudo a quem comeu bem, mas não suportas mentiras à mãe nem desculpas sem educação. Falas com carinho e ditados populares.',

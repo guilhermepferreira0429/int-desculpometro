@@ -8,14 +8,16 @@ const TXT = {
     app: 'Bico Messenger', online: 'online', escrever: 'a escrever...', mensagem: 'Mensagem', hoje: 'HOJE',
     abrir: 'toca para abrir', fechar: 'Fechar', repetir: '↻ Repetir', erro: 'Sem rede. A pessoa ficou sem saber de nada.',
     aviso: 'Diário do Bico, jornal oficial das gaivotas do Porto · publicação fictícia', exclusivo: 'EXCLUSIVO',
-    desfecho: { acredita: '✅ Acreditou!', desiste: '🏳️ Desistiu de discutir', quer_falar: '📞 Quer falar diretamente com a personagem' },
+    desfecho: { acredita: '✅ Acreditou!', desiste: '🏳️ Desistiu de discutir', quer_falar: '📞 Quer falar diretamente com a personagem', confirmado: '✅ O culpado confirmou. Caso encerrado.' },
+    entrou: 'entrou na conversa', visto: 'visto por último agora', enviando: 'a enviar desculpa...',
     entrevista: 'Entrevista exclusiva',
   },
   en: {
     app: 'Bico Messenger', online: 'online', escrever: 'typing...', mensagem: 'Message', hoje: 'TODAY',
     abrir: 'tap to open', fechar: 'Close', repetir: '↻ Replay', erro: 'No signal. They never found out.',
     aviso: 'Diário do Bico (The Beak Gazette), official newspaper of the seagulls of Porto · fictional publication', exclusivo: 'EXCLUSIVE',
-    desfecho: { acredita: '✅ They bought it!', desiste: '🏳️ They gave up arguing', quer_falar: '📞 They demand to speak to the culprit directly' },
+    desfecho: { acredita: '✅ They bought it!', desiste: '🏳️ They gave up arguing', quer_falar: '📞 They demand to speak to the culprit directly', confirmado: '✅ The culprit confirmed it. Case closed.' },
+    entrou: 'joined the chat', visto: 'last seen just now', enviando: 'sending excuse...',
     entrevista: 'Exclusive interview',
   },
 };
@@ -82,6 +84,42 @@ const CSS = `
   @keyframes bm-carimbo { from { transform: scale(2.4) rotate(-6deg); opacity:0; } }
   .bm-fim .acoes { display:flex; gap:8px; justify-content:center; margin-top:10px; }
   .bm-fim button { font-size:.85rem; padding: 6px 14px; }
+  .bm-tel::before, .bm-tel::after { content:''; position:absolute; left:-5px; width:5px; border-radius:3px 0 0 3px; background:#2a2a2a; }
+  .bm-tel::before { top:130px; height:46px; box-shadow: 0 60px 0 #2a2a2a; }
+  .bm-tel::after { top:110px; left:auto; right:-5px; height:70px; border-radius:0 3px 3px 0; }
+  .bm-tel { background: linear-gradient(145deg, #2b2b2b, #0d0d0d 60%); }
+  .bm-ecra::after { content:''; position:absolute; inset:0; border-radius:36px; pointer-events:none; background: linear-gradient(120deg, #ffffff14 0 18%, transparent 30%); z-index:7; }
+  .bm-notch { width: 96px; height: 28px; top: 10px; }
+  .bm-status { padding: 14px 24px 4px; align-items:center; }
+  .bm-status svg { height: 11px; margin-left: 4px; fill: #fff; }
+  .bm-chat { background-color:#f1ede4; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%235b4b8a' stroke-opacity='.10' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M14 28 q8 -10 16 0 q8 -10 16 0'/%3E%3Ccircle cx='86' cy='22' r='7'/%3E%3Cpath d='M86 29 v14 m0 -6 h6 m-6 4 h4'/%3E%3Crect x='20' y='76' width='26' height='18' rx='5'/%3E%3Cpath d='M20 82 h26 M33 70 l0 6'/%3E%3Cpath d='M78 84 q10 -14 22 0 q-11 12 -22 0 z'/%3E%3C/g%3E%3C/svg%3E"); background-size: 120px 120px; }
+  .bm-b.cauda.bm-eu::after, .bm-b.cauda.bm-ele::after { content:''; position:absolute; bottom:0; width:12px; height:14px; }
+  .bm-b.cauda.bm-eu::after { right:-6px; background: radial-gradient(circle at 0 0, transparent 11px, #ffe680 12px); }
+  .bm-b.cauda.bm-ele::after { left:-6px; background: radial-gradient(circle at 100% 0, transparent 11px, #fff 12px); }
+  .bm-b.cauda.bm-eu { border-bottom-right-radius: 2px; } .bm-b.cauda.bm-ele { border-bottom-left-radius: 2px; }
+  .bm-b:not(.cauda).bm-eu, .bm-b:not(.cauda).bm-ele { border-radius: 14px; }
+  .bm-campo.escreve { color:#222; white-space:nowrap; overflow:hidden; direction:rtl; text-align:left; }
+  .bm-campo.escreve span { direction:ltr; unicode-bidi: plaintext; }
+  .bm-campo.escreve::after { content:'|'; color:#5b4b8a; animation: bm-cursor .6s steps(2) infinite; }
+  @keyframes bm-cursor { 50% { opacity:0; } }
+  .bm-enviar.carrega { animation: bm-carrega .35s ease-out; }
+  @keyframes bm-carrega { 40% { transform: scale(.8) rotate(-20deg); } 100% { transform: scale(1); } }
+  .bm-reacao { position:absolute; bottom:-12px; left:-10px; background:#fff; border-radius: 99px; padding: 0 6px; font-size: .9rem; box-shadow: 0 1px 3px #0003; animation: bm-pop .35s cubic-bezier(.2,1.8,.4,1) both; }
+  .bm-b.tem-reacao { margin-bottom: 10px; }
+  .bm-sistema { align-self:center; background:#5b4b8a22; color:#4a3d75; font-size:.75rem; font-weight:700; padding: 4px 12px; border-radius: 99px; animation: bm-pop .3s both; }
+  .bm-linha-av { display:flex; gap:6px; align-items:flex-end; align-self:flex-start; max-width: 88%; }
+  .bm-linha-av .bm-b { max-width: none; }
+  .bm-mini { width: 30px; height: 30px; flex:none; border-radius: 50%; background:#ffd23f; overflow:hidden; display:flex; align-items:center; justify-content:center; border: 2px solid #5b4b8a; }
+  .bm-mini svg { width: 34px; height: 40px; margin-top: 8px; }
+  .bm-autor.culpado { color:#ef233c; }
+  .bm-fim { bottom: auto; top: 50%; transform: translateY(-50%); padding: 22px 16px 16px; border: 3px solid #ffd23f; }
+  .bm-fim .grande { display:block; font-size: 3.2rem; line-height: 1; margin-bottom: 8px; }
+  @keyframes bm-carimbo { from { transform: translateY(-50%) scale(2.4) rotate(-6deg); opacity:0; } to { transform: translateY(-50%); } }
+  .bm-notif { position:absolute; top: 44px; left: 10px; right: 10px; z-index: 8; background: #ffffffee; color:#222; border-radius: 16px; padding: 8px 12px; display:flex; gap: 10px; align-items:center; box-shadow: 0 6px 20px #0004; font-size: .8rem; animation: bm-notif 1.6s ease-in-out both; }
+  .bm-notif b { display:block; font-size:.72rem; color:#5b4b8a; }
+  .bm-notif .ic { width: 30px; height: 30px; border-radius: 8px; background:#5b4b8a; color:#fff; display:flex; align-items:center; justify-content:center; }
+  @keyframes bm-notif { 0% { transform: translateY(-120%); } 15%, 75% { transform: translateY(0); } 100% { transform: translateY(-140%); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .bm-notif, .bm-fim, .bm-reacao { animation: none; } }
   .bm-fechar { position:absolute; top:-14px; right:-14px; width:40px; height:40px; border-radius:50%; background:#ff4f8b; color:#fff; border: 3px solid #1d1b4b; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; box-shadow:none; z-index:6; }
 `;
 
@@ -120,15 +158,16 @@ export function abrirMessenger(dados) {
       <button class="bm-fechar" title="${esc(T.fechar)}">✕</button>
       <div class="bm-ecra">
         <div class="bm-notch"></div>
-        <div class="bm-status"><span>${hora()}</span><span>${esc(T.app)}</span><span>📶 🔋</span></div>
+        <div class="bm-status"><span>${hora()}</span><span></span><span><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 L5.5 8.6 a3.6 3.6 0 0 1 5 0 Z M2.6 5.8 a7.6 7.6 0 0 1 10.8 0 l-1.5 1.6 a5.5 5.5 0 0 0 -7.8 0 Z M0 3 a11.3 11.3 0 0 1 16 0 l-1.4 1.5 a9.2 9.2 0 0 0 -13.2 0 Z"/></svg><svg viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="#fff"/><rect x="2" y="2" width="15" height="8" rx="2"/><rect x="23.5" y="4" width="2" height="4" rx="1"/></svg></span></div>
         <div class="bm-topo">
           <span>‹</span>
           <div class="bm-av">${esc(dados.emoji || '🙂')}</div>
           <div><div class="bm-nome" id="bm-nome">${esc(dados.destinatario)}</div><div class="bm-sub" id="bm-sub">${esc(T.online)}</div></div>
           <span class="bm-marca">🐦 BICO</span>
         </div>
+        <div class="bm-notif"><div class="ic">🐦</div><div><b>${esc(T.app)}</b>${esc(T.enviando)}</div></div>
         <div class="bm-chat" id="bm-chat"><div class="bm-dia">${esc(T.hoje)}</div></div>
-        <div class="bm-barra"><div class="bm-campo">${esc(T.mensagem)}</div><div class="bm-enviar">➤</div></div>
+        <div class="bm-barra"><div class="bm-campo" id="bm-campo">${esc(T.mensagem)}</div><div class="bm-enviar" id="bm-enviar">➤</div></div>
         <div class="bm-nav" id="bm-nav"></div>
       </div>
     </div>`;
@@ -145,9 +184,27 @@ async function correr(id, dados, T) {
   const chat = document.getElementById('bm-chat');
   const rolar = () => { chat.scrollTop = chat.scrollHeight; };
   const sub = txt => { const s = document.getElementById('bm-sub'); if (s) s.textContent = txt; };
-  const bolha = (quem, html) => {
-    chat.insertAdjacentHTML('beforeend', `<div class="bm-b ${quem === 'eu' ? 'bm-eu' : 'bm-ele'}">${html}</div>`);
+  const bolha = (quem, html, antes = '') => {
+    const lado = quem === 'eu' ? 'bm-eu' : 'bm-ele';
+    const ult = chat.lastElementChild;
+    if (ult?.classList?.contains(lado)) ult.classList.remove('cauda');
+    if (antes) { chat.insertAdjacentHTML('beforeend', `<div class="bm-linha-av">${antes}<div class="bm-b ${lado} cauda">${html}</div></div>`); rolar(); return chat.lastElementChild.lastElementChild; }
+    chat.insertAdjacentHTML('beforeend', `<div class="bm-b ${lado} cauda">${html}</div>`);
     rolar(); return chat.lastElementChild;
+  };
+  // o texto é escrito letra a letra no campo de baixo antes de ser enviado
+  const escrever = async texto => {
+    const campo = document.getElementById('bm-campo'), btn = document.getElementById('bm-enviar');
+    if (!campo) return;
+    campo.classList.add('escreve');
+    const passos = Math.min(texto.length, 40), t0 = performance.now(), dur = Math.min(1200, 300 + texto.length * 12);
+    for (let k = 1; k <= passos && vivo(); k++) {
+      campo.innerHTML = `<span>${esc(texto.slice(0, Math.ceil(texto.length * k / passos)))}</span>`;
+      await espera(dur / passos);
+    }
+    btn.classList.remove('carrega'); void btn.offsetWidth; btn.classList.add('carrega');
+    await espera(250);
+    campo.classList.remove('escreve'); campo.textContent = T.mensagem;
   };
   const daPessoa = async lista => {
     for (const m of lista || []) {
@@ -162,7 +219,8 @@ async function correr(id, dados, T) {
       await espera(700);
     }
   };
-  const minha = async html => {
+  const minha = async (html, texto) => {
+    if (texto) await escrever(texto);
     const el = bolha('eu', `${html}<span class="bm-hora">${hora()} <span class="bm-vistos">🕓</span></span>`);
     const v = el.querySelector('.bm-vistos');
     setTimeout(() => { v.textContent = '✓'; }, 500);
@@ -179,14 +237,15 @@ async function correr(id, dados, T) {
       lang: dados.lang, destinatario: dados.destinatario, destinatario_id: dados.destinatario_id,
       mensagem: r.mensagem, credibilidade: r.credibilidade, modo_desespero: r.modo_desespero,
       desculpa: r.desculpa_absurda?.titulo, personagem: r.desculpa_absurda?.personagem,
-      entrevista: r.entrevista ? JSON.stringify(r.entrevista).slice(0, 1500) : '',
+      entrevista: r.entrevista ? JSON.stringify(r.entrevista).slice(0, 1500) : '', culpado_nome: r.entrevista?.entrevistada || '',
     }),
   }).then(x => x.json()).catch(e => ({ erro: e.message }));
 
   // a desculpa vai em 2 ou 3 bolhas curtas, como se escreve no telemóvel
   const bolhas = partir(r.mensagem || '');
   const enviadas = [];
-  for (const b of bolhas) { enviadas.push(await minha(esc(b))); if (!vivo()) return; }
+  await espera(1300); // a notificação de envio
+  for (const b of bolhas) { enviadas.push(await minha(esc(b), b)); if (!vivo()) return; }
   await espera(900); if (!vivo()) return;
   enviadas.forEach(m => m.lido());
 
@@ -198,6 +257,8 @@ async function correr(id, dados, T) {
   if (!vivo()) return;
   if (!conversa || conversa.erro) { sub(T.online); bolha('ele', `⚠️ ${esc(T.erro)}`); return fim(null); }
   if (conversa.nome_contacto) document.getElementById('bm-nome').textContent = conversa.nome_contacto;
+  const ultimaMinha = enviadas[enviadas.length - 1]?.el;
+  if (ultimaMinha) { ultimaMinha.classList.add('tem-reacao'); ultimaMinha.insertAdjacentHTML('beforeend', `<span class="bm-reacao">${esc(conversa.reacao || (conversa.duvida ? '🤨' : '👍'))}</span>`); }
 
   // 3. primeira reação, no estilo da pessoa
   await daPessoa(conversa.resposta1);
@@ -206,7 +267,7 @@ async function correr(id, dados, T) {
   // 4 a 6. se duvida: link para o Diário do Bico, página dentro da app e nova reação
   if (conversa.duvida) {
     await espera(900); if (!vivo()) return;
-    if (conversa.texto_link) { const m = await minha(esc(conversa.texto_link)); m.lido(); }
+    if (conversa.texto_link) { const m = await minha(esc(conversa.texto_link), conversa.texto_link); m.lido(); }
     const manchete = r.diario_do_bico?.manchete || conversa.noticia_link?.manchete || '';
     const link = await minha(`<div class="bm-prev"><b>Diário do Bico</b><span>${esc(manchete)}</span></div><div class="bm-url">diariodobico.pt/exclusivo</div><div class="bm-toca">${esc(T.abrir)}</div>`);
     link.el.classList.add('bm-link', 'pulsa');
@@ -220,11 +281,33 @@ async function correr(id, dados, T) {
     await espera(600);
     await daPessoa(conversa.reacao_link);
   }
-  if (vivo()) fim(conversa.desfecho || 'acredita');
+  let desfecho = conversa.desfecho || 'acredita';
+  if (vivo() && desfecho === 'quer_falar' && conversa.culpado?.mensagens?.length) {
+    await espera(900); if (!vivo()) return;
+    const nome = conversa.culpado.nome || r.desculpa_absurda?.personagem || '?';
+    chat.insertAdjacentHTML('beforeend', `<div class="bm-sistema">${esc(nome)} ${esc(T.entrou)}</div>`); rolar();
+    await espera(900);
+    const av = `<div class="bm-mini">${dados.fotoHTML || dados.gaivotaSVG(40)}</div>`;
+    for (const m of conversa.culpado.mensagens) {
+      if (!vivo()) return;
+      sub(T.escrever);
+      chat.insertAdjacentHTML('beforeend', '<div class="bm-escrevendo"><i></i><i></i><i></i></div>'); rolar();
+      await espera(900 + Math.min(1400, (m.texto || '').length * 16));
+      chat.querySelector('.bm-escrevendo')?.remove();
+      sub(T.online);
+      bolha('ele', `<span class="bm-autor culpado">${esc(nome)}</span>${esc(m.texto)}<span class="bm-hora">${hora()}</span>`, av);
+      await espera(700);
+    }
+    await daPessoa(conversa.reacao_final);
+    desfecho = 'confirmado';
+  }
+  sub(T.visto);
+  if (vivo()) fim(desfecho);
 
   function fim(desfecho) {
     const ecra = document.querySelector('.bm-ecra'); if (!ecra) return;
-    ecra.insertAdjacentHTML('beforeend', `<div class="bm-fim">${esc(desfecho ? T.desfecho[desfecho] || desfecho : '📵')}
+    const txt = desfecho ? T.desfecho[desfecho] || desfecho : '📵', [emo, ...resto] = [...txt.split(' ')];
+    ecra.insertAdjacentHTML('beforeend', `<div class="bm-fim"><span class="grande">${esc(emo)}</span>${esc(resto.join(' '))}
       <div class="acoes"><button class="bm-rep">${esc(T.repetir)}</button><button class="bm-x">${esc(T.fechar)}</button></div></div>`);
     ecra.querySelector('.bm-rep').onclick = () => abrirMessenger(dados);
     ecra.querySelector('.bm-x').onclick = fecharMessenger;

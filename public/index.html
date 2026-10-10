@@ -114,7 +114,11 @@
   .tv-topo .exc { margin-left:auto; color: var(--amarelo); letter-spacing: 2px; }
   .tv-palco { position: relative; height: 230px; background: radial-gradient(circle at 70% 85%, #ffd23f66 0 22%, transparent 23%), radial-gradient(circle at 24% 85%, #ffffff33 0 16%, transparent 17%), linear-gradient(#2d2a5a, #5b4b8a); display:flex; align-items:flex-end; justify-content: space-around; padding: 0 30px 0; }
   .tv-palco .rep { font-size: 4.2rem; margin-bottom: 26px; filter: drop-shadow(3px 3px 0 #0005); }
-  .tv-palco .conv svg { width: 170px; height: 195px; display:block; }
+  .tv-palco .grupo-tv { display:flex; align-items:flex-end; }
+  .tv-palco .conv { width: 170px; }
+  .tv-palco .conv svg { width: 100%; height: auto; display:block; transform: scaleX(-1); }
+  .tv-palco .conv.veic svg { transform: none; }
+  .tv-linha .bal .quem-tv { display:block; font-size:.75rem; color: var(--roxo); }
   .tv-palco .micro { position:absolute; left: 50%; bottom: 0; width: 6px; height: 90px; background: #222; transform: translateX(40px); }
   .tv-palco .micro::before { content:'🎙️'; position:absolute; top: -34px; left: -16px; font-size: 2rem; }
   .tv-oraculo { display:flex; align-items:stretch; margin: -46px 0 0 22px; position: relative; z-index: 2; max-width: calc(100% - 44px); }
@@ -224,7 +228,7 @@
   #desfile span.culpado { font-size:4.6rem; }
   #desfile span svg { width:96px; height:112px; display:block; }
   #desfile span.culpado svg { width:150px; height:175px; }
-  #desfile span.rtl svg { transform: scaleX(-1); }
+  #desfile span.rtl:not(.veic) svg { transform: scaleX(-1); }
   @keyframes passa { 0% { transform: translate(0,0) rotate(-8deg); } 25% { transform: translate(28vw,-22px) rotate(8deg); } 50% { transform: translate(56vw,0) rotate(-8deg); } 75% { transform: translate(84vw,-22px) rotate(8deg); } 100% { transform: translate(calc(100vw + 280px),0) rotate(-8deg); } }
   @keyframes passa-rtl { 0% { transform: translate(0,0) rotate(8deg); } 25% { transform: translate(-28vw,-22px) rotate(-8deg); } 50% { transform: translate(-56vw,0) rotate(8deg); } 75% { transform: translate(-84vw,-22px) rotate(-8deg); } 100% { transform: translate(calc(-100vw - 280px),0) rotate(8deg); } }
   @media (prefers-reduced-motion: reduce) { #desfile { display:none; } }
@@ -611,7 +615,8 @@ function desfile(on, culpado, ultimo) {
   el.innerHTML = faixas.map((top, i) => {
     const rtl = i % 2 ? ' rtl' : '', dur = (ultimo ? 6 : 9) + Math.random() * 3, atraso = -Math.random() * dur;
     const estilo = d => `top:${top}vh; animation-duration:${dur.toFixed(1)}s; animation-delay:${d.toFixed(1)}s`;
-    return `<span class="culpado${rtl}" style="${estilo(atraso)}">${boneco(culpado, PERSONAGENS[culpado].emoji)}</span>` +
+    const veic = ['maquinista', 'excursao', 'motorista', 'carro', 'supermercado', 'rabelo'].includes(culpado) ? ' veic' : '';
+    return `<span class="culpado${rtl}${veic}" style="${estilo(atraso)}">${boneco(culpado, PERSONAGENS[culpado].emoji)}</span>` +
       `<span class="${rtl}" style="${estilo(atraso + 1.6)}">${boneco('tu')}</span>`;
   }).join('');
 }
@@ -647,16 +652,18 @@ function renderJornal(j) {
 }
 
 function renderEntrevista(e, personagem) {
-  const grande = boneco(personagem, PERSONAGENS[personagem]?.emoji || '🎤');
-  const mini = boneco(personagem, PERSONAGENS[personagem]?.emoji || '🎤');
+  const id = PERSONAGENS[e.boneco] || e.boneco === 'tu' ? e.boneco : (personagem === 'excursao' ? 'avo' : personagem);
+  const n = Math.max(1, Math.min(4, Number(e.grupo) || 1));
+  const palco = Array.from({ length: n }, (_, k) => `<div class="conv${['maquinista', 'excursao', 'motorista', 'carro', 'supermercado', 'rabelo'].includes(id) ? ' veic' : ''}" style="${n > 1 ? `width:${Math.round(170 - n * 18)}px; margin-left:${k ? -24 : 0}px` : ''}">${boneco(id, PERSONAGENS[id]?.emoji || '🎤')}</div>`).join('');
+  const mini = boneco(id, PERSONAGENS[id]?.emoji || '🎤');
   return `<article class="tv card">
     <div class="tv-topo"><span class="vivo">${esc(t('tv_vivo'))}</span><span>${esc(t('tv_canal'))}</span><span class="exc">${esc(t('e_selo'))}</span></div>
-    <div class="tv-palco"><div class="rep">🎤</div><div class="micro"></div><div class="conv">${grande}</div></div>
+    <div class="tv-palco"><div class="rep">🎤</div><div class="micro"></div><div class="grupo-tv">${palco}</div></div>
     <div class="tv-oraculo"><div class="nome">${esc(e.entrevistada)}</div><div class="tit">${esc(e.titulo)}</div></div>
     <div class="tv-conversa">
       ${(e.perguntas || []).slice(0, 4).map((q, k) => `
         <div class="tv-linha p" style="animation-delay:${k * 0.5}s"><div class="mini">🎤</div><div class="bal">${esc(q.p)}</div></div>
-        <div class="tv-linha r" style="animation-delay:${k * 0.5 + 0.25}s"><div class="mini">${mini}</div><div class="bal">${esc(q.r)}</div></div>`).join('')}
+        <div class="tv-linha r" style="animation-delay:${k * 0.5 + 0.25}s"><div class="mini">${mini}</div><div class="bal">${q.quem && n > 1 ? `<b class="quem-tv">${esc(q.quem)}</b>` : ''}${esc(q.r)}</div></div>`).join('')}
     </div>
     <div class="ficcao" style="padding: 0 22px 14px">${esc(t('e_ficcao'))}</div>
   </article>`;
@@ -693,7 +700,7 @@ function mostrarFinal(d) {
     </div>`;
   if (desespero || maluco) {
     const personagem = a?.personagem || (d.diario_do_bico ? 'gaivota' : 'outro');
-    mostrarVideo($('video'), { lang, personagem, video: d.video || {}, minutos: pedidoAtual?.minutos, fuga: pedidoAtual?.tipo === 'fuga' });
+    mostrarVideo($('video'), { lang, personagem, video: d.video || {}, minutos: pedidoAtual?.minutos, fuga: pedidoAtual?.tipo === 'fuga', origem: pedidoAtual?.origem, destino: pedidoAtual?.destino });
     $('jornalWrap').classList.toggle('hidden', !d.diario_do_bico);
     $('jornal').innerHTML = d.diario_do_bico ? renderJornal(d.diario_do_bico) : '';
     $('entrevista').innerHTML = d.entrevista ? renderEntrevista(d.entrevista, personagem) : '';
@@ -821,7 +828,7 @@ $('enviarBtn').onclick = () => {
     lang, resultado: ultimoResultado,
     destinatario: pedidoAtual.destinatario, destinatario_id: pedidoAtual.destinatario_id, emoji: d?.emoji || '🙂',
     gaivotaSVG, fotoHTML: p ? boneco(p, PERSONAGENS[p]?.emoji) : null,
-    videoOpcoes: ultimoResultado.modo_desespero && p ? { lang, personagem: p, video: ultimoResultado.video || {}, minutos: pedidoAtual.minutos, fuga: pedidoAtual.tipo === 'fuga' } : null,
+    videoOpcoes: ultimoResultado.modo_desespero && p ? { lang, personagem: p, video: ultimoResultado.video || {}, minutos: pedidoAtual.minutos, fuga: pedidoAtual.tipo === 'fuga', origem: pedidoAtual.origem, destino: pedidoAtual.destino } : null,
   });
 };
 $('tribunalBtn').onclick = async () => {
