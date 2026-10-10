@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Desculpómetro · Pitch</title>
+<title>Desculpómetro Pitch</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
@@ -301,7 +301,48 @@
   .fecho h2 { font-size: clamp(2.6rem, 6vw, 5.2rem); letter-spacing: -2px; }
   .fecho .rosa { color: var(--rosa); }
 
+  /* ---------- 15. IPO com o Big Gull (personagem inventada) ---------- */
+  .slide.ipo { padding-top: 5.2rem; }
+  .fita { position: absolute; top: 0; left: 0; right: 0; z-index: 3; background: var(--ink); color: var(--amarelo); border-bottom: var(--borda); overflow: hidden; white-space: nowrap; font-family: var(--mono); font-weight: 700; font-size: .9rem; padding: .35rem 0; }
+  .fita div { display: inline-block; padding-left: 100%; }
+  .slide.ativo .fita div { animation: fita 22s linear infinite; }
+  @keyframes fita { to { transform: translateX(-100%); } }
+  .fita .sobe { color: var(--verde); } .fita .desce { color: #ff8fa3; }
+  .ipo .in { padding-right: clamp(0px, 24vw, 420px); }
+  .bolsa { padding: 1rem 1.2rem; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .3rem 1.2rem; align-items: center; }
+  .bolsa .tick { font-family: var(--mono); font-weight: 700; font-size: 1.6rem; background: var(--ink); color: var(--amarelo); border-radius: 12px; padding: 0 .7rem; }
+  .bolsa .val { font-size: 2.6rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+  .bolsa .sub { grid-column: 1 / -1; font-weight: 700; color: var(--mut); }
+  .bolsa .sub b { color: #06a57b; }
+  .bolsa svg { grid-column: 1 / -1; width: 100%; height: auto; display: block; }
+  .linha-bolsa { stroke-dasharray: 1200; stroke-dashoffset: 1200; }
+  .slide.ativo .linha-bolsa { animation: desenha 3s cubic-bezier(.5,0,.3,1) forwards .6s; }
+  @keyframes desenha { to { stroke-dashoffset: 0; } }
+  .slide:not(.ativo) .linha-bolsa { stroke-dashoffset: 0; }
+  .sino { display: inline-block; transform-origin: top center; }
+  .slide.ativo .sino { animation: toca .5s ease-in-out infinite alternate; }
+  @keyframes toca { from { transform: rotate(-16deg); } to { transform: rotate(16deg); } }
+  .fala { position: absolute; right: clamp(150px, 19vw, 330px); bottom: clamp(220px, 34vh, 380px); width: min(30rem, 42vw); z-index: 4;
+          background: #fff; border: var(--borda); border-radius: 22px; box-shadow: var(--sombra); padding: .9rem 1.1rem; font-size: 1.02rem; line-height: 1.45; }
+  .fala::after { content: ''; position: absolute; right: 2.2rem; bottom: -22px; width: 30px; height: 30px; background: #fff; border-right: var(--borda); border-bottom: var(--borda); transform: rotate(45deg) skew(12deg, 12deg); }
+  .fala .quem { display: block; font-weight: 800; font-size: .8rem; letter-spacing: 1px; text-transform: uppercase; color: var(--rosa); margin-bottom: .2rem; }
+  .fala .cursor { display: inline-block; width: .5em; height: 1em; background: var(--ink); vertical-align: -2px; margin-left: 2px; }
+  .slide.ativo .fala .cursor { animation: pisca 1s steps(2) infinite; }
+  @keyframes pisca { 50% { opacity: 0; } }
+  .biggull { position: absolute; right: max(10px, 1.5vw); bottom: 3.6rem; width: clamp(170px, 22vw, 360px); z-index: 4; filter: drop-shadow(6px 8px 0 #1d1b4b33); }
+  .slide.ativo .biggull { animation: entra-canto .8s cubic-bezier(.2,1.5,.4,1) both .4s; }
+  @keyframes entra-canto { from { transform: translate(60%, 60%) rotate(20deg); opacity: 0; } }
+  .slide.ativo .biggull .mao { animation: ok .55s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: bottom center; }
+  .slide.ativo .biggull .mao.dir { animation-delay: .27s; }
+  @keyframes ok { from { transform: translateY(0) rotate(-6deg); } to { transform: translateY(-10px) rotate(6deg); } }
+  .slide.ativo .biggull .cabeca { animation: acena 1.1s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: bottom center; }
+  @keyframes acena { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+  .aviso-ipo { font-size: .8rem; color: var(--mut); }
+
   @media (max-width: 900px) {
+    .ipo .in { padding-right: 0; }
+    .fala { position: relative; right: auto; bottom: auto; width: auto; }
+    .biggull { position: relative; right: auto; bottom: auto; align-self: center; width: 200px; }
     h2 { font-size: 2.1rem; }
     .g3, .g4, .g5, .perguntas { grid-template-columns: repeat(2, minmax(0,1fr)); }
     .g2, .fluxo, .cred, .par, .msgr, .numeros { grid-template-columns: minmax(0,1fr); }
@@ -322,7 +363,7 @@
   }
 </style>
 
-<!-- Gaivota com as chaves no bico (a mesma arte do site) -->
+<!-- Seagull with the keys in its beak (same art as the site) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="gaivota" viewBox="0 0 210 140">
     <path class="asa" d="M95 64 Q62 8 8 22 Q52 40 80 70 Z" fill="#cfd6dd" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
@@ -350,245 +391,245 @@
 
 <main class="deck" id="deck">
 
-  <!-- 1. Capa -->
-  <section class="slide capa" data-notas="<b>10 s.</b> “Levantem a mão quem já chegou atrasado esta semana.” Pausa. “Pois. Nós fizemos o Desculpómetro.”">
+  <!-- 1. Cover -->
+  <section class="slide capa" data-notas="<b>10 s.</b> “Hands up if you were late this week.” Pause. “Right. So we built the Desculpómetro, the excuse-o-meter.”">
     <svg class="voadora" viewBox="0 0 210 140" aria-hidden="true"><use href="#gaivota"/></svg>
     <div class="in">
       <span class="eyebrow ink salta">Agentic AI Challenge · Pitch</span>
       <h1 class="logo salta" style="--i:1">Desculp<span class="o">ó</span>metro</h1>
-      <p class="lead salta" style="--i:2">Vais chegar atrasado? Um <b>agente de IA</b> investiga o que se passa mesmo no teu caminho e monta a desculpa mais credível possível. <b>Só com factos verdadeiros.</b></p>
+      <p class="lead salta" style="--i:2">Running late? An <b>AI agent</b> checks what is really happening on your way and builds the most believable excuse possible. <b>Using only true facts.</b></p>
       <div class="pills salta" style="--i:3">
-        <span class="pill">🔎 6 ferramentas</span><span class="pill">🧠 Claude Sonnet 5.5</span><span class="pill">🐦 1 gaivota</span><span class="pill ink">[Nome da equipa]</span>
+        <span class="pill">🔎 6 tools</span><span class="pill">🧠 Claude Sonnet 5.5</span><span class="pill">🐦 1 seagull</span><span class="pill ink">[Team name]</span>
       </div>
     </div>
   </section>
 
-  <!-- 2. Problema -->
-  <section class="slide" data-notas="<b>15 s.</b> O problema nunca é o atraso, é a desculpa. Vaga, sem provas, e quem a ouve sabe. As provas existem (tempo, trânsito, metro), mas ninguém as procura a correr.">
+  <!-- 2. Problem -->
+  <section class="slide" data-notas="<b>15 s.</b> Being late is never the real problem. The excuse is. Vague, no evidence, and the other person knows it. The evidence exists (weather, traffic, the metro), but nobody looks it up while running for the train.">
     <div class="in">
-      <span class="eyebrow salta">O problema</span>
-      <h2 class="salta" style="--i:1">Todos chegamos atrasados.<br>O problema é a desculpa.</h2>
+      <span class="eyebrow salta">The problem</span>
+      <h2 class="salta" style="--i:1">Everyone runs late.<br>The excuse is the problem.</h2>
       <div class="grelha g3">
-        <div class="card desculpa-ma salta" style="--i:2"><div class="q">“Havia trânsito.”</div><div class="p">Onde? Quanto?</div><span class="carimbo" style="--i:0">NINGUÉM ACREDITA</span></div>
-        <div class="card desculpa-ma salta" style="--i:3"><div class="q">“O metro atrasou.”</div><div class="p">Que linha? A que horas?</div><span class="carimbo" style="--i:1">NINGUÉM ACREDITA</span></div>
-        <div class="card desculpa-ma salta" style="--i:4"><div class="q">“Estava a chover.”</div><div class="p">Estava mesmo?</div><span class="carimbo" style="--i:2">NINGUÉM ACREDITA</span></div>
+        <div class="card desculpa-ma salta" style="--i:2"><div class="q">“There was traffic.”</div><div class="p">Where? How much?</div><span class="carimbo" style="--i:0">NOBODY BUYS IT</span></div>
+        <div class="card desculpa-ma salta" style="--i:3"><div class="q">“The metro was late.”</div><div class="p">Which line? What time?</div><span class="carimbo" style="--i:1">NOBODY BUYS IT</span></div>
+        <div class="card desculpa-ma salta" style="--i:4"><div class="q">“It was raining.”</div><div class="p">Was it, though?</div><span class="carimbo" style="--i:2">NOBODY BUYS IT</span></div>
       </div>
-      <p class="lead salta" style="--i:5">Uma desculpa só convence com <b>provas</b>. E ninguém tem tempo de as procurar enquanto corre para o metro.</p>
+      <p class="lead salta" style="--i:5">An excuse only works with <b>evidence</b>. And nobody has time to dig it up while running for the metro.</p>
     </div>
   </section>
 
-  <!-- 3. O que faz -->
-  <section class="slide" data-notas="<b>20 s.</b> Dizes onde estás, para onde vais, quantos minutos e a quem tens de explicar. Ou então: queres fugir de um compromisso. O agente investiga e devolve nota, provas com fonte e a mensagem pronta.">
+  <!-- 3. What it does -->
+  <section class="slide" data-notas="<b>20 s.</b> You say where you are, where you are going, how late you will be and who you have to explain it to. Or: you want to get out of a plan. The agent investigates and returns a score, evidence with sources and a ready-to-send message.">
     <div class="in">
-      <span class="eyebrow salta">O que faz</span>
-      <h2 class="salta" style="--i:1">Quatro respostas tuas. Uma investigação do agente.</h2>
+      <span class="eyebrow salta">What it does</span>
+      <h2 class="salta" style="--i:1">Four answers from you. One investigation by the agent.</h2>
       <div class="fluxo">
-        <form class="card mock salta" style="--i:2" onsubmit="return false" aria-label="Exemplo do formulário da app">
-          <div class="tipos"><span class="on">⏰ Vou chegar atrasado</span><span>🏃 Quero fugir de um compromisso</span></div>
-          <label>📍 Onde estás<span class="campo">Porto</span></label>
-          <label>🏁 Para onde vais<span class="campo">Matosinhos</span></label>
-          <label>⏰ Atraso (min)<span class="campo">25</span></label>
-          <label>👤 A quem<span class="campo">👔 Chefe</span></label>
-          <div class="go"><span>🔎 Investigar</span></div>
+        <form class="card mock salta" style="--i:2" onsubmit="return false" aria-label="Example of the app form">
+          <div class="tipos"><span class="on">⏰ I'm running late</span><span>🏃 I want to get out of something</span></div>
+          <label>📍 Where are you<span class="campo">Porto</span></label>
+          <label>🏁 Where are you going<span class="campo">Matosinhos</span></label>
+          <label>⏰ Delay (min)<span class="campo">25</span></label>
+          <label>👤 Who to tell<span class="campo">👔 Boss</span></label>
+          <div class="go"><span>🔎 Investigate</span></div>
         </form>
         <div class="seta" aria-hidden="true">→</div>
         <div class="card recebes salta" style="--i:3">
-          <h3>Recebes</h3>
-          <div class="linha-r"><span class="e" style="background:#fff2bf">🎯</span>Nota de credibilidade, de 0 a 100</div>
-          <div class="linha-r"><span class="e" style="background:#dbe8ff">🧾</span>Provas, cada uma com a sua fonte</div>
-          <div class="linha-r"><span class="e" style="background:#ffd9e6">💬</span>Mensagem no tom certo, pronta a copiar</div>
-          <div class="linha-r"><span class="e" style="background:#ece0ff">📱</span>Simulação do envio no Bico Messenger</div>
+          <h3>You get</h3>
+          <div class="linha-r"><span class="e" style="background:#fff2bf">🎯</span>A credibility score from 0 to 100</div>
+          <div class="linha-r"><span class="e" style="background:#dbe8ff">🧾</span>Evidence, each item with its source</div>
+          <div class="linha-r"><span class="e" style="background:#ffd9e6">💬</span>A message in the right tone, ready to copy</div>
+          <div class="linha-r"><span class="e" style="background:#ece0ff">📱</span>A simulated send on Bico Messenger</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 4. Para quem -->
-  <section class="slide" data-notas="<b>15 s.</b> Para quem se desloca e tem alguém à espera. As mesmas provas, mas o tom muda: formal para o chefe, dramático para a mãe, passivo-agressivo para a sogra. Dez destinatários, ou escreves outra pessoa.">
+  <!-- 4. Who it's for -->
+  <section class="slide" data-notas="<b>15 s.</b> For anyone on the move with someone waiting. Same evidence, different tone: formal for the boss, dramatic for mum, passive-aggressive for the mother-in-law. Ten recipients, or type anyone else.">
     <div class="in">
-      <span class="eyebrow salta">Para quem</span>
-      <h2 class="salta" style="--i:1">Para quem chega atrasado e tem de explicar a alguém.</h2>
-      <p class="lead salta" style="--i:2">As provas são as mesmas. O tom muda conforme quem está do outro lado.</p>
+      <span class="eyebrow salta">Who it's for</span>
+      <h2 class="salta" style="--i:1">For anyone who is late and owes someone an explanation.</h2>
+      <p class="lead salta" style="--i:2">The evidence stays the same. The tone changes with whoever is on the other end.</p>
       <div class="grelha g5" id="destinos"></div>
     </div>
   </section>
 
-  <!-- 5. Como decide -->
-  <section class="slide" data-notas="<b>25 s.</b> Isto não é um gerador de texto, é um agente. O Claude escolhe que ferramentas chamar, o servidor executa-as em paralelo, os resultados voltam e ele decide se precisa de mais. Até 12 voltas. Depois dá a nota e escolhe o tipo de desculpa.">
+  <!-- 5. How it decides -->
+  <section class="slide" data-notas="<b>25 s.</b> This is not a text generator, it is an agent. Claude picks which tools to call, the server runs them in parallel, the results go back and Claude decides whether it needs more. Up to 12 rounds. Then it scores the excuse and picks what kind of excuse to write.">
     <div class="in">
-      <span class="eyebrow salta">Como decide</span>
-      <h2 class="salta" style="--i:1">Um agente em ciclo. Ele decide o que investigar.</h2>
+      <span class="eyebrow salta">How it decides</span>
+      <h2 class="salta" style="--i:1">An agent in a loop. It decides what to investigate.</h2>
       <div class="card diagrama salta" style="--i:2">
         <div class="linha">
-          <div class="passo pedido p1"><div class="e">👤</div><div class="t">Pedido do utilizador</div><div class="d">De onde, para onde, quantos minutos e a quem.</div></div>
+          <div class="passo pedido p1"><div class="e">👤</div><div class="t">User request</div><div class="d">From where, to where, how late and who to tell.</div></div>
           <div class="seta">→</div>
           <div class="ciclo">
-            <div class="rotulo">Ciclo do agente · até 12 voltas</div>
+            <div class="rotulo">Agent loop · up to 12 rounds</div>
             <div class="pacote" aria-hidden="true">📦</div>
             <div class="linha">
-              <div class="passo p2"><div class="e">🧠</div><div class="t">O modelo escolhe as ferramentas</div><div class="d">Claude decide quais chamar e com que parâmetros.</div></div>
+              <div class="passo p2"><div class="e">🧠</div><div class="t">The model picks the tools</div><div class="d">Claude decides which to call and with which parameters.</div></div>
               <div class="seta">→</div>
-              <div class="passo p3"><div class="e">⚙️</div><div class="t">O servidor executa-as</div><div class="d">Várias ao mesmo tempo, em paralelo.</div></div>
+              <div class="passo p3"><div class="e">⚙️</div><div class="t">The server runs them</div><div class="d">Several at once, in parallel.</div></div>
               <div class="seta">→</div>
-              <div class="passo p4"><div class="e">📥</div><div class="t">Os resultados voltam</div><div class="d">Claude lê as provas e decide se precisa de mais.</div></div>
+              <div class="passo p4"><div class="e">📥</div><div class="t">Results go back</div><div class="d">Claude reads the evidence and decides if it needs more.</div></div>
             </div>
-            <div class="volta"><span>🔁 repete até ter provas suficientes</span></div>
+            <div class="volta"><span>🔁 repeats until it has enough evidence</span></div>
           </div>
         </div>
-        <div class="desce"><span>provas suficientes</span><b>↓</b></div>
+        <div class="desce"><span>enough evidence</span><b>↓</b></div>
         <div class="linha">
-          <div class="passo p5"><div class="e">🎯</div><div class="t">Credibilidade de 0 a 100</div><div class="d">Os factos explicam mesmo os minutos de atraso?</div></div>
+          <div class="passo p5"><div class="e">🎯</div><div class="t">Credibility from 0 to 100</div><div class="d">Do the facts really explain the minutes of delay?</div></div>
           <div class="seta">→</div>
-          <div class="passo p6"><div class="e">🎭</div><div class="t">Escolhe a desculpa</div>
-            <div class="niveis"><div class="nivel n1">20 a 100: desculpa normal, só com factos</div><div class="nivel n2">1 a 19: MODO DESESPERO</div><div class="nivel n3">0: ÚLTIMO RECURSO</div></div>
+          <div class="passo p6"><div class="e">🎭</div><div class="t">Picks the excuse</div>
+            <div class="niveis"><div class="nivel n1">20 to 100: normal excuse, facts only</div><div class="nivel n2">1 to 19: DESPERATION MODE</div><div class="nivel n3">0: LAST RESORT</div></div>
           </div>
           <div class="seta">→</div>
-          <div class="passo p7"><div class="e">💬</div><div class="t">Mensagem no tom certo</div><div class="d">Formal, dramático, carinhoso, respeitoso…</div></div>
+          <div class="passo p7"><div class="e">💬</div><div class="t">Message in the right tone</div><div class="d">Formal, dramatic, loving, respectful…</div></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 6. Ferramentas -->
-  <section class="slide" data-notas="<b>20 s.</b> Seis ferramentas. Tempo, coordenadas e gaivotas são dados reais e grátis. Trânsito é real com chave TomTom. Metro e eventos são sintéticos porque as APIs são pagas, e o agente recebe-os marcados como simulados. Trocar por uma API real é mudar uma função.">
+  <!-- 6. Tools -->
+  <section class="slide" data-notas="<b>20 s.</b> Six tools. Weather, coordinates and seagulls are real, free data. Traffic is real with a TomTom key. Metro and events are synthetic because those APIs are paid, and the agent always gets them labelled as simulated. Swapping in a real API means changing one function.">
     <div class="in">
-      <span class="eyebrow salta">As ferramentas</span>
-      <h2 class="salta" style="--i:1">O agente está a investigar…</h2>
+      <span class="eyebrow salta">The tools</span>
+      <h2 class="salta" style="--i:1">The agent is investigating…</h2>
       <div class="grelha g2">
-        <div class="card tool" style="--i:0"><div class="ico">📍</div><div><span class="estado">✓ feito</span><div class="nome">geocode</div><div class="res">Local → coordenadas. Open-Meteo Geocoding.</div><span class="selo real">🟢 Dados reais</span></div></div>
-        <div class="card tool" style="--i:1"><div class="ico">🌦️</div><div><span class="estado">✓ feito</span><div class="nome">get_weather</div><div class="res">Céu, chuva, rajadas e visibilidade, agora e nas próximas 6 h. Open-Meteo.</div><span class="selo real">🟢 Dados reais</span></div></div>
-        <div class="card tool" style="--i:2"><div class="ico">🚗</div><div><span class="estado">✓ feito</span><div class="nome">get_traffic</div><div class="res">Tempo de viagem e atraso por trânsito. TomTom Routing.</div><span class="selo real">🟢 Real com chave</span> <span class="selo sint">🟡 Sintético sem chave</span></div></div>
-        <div class="card tool" style="--i:3"><div class="ico">🚇</div><div><span class="estado">✓ feito</span><div class="nome">get_transport_status</div><div class="res">Metro (A, B, D), STCP e CP no Porto; linhas de Lisboa no resto.</div><span class="selo sint">🟡 Dados sintéticos</span></div></div>
-        <div class="card tool" style="--i:4"><div class="ico">🎟️</div><div><span class="estado">✓ feito</span><div class="nome">get_events_nearby</div><div class="res">Jogos e concertos que causam trânsito, com zona e hora.</div><span class="selo sint">🟡 Dados sintéticos</span></div></div>
-        <div class="card tool" style="--i:5"><div class="ico">🐦</div><div><span class="estado">✓ feito</span><div class="nome">get_seagull_facts</div><div class="res">Factos reais sobre a gaivota-de-patas-amarelas. Wikipédia.</div><span class="selo des">🚨 Só no modo desespero</span></div></div>
+        <div class="card tool" style="--i:0"><div class="ico">📍</div><div><span class="estado">✓ done</span><div class="nome">geocode</div><div class="res">Place name → coordinates. Open-Meteo Geocoding.</div><span class="selo real">🟢 Real data</span></div></div>
+        <div class="card tool" style="--i:1"><div class="ico">🌦️</div><div><span class="estado">✓ done</span><div class="nome">get_weather</div><div class="res">Sky, rain, wind gusts and visibility, now and for the next 6 hours. Open-Meteo.</div><span class="selo real">🟢 Real data</span></div></div>
+        <div class="card tool" style="--i:2"><div class="ico">🚗</div><div><span class="estado">✓ done</span><div class="nome">get_traffic</div><div class="res">Driving time and traffic delay. TomTom Routing.</div><span class="selo real">🟢 Real with a key</span> <span class="selo sint">🟡 Synthetic without one</span></div></div>
+        <div class="card tool" style="--i:3"><div class="ico">🚇</div><div><span class="estado">✓ done</span><div class="nome">get_transport_status</div><div class="res">Metro (A, B, D), STCP buses and CP trains in Porto; Lisbon lines elsewhere.</div><span class="selo sint">🟡 Synthetic data</span></div></div>
+        <div class="card tool" style="--i:4"><div class="ico">🎟️</div><div><span class="estado">✓ done</span><div class="nome">get_events_nearby</div><div class="res">Matches and concerts causing traffic, with area and time.</div><span class="selo sint">🟡 Synthetic data</span></div></div>
+        <div class="card tool" style="--i:5"><div class="ico">🐦</div><div><span class="estado">✓ done</span><div class="nome">get_seagull_facts</div><div class="res">Real facts about the yellow-legged gull. Wikipedia.</div><span class="selo des">🚨 Desperation mode only</span></div></div>
       </div>
     </div>
   </section>
 
-  <!-- 7. Credibilidade -->
-  <section class="slide" data-anim="medidor" data-notas="<b>20 s.</b> A regra de ouro: só factos que as ferramentas devolveram, cada um com a fonte. O que o utilizador escreve serve para o tom, nunca conta como prova. A nota aparece neste velocímetro.">
+  <!-- 7. Credibility -->
+  <section class="slide" data-anim="medidor" data-notas="<b>20 s.</b> The golden rule: only facts the tools returned, each with its source. What the user types sets the tone and never counts as evidence. The score shows up on this gauge.">
     <div class="in">
-      <span class="eyebrow salta">A regra de ouro</span>
-      <h2 class="salta" style="--i:1">Nunca inventa. Só usa o que as ferramentas devolveram.</h2>
+      <span class="eyebrow salta">The golden rule</span>
+      <h2 class="salta" style="--i:1">It never makes things up. It only uses what the tools returned.</h2>
       <div class="cred">
         <div class="medidor card salta" style="--i:2" id="medidor">
-          <svg viewBox="-50 -12 440 204" aria-label="Velocímetro de credibilidade">
+          <svg viewBox="-50 -12 440 204" aria-label="Credibility gauge">
             <g id="arcos"></g>
             <g id="etiquetas" font-family="Baloo 2, sans-serif" font-weight="800" font-size="13" fill="#1d1b4b" text-anchor="middle"></g>
             <g id="ponteiro"><polygon points="164,170 176,170 170,58" fill="#1d1b4b"/></g>
             <circle cx="170" cy="170" r="14" fill="#ff4f8b" stroke="#1d1b4b" stroke-width="3"/>
           </svg>
           <div class="num" id="num">?</div>
-          <div class="veredito" id="veredito">À espera de provas…</div>
-          <div class="carimbo-g">IRREFUTÁVEL</div>
+          <div class="veredito" id="veredito">Waiting for evidence…</div>
+          <div class="carimbo-g">IRREFUTABLE</div>
         </div>
         <div class="grelha">
-          <div class="card regra salta" style="--i:3"><div class="e">🧭</div><b>Nada está fixo no código</b>O modelo decide sozinho a ordem e quais ferramentas usar. O servidor só executa o que ele pede.</div>
-          <div class="card regra salta" style="--i:4"><div class="e">🔒</div><b>Só factos das ferramentas</b>Cada prova leva a fonte, tal como veio. Dados simulados aparecem marcados como simulados.</div>
-          <div class="card regra salta" style="--i:5"><div class="e">✍️</div><b>O teu texto não é prova</b>O contexto que escreves serve para o tom e para escolher a desculpa. Nunca conta como fonte.</div>
+          <div class="card regra salta" style="--i:3"><div class="e">🧭</div><b>Nothing is hard-coded</b>The model alone decides the order and which tools to use. The server just runs what it asks for.</div>
+          <div class="card regra salta" style="--i:4"><div class="e">🔒</div><b>Only facts from the tools</b>Every piece of evidence carries its source, exactly as given. Simulated data is labelled as simulated.</div>
+          <div class="card regra salta" style="--i:5"><div class="e">✍️</div><b>Your text is not evidence</b>What you write sets the tone and helps pick the excuse. It never counts as a source.</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 8. Modo desespero -->
-  <section class="slide desespero" data-notas="<b>20 s.</b> E se não houver provas? Céu limpo, estradas livres. Abaixo de 20, MODO DESESPERO: o ecrã pisca, a sirene liga, as personagens desfilam. Catálogo de 30 desculpas absurdas e 22 personagens. Com 0, último recurso, as mais absurdas.">
+  <!-- 8. Desperation mode -->
+  <section class="slide desespero" data-notas="<b>20 s.</b> And when there is no evidence? Clear skies, empty roads. Below 20: DESPERATION MODE. The screen flashes, the siren goes off, the characters parade across. A catalogue of 30 absurd excuses and 22 characters. At 0, last resort: the most absurd ones.">
     <div class="flash" aria-hidden="true"></div>
     <div class="desfile" aria-hidden="true" id="desfile"></div>
-    <div class="sirene" aria-hidden="true"><div class="luz"></div><div class="base"></div><div class="txt">MODO DESESPERO</div></div>
+    <div class="sirene" aria-hidden="true"><div class="luz"></div><div class="base"></div><div class="txt">DESPERATION MODE</div></div>
     <div class="in">
-      <span class="eyebrow ink salta">Credibilidade abaixo de 20</span>
-      <h2 class="salta" style="--i:1">Modo desespero: a culpa é da gaivota.</h2>
+      <span class="eyebrow ink salta">Credibility below 20</span>
+      <h2 class="salta" style="--i:1">Desperation mode: blame the seagull.</h2>
       <div class="grelha g2">
         <div class="card painel-d salta" style="--i:2">
-          <span class="absurda">🚨 Desculpa absurda ativada</span>
+          <span class="absurda">🚨 Absurd excuse activated</span>
           <ul class="exemplos">
-            <li><span class="n">#1</span>Uma gaivota roubou-me as chaves na Ribeira e tive de negociar com ela</li>
-            <li><span class="n">#22</span>Fiquei preso numa rotunda em Gaia, dei 37 voltas e não havia saída</li>
-            <li><span class="n">#5</span>A minha avó ligou “só um minutinho”</li>
+            <li><span class="n">#1</span>A gull stole my keys at the Ribeira and I had to negotiate with it</li>
+            <li><span class="n">#22</span>I got stuck on a roundabout in Gaia, went round 37 times and there was no exit</li>
+            <li><span class="n">#5</span>My granny called “just for a minute”</li>
           </ul>
-          <span class="absurda ultimo">☠️ ÚLTIMO RECURSO · credibilidade 0</span>
+          <span class="absurda ultimo">☠️ LAST RESORT · credibility 0</span>
           <ul class="exemplos">
-            <li><span class="n">#18</span>O GPS mandou-me virar à direita no Douro</li>
+            <li><span class="n">#18</span>The sat nav told me to turn right into the Douro</li>
           </ul>
         </div>
         <div class="grelha">
           <div class="numeros">
-            <div class="card numero salta" style="--i:3"><b>30</b><span>desculpas absurdas</span></div>
-            <div class="card numero salta" style="--i:4"><b>22</b><span>personagens</span></div>
-            <div class="card numero salta" style="--i:5"><b>10</b><span>destinatários</span></div>
+            <div class="card numero salta" style="--i:3"><b>30</b><span>absurd excuses</span></div>
+            <div class="card numero salta" style="--i:4"><b>22</b><span>characters</span></div>
+            <div class="card numero salta" style="--i:5"><b>10</b><span>recipients</span></div>
           </div>
           <div class="card painel-d salta" style="--i:6">
-            <p class="lead" style="color:var(--ink);font-size:1.15rem">O agente vai à Wikipédia buscar <b>factos reais</b> sobre a gaivota-de-patas-amarelas e defende a história com toda a seriedade.</p>
+            <p class="lead" style="color:var(--ink);font-size:1.15rem">The agent fetches <b>real facts</b> about the yellow-legged gull from Wikipedia and defends the story with a completely straight face.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 9. Diário do Bico + entrevista -->
-  <section class="slide" data-notas="<b>15 s.</b> Provas à altura: uma página do Diário do Bico, o jornal oficial das gaivotas do Porto, e uma entrevista exclusiva à culpada. Tudo claramente paródia. Limite posto de propósito: nunca gera nada que possa passar por real.">
+  <!-- 9. Diário do Bico + interview -->
+  <section class="slide" data-notas="<b>15 s.</b> Evidence to match: a page from the Diário do Bico, the Beak Gazette, official newspaper of the seagulls of Porto, plus an exclusive interview with the culprit. All clearly parody. A limit we set on purpose: it never produces anything that could pass as real.">
     <div class="in">
-      <span class="eyebrow salta">Provas de paródia</span>
-      <h2 class="salta" style="--i:1">O Diário do Bico tem a exclusiva.</h2>
+      <span class="eyebrow salta">Parody evidence</span>
+      <h2 class="salta" style="--i:1">The Beak Gazette has the exclusive.</h2>
       <div class="par">
-        <div class="jornal" aria-label="Exemplo de página do Diário do Bico">
-          <div class="aviso">Diário do Bico, jornal oficial das gaivotas do Porto · publicação fictícia</div>
+        <div class="jornal" aria-label="Example page of the Diário do Bico">
+          <div class="aviso">Diário do Bico (The Beak Gazette), official newspaper of the seagulls of Porto · fictional publication</div>
           <div class="titulo-j">Diário do Bico</div>
-          <div class="meta"><span>Ribeira, Porto</span><span>Edição de hoje</span><span>Preço: 1 batata frita</span></div>
-          <div class="manchete">Gaivota rouba chaves e exige resgate em francesinhas</div>
-          <p class="subt">“Brilhavam. Eram minhas.”, declarou a acusada, sem remorsos.</p>
+          <div class="meta"><span>Ribeira, Porto</span><span>Today's edition</span><span>Price: 1 chip</span></div>
+          <div class="manchete">Gull steals keys, demands ransom in francesinhas</div>
+          <p class="subt">“They were shiny. They were mine,” said the accused, showing no remorse.</p>
           <div class="gr">
             <div class="corpo">
-              <p><b>Uma gaivota-de-patas-amarelas</b> foi vista esta manhã a sobrevoar a Ribeira com um molho de chaves no bico, deixando um cidadão impossibilitado de sair de casa a horas.</p>
-              <p>Fontes do telhado garantem que não é a primeira vez. A visada recusou devolver o material até receber compensação adequada.</p>
+              <p><b>A yellow-legged gull</b> was seen this morning flying over the Ribeira with a bunch of keys in its beak, leaving a citizen unable to leave home on time.</p>
+              <p>Rooftop sources say it is not the first time. The suspect refused to return the goods without suitable compensation.</p>
             </div>
             <div>
               <div class="foto"><svg viewBox="0 0 210 140" aria-hidden="true"><use href="#gaivota"/></svg></div>
-              <div class="caixa"><b>Factos reais</b><ul><li>Nome científico: <i>Larus michahellis</i></li><li>Tem patas amarelas, daí o nome</li></ul></div>
+              <div class="caixa"><b>Real facts</b><ul><li>Scientific name: <i>Larus michahellis</i></li><li>It has yellow legs, hence the name</li></ul></div>
             </div>
           </div>
         </div>
         <div class="grelha">
           <div class="card entrevista salta" style="--i:2">
             <div class="topo"><div class="avatar"><svg viewBox="0 0 210 140" aria-hidden="true"><use href="#gaivota"/></svg></div>
-              <div><span class="sel">EXCLUSIVO</span><h3>Entrevista à gaivota culpada</h3></div></div>
-            <div class="p">Porque levou as chaves?</div>
-            <p class="r">Brilhavam. Sou uma gaivota do Porto. Não devo explicações a humanos.</p>
-            <div class="p">Arrepende-se?</div>
-            <p class="r">Arrependo-me de não ter levado também a carteira.</p>
-            <p class="ficcao">Exemplo ilustrativo. Na app, o texto é gerado pelo agente.</p>
+              <div><span class="sel">EXCLUSIVE</span><h3>Interview with the guilty gull</h3></div></div>
+            <div class="p">Why did you take the keys?</div>
+            <p class="r">They were shiny. I am a Porto seagull. I owe humans no explanations.</p>
+            <div class="p">Any regrets?</div>
+            <p class="r">Only that I did not take the wallet too.</p>
+            <p class="ficcao">Illustrative example. In the app, the agent writes this text.</p>
           </div>
-          <div class="card limite salta" style="--i:3"><b>Limite que não passamos.</b> Nunca gera atestados, autos de polícia, declarações oficiais ou notícias de meios reais. As pessoas das entrevistas são inventadas.</div>
+          <div class="card limite salta" style="--i:3"><b>A line we don't cross.</b> It never produces doctor's notes, police reports, official statements or news from real outlets. The people in the interviews are made up.</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- 10. Bico Messenger -->
-  <section class="slide" data-notas="<b>15 s.</b> E para fechar a história: simulamos o envio. Um telemóvel com o Bico Messenger, uma app inventada. O destinatário responde com IA, no estilo dele, abre o link do Diário do Bico, e há um desfecho: acreditou, desistiu, ou quer falar com a gaivota.">
+  <section class="slide" data-notas="<b>15 s.</b> To close the story, we simulate sending it. A phone running Bico Messenger, a made-up app. The recipient replies through AI in their own style, opens the Beak Gazette link, and there is an ending: they bought it, they gave up arguing, or they want to speak to the seagull.">
     <div class="in">
-      <span class="eyebrow salta">A simulação final</span>
-      <h2 class="salta" style="--i:1">Enviar pelo Bico Messenger. E ver a reação.</h2>
+      <span class="eyebrow salta">The final simulation</span>
+      <h2 class="salta" style="--i:1">Send it on Bico Messenger. Watch the reaction.</h2>
       <div class="msgr">
         <div class="passos">
-          <div class="card passo-m salta" style="--i:2"><span class="e">📱</span><span>Um telemóvel com uma app de mensagens <b>inventada</b>, sem marcas reais.</span></div>
-          <div class="card passo-m salta" style="--i:3"><span class="e">🤖</span><span>O destinatário responde com <b>IA</b>, no estilo dele: a mãe pergunta se comeste, o chefe é seco, a sogra lembra a última vez.</span></div>
-          <div class="card passo-m salta" style="--i:4"><span class="e">📰</span><span>O link do <b>Diário do Bico</b> abre dentro da app.</span></div>
-          <div class="card passo-m salta" style="--i:5"><span class="e">🏁</span><span>Desfecho animado em cerca de 30 segundos: <b>acreditou</b>, <b>desistiu de discutir</b> ou <b>quer falar com a gaivota</b>.</span></div>
+          <div class="card passo-m salta" style="--i:2"><span class="e">📱</span><span>A phone with a <b>made-up</b> messaging app, no real brands.</span></div>
+          <div class="card passo-m salta" style="--i:3"><span class="e">🤖</span><span>The recipient replies through <b>AI</b>, in their own style: mum asks if you have eaten, the boss is curt, the mother-in-law brings up last time.</span></div>
+          <div class="card passo-m salta" style="--i:4"><span class="e">📰</span><span>The <b>Beak Gazette</b> link opens inside the app.</span></div>
+          <div class="card passo-m salta" style="--i:5"><span class="e">🏁</span><span>An animated ending in about 30 seconds: <b>they bought it</b>, <b>they gave up arguing</b> or <b>they want to talk to the seagull</b>.</span></div>
         </div>
-        <div class="tel" aria-label="Exemplo de conversa no Bico Messenger">
+        <div class="tel" aria-label="Example conversation on Bico Messenger">
           <div class="ecra">
             <div class="notch"></div>
-            <div class="bm-topo"><div class="bm-av">👩‍👦</div><div><div class="bm-nome">Mãe</div><div class="bm-sub">online</div></div><span class="bm-marca">BICO MESSENGER</span></div>
+            <div class="bm-topo"><div class="bm-av">👩‍👦</div><div><div class="bm-nome">Mum</div><div class="bm-sub">online</div></div><span class="bm-marca">BICO MESSENGER</span></div>
             <div class="bm-chat">
-              <div class="bm-b bm-eu" style="--d:.6s">Mãe, desculpa o atraso 🙏 Uma gaivota roubou-me as chaves na Ribeira. Está tudo documentado.</div>
-              <div class="bm-esc" style="--d:1.3s">a escrever...</div>
-              <div class="bm-b bm-ele" style="--d:2.7s">FILHO 😱😱 Estás bem?? Já comeste??</div>
-              <div class="bm-b bm-eu" style="--d:3.6s">Saiu no jornal 👇<span class="bm-link"><b>DIÁRIO DO BICO</b>diariodobico.pt/exclusivo</span></div>
-              <div class="bm-esc" style="--d:4.3s">a escrever...</div>
-              <div class="bm-b bm-ele" style="--d:5.7s">Ai está no jornal?! Então é verdade 🙏 Vem com cuidado ❤️</div>
-              <div class="desfecho" style="--d:6.5s">✅ Acreditou!</div>
+              <div class="bm-b bm-eu" style="--d:.6s">Mum, sorry I'm late 🙏 A gull stole my keys at the Ribeira. It's all documented.</div>
+              <div class="bm-esc" style="--d:1.3s">typing...</div>
+              <div class="bm-b bm-ele" style="--d:2.7s">OH MY 😱😱 Are you ok?? Have you eaten??</div>
+              <div class="bm-b bm-eu" style="--d:3.6s">It's in the paper 👇<span class="bm-link"><b>DIÁRIO DO BICO</b>diariodobico.pt/exclusivo</span></div>
+              <div class="bm-esc" style="--d:4.3s">typing...</div>
+              <div class="bm-b bm-ele" style="--d:5.7s">It's in the newspaper?! Then it's true 🙏 Come home safe ❤️</div>
+              <div class="desfecho" style="--d:6.5s">✅ They bought it!</div>
             </div>
           </div>
         </div>
@@ -596,86 +637,155 @@
     </div>
   </section>
 
-  <!-- 11. Diz a verdade -->
-  <section class="slide" data-notas="<b>10 s.</b> E o botão mais corajoso: “Ou então diz a verdade”. O mesmo agente escreve um pedido de desculpas honesto e humilde. Às vezes a melhor desculpa é não ter desculpa.">
+  <!-- 11. Tell the truth -->
+  <section class="slide" data-notas="<b>10 s.</b> And the bravest button: “Or just tell the truth”. The same agent writes an honest, humble apology. Sometimes the best excuse is no excuse.">
     <div class="in">
-      <span class="eyebrow salta">O botão mais corajoso</span>
-      <h2 class="salta" style="--i:1">Ou então… diz a verdade.</h2>
-      <div class="botoes salta" style="--i:2"><span class="b-roxo">📱 Enviar</span><span class="b-verde">📋 Copiar</span><span class="b-azul">🎲 Outra desculpa</span><span class="b-branco">😇 Ou então diz a verdade</span></div>
-      <div class="card verdade-card salta" style="--i:3">Peço desculpa pelo atraso. Não houve gaivota nenhuma: saí tarde de casa e devia ter avisado mais cedo. Não volta a acontecer.</div>
-      <p class="lead salta" style="--i:4">Um clique e o mesmo agente escreve um pedido de desculpas <b>honesto e humilde</b>. Sem provas, sem gaivotas.</p>
+      <span class="eyebrow salta">The bravest button in the app</span>
+      <h2 class="salta" style="--i:1">Or… just tell the truth.</h2>
+      <div class="botoes salta" style="--i:2"><span class="b-roxo">📱 Send</span><span class="b-verde">📋 Copy</span><span class="b-azul">🎲 Another excuse</span><span class="b-branco">😇 Or just tell the truth</span></div>
+      <div class="card verdade-card salta" style="--i:3">I'm sorry I'm late. There was no seagull: I left home late and should have warned you sooner. It won't happen again.</div>
+      <p class="lead salta" style="--i:4">One click and the same agent writes an <b>honest, humble</b> apology. No evidence, no seagulls.</p>
     </div>
   </section>
 
-  <!-- 12. Por dentro -->
-  <section class="slide" data-notas="<b>15 s.</b> Por dentro: uma página, Node com Express, Claude Sonnet 5.5 com tool use e esforço médio. Dados sintéticos estáveis e marcados. As mesmas 6 ferramentas também como servidor MCP, para qualquer outro agente. App em português e inglês.">
+  <!-- 12. Under the hood -->
+  <section class="slide" data-notas="<b>15 s.</b> Under the hood: one page, Node with Express, Claude Sonnet 5.5 with tool use at medium effort. Stable, labelled synthetic data. The same 6 tools also ship as an MCP server for any other agent. The app works in Portuguese and English.">
     <div class="in">
-      <span class="eyebrow salta">O que construímos</span>
-      <h2 class="salta" style="--i:1">Simples por fora. Um agente a sério por dentro.</h2>
+      <span class="eyebrow salta">What we built</span>
+      <h2 class="salta" style="--i:1">Simple on the outside. A real agent on the inside.</h2>
       <div class="grelha g4 stack">
-        <div class="card salta" style="--i:2"><h3>🖥️ Interface</h3><ul><li>HTML, JS e CSS, sem framework</li><li>Investigação ao vivo e velocímetro</li><li>Catálogo e Como funciona</li><li>Português e inglês</li></ul></div>
-        <div class="card salta" style="--i:3"><h3>⚙️ Backend</h3><ul><li>Node e Express</li><li><code>POST /desculpa</code></li><li><code>POST /conversa</code> para o Messenger</li><li>Ferramentas em paralelo</li></ul></div>
-        <div class="card salta" style="--i:4"><h3>🧠 IA</h3><ul><li><code>claude-sonnet-5-5</code></li><li>Tool use, até 12 voltas</li><li>Esforço médio na investigação</li><li>Resposta em JSON estruturado</li></ul></div>
-        <div class="card salta" style="--i:5"><h3>🛟 Dados</h3><ul><li>Reais: Open-Meteo, Wikipédia</li><li>TomTom com chave</li><li>Sintéticos estáveis e marcados</li><li>Trocar por API real: 1 função</li></ul></div>
+        <div class="card salta" style="--i:2"><h3>🖥️ Interface</h3><ul><li>HTML, JS and CSS, no framework</li><li>Live investigation and gauge</li><li>Catalogue and How it works pages</li><li>Portuguese and English</li></ul></div>
+        <div class="card salta" style="--i:3"><h3>⚙️ Backend</h3><ul><li>Node and Express</li><li><code>POST /desculpa</code></li><li><code>POST /conversa</code> for the Messenger</li><li>Tools run in parallel</li></ul></div>
+        <div class="card salta" style="--i:4"><h3>🧠 AI</h3><ul><li><code>claude-sonnet-5-5</code></li><li>Tool use, up to 12 rounds</li><li>Medium effort for the investigation</li><li>Structured JSON output</li></ul></div>
+        <div class="card salta" style="--i:5"><h3>🛟 Data</h3><ul><li>Real: Open-Meteo, Wikipedia</li><li>TomTom with a key</li><li>Stable, labelled synthetic data</li><li>Real API swap: 1 function</li></ul></div>
       </div>
       <div class="salta" style="--i:6">
-        <p class="lead" style="margin-bottom:.5rem">As mesmas 6 ferramentas também como servidor <b>MCP</b>. Qualquer agente as pode usar:</p>
+        <p class="lead" style="margin-bottom:.5rem">The same 6 tools also ship as an <b>MCP</b> server. Any agent can use them:</p>
         <div class="codigo"><pre><span class="c">$</span> claude mcp add desculpometro -- node <span class="s">mcp-server.js</span></pre></div>
       </div>
     </div>
   </section>
 
   <!-- 13. Challenge -->
-  <section class="slide" data-notas="<b>15 s.</b> Os cinco critérios e as quatro perguntas do pitch, um a um. Utilidade, criatividade, experiência, uso inteligente de IA e uma demo que conta uma história.">
+  <section class="slide" data-notas="<b>15 s.</b> The five criteria and the four pitch questions, one by one. Usefulness, creativity, experience, smart use of AI, and a demo that tells a story.">
     <div class="in">
-      <span class="eyebrow salta">Como encaixa no desafio</span>
-      <h2 class="salta" style="--i:1">Os cinco critérios, um a um.</h2>
+      <span class="eyebrow salta">How it fits the challenge</span>
+      <h2 class="salta" style="--i:1">The five criteria, one by one.</h2>
       <div class="grelha g5">
-        <div class="card criterio salta" style="--i:2"><span class="e">🧰</span><b>Utilidade real</b><span>Toda a gente se atrasa. Provas reais em segundos, no tom certo.</span><span class="ok">✓ cumprido</span></div>
-        <div class="card criterio salta" style="--i:3"><span class="e">🐦</span><b>Criatividade</b><span>Modo desespero, Diário do Bico, Bico Messenger.</span><span class="ok">✓ cumprido</span></div>
-        <div class="card criterio salta" style="--i:4"><span class="e">✨</span><b>Experiência</b><span>Vês o agente a trabalhar. Velocímetro, cartões, copiar num clique.</span><span class="ok">✓ cumprido</span></div>
-        <div class="card criterio salta" style="--i:5"><span class="e">🧠</span><b>Uso inteligente de GenAI</b><span>Agente com ferramentas que decide sozinho e não inventa. Também em MCP.</span><span class="ok">✓ cumprido</span></div>
-        <div class="card criterio salta" style="--i:6"><span class="e">🎬</span><b>Demo e storytelling</b><span>Um atraso com provas e outro que acaba na gaivota.</span><span class="ok">✓ cumprido</span></div>
+        <div class="card criterio salta" style="--i:2"><span class="e">🧰</span><b>Real-world usefulness</b><span>Everyone runs late. Real evidence in seconds, in the right tone.</span><span class="ok">✓ checked</span></div>
+        <div class="card criterio salta" style="--i:3"><span class="e">🐦</span><b>Creativity</b><span>Desperation mode, the Beak Gazette, Bico Messenger.</span><span class="ok">✓ checked</span></div>
+        <div class="card criterio salta" style="--i:4"><span class="e">✨</span><b>User experience</b><span>You watch the agent work. Gauge, cards, one-click copy.</span><span class="ok">✓ checked</span></div>
+        <div class="card criterio salta" style="--i:5"><span class="e">🧠</span><b>Smart use of GenAI</b><span>An agent with tools that decides alone and never invents. Also over MCP.</span><span class="ok">✓ checked</span></div>
+        <div class="card criterio salta" style="--i:6"><span class="e">🎬</span><b>Demo and storytelling</b><span>One delay with evidence, one that ends with the seagull.</span><span class="ok">✓ checked</span></div>
       </div>
       <div class="perguntas">
-        <div class="card pergunta salta" style="--i:7"><b>O que faz?</b><span>Investiga o caminho e monta a desculpa com provas.</span></div>
-        <div class="card pergunta salta" style="--i:8"><b>Para quem?</b><span>Quem chega atrasado e tem de explicar a alguém.</span></div>
-        <div class="card pergunta salta" style="--i:9"><b>Como decide?</b><span>Ciclo de tool use; credibilidade de 0 a 100.</span></div>
-        <div class="card pergunta salta" style="--i:10"><b>O que tem de especial?</b><span>Só factos reais, e quando não há, a gaivota.</span></div>
+        <div class="card pergunta salta" style="--i:7"><b>What does it do?</b><span>Investigates your route and builds an excuse with evidence.</span></div>
+        <div class="card pergunta salta" style="--i:8"><b>Who is it for?</b><span>Anyone running late who owes someone an explanation.</span></div>
+        <div class="card pergunta salta" style="--i:9"><b>How does it decide?</b><span>A tool-use loop and a 0 to 100 credibility score.</span></div>
+        <div class="card pergunta salta" style="--i:10"><b>What makes it special?</b><span>Only real facts. And when there are none, the seagull.</span></div>
       </div>
     </div>
   </section>
 
-  <!-- 14. Fecho -->
-  <section class="slide fecho" data-notas="<b>10 s.</b> “Da próxima vez que chegarem atrasados, a culpa não é vossa. É da gaivota. Obrigado.” Passar para a demo ao vivo.">
+  <!-- 14. Closing line -->
+  <section class="slide fecho" data-notas="<b>10 s.</b> “Next time you are late, it's not your fault. It's the seagull's.” Then: “One more thing…”">
     <svg class="voadora" viewBox="0 0 210 140" aria-hidden="true"><use href="#gaivota"/></svg>
     <div class="in">
       <span class="eyebrow ink salta">Desculpómetro</span>
-      <h2 class="salta" style="--i:1">Da próxima vez, a culpa não é tua.<br><span class="rosa">É da gaivota.</span></h2>
-      <div class="pills salta" style="--i:2"><span class="pill">🙏 Obrigado</span><span class="pill">🔎 Demo ao vivo a seguir</span><span class="pill ink">[Nome da equipa]</span></div>
+      <h2 class="salta" style="--i:1">Next time, it's not your fault.<br><span class="rosa">It's the seagull's.</span></h2>
+      <div class="pills salta" style="--i:2"><span class="pill">🙏 Thank you</span><span class="pill">👀 One more thing…</span><span class="pill ink">[Team name]</span></div>
     </div>
+  </section>
+
+  <!-- 15. IPO -->
+  <section class="slide ipo" data-anim="ipo" data-notas="<b>20 s, finale.</b> “One more thing: we're going public.” Let the Big Gull speech play (or read it in your best rally voice). End on: “Believe me. Thank you!” Then live demo.">
+    <div class="fita" aria-hidden="true"><div>
+      DSCLP <span class="sobe">▲ 9,999%</span> · GULL <span class="sobe">▲ 312%</span> · FRANCESINHA <span class="sobe">▲ 48%</span> · ALARM-CLOCK <span class="desce">▼ 87%</span> · VAGUE-EXCUSES <span class="desce">▼ 100%</span> · TRAFFIC <span class="sobe">▲ always</span> · KEYS <span class="desce">▼ stolen</span> ·
+      DSCLP <span class="sobe">▲ 9,999%</span> · GULL <span class="sobe">▲ 312%</span> · FRANCESINHA <span class="sobe">▲ 48%</span> · ALARM-CLOCK <span class="desce">▼ 87%</span> · VAGUE-EXCUSES <span class="desce">▼ 100%</span> · TRAFFIC <span class="sobe">▲ always</span> · KEYS <span class="desce">▼ stolen</span> ·
+    </div></div>
+    <div class="in">
+      <span class="eyebrow ink salta">One more thing</span>
+      <h2 class="salta" style="--i:1">We're going public. <span class="sino" aria-hidden="true">🔔</span></h2>
+      <div class="card bolsa salta" style="--i:2">
+        <span class="tick">$DSCLP</span>
+        <span class="val" id="valor">$0</span>
+        <span class="sub">Listed on the Gull Street Exchange · <b>▲ 9,999% since the hackathon started</b></span>
+        <svg viewBox="0 0 600 170" aria-label="Share price chart going straight up">
+          <g stroke="#1d1b4b22" stroke-width="2"><line x1="0" y1="40" x2="600" y2="40"/><line x1="0" y1="85" x2="600" y2="85"/><line x1="0" y1="130" x2="600" y2="130"/></g>
+          <polyline class="linha-bolsa" points="10,160 60,150 100,155 150,138 190,145 240,120 280,128 330,98 370,104 410,72 450,80 490,46 530,52 570,16 590,10" fill="none" stroke="#06d6a0" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+          <circle cx="590" cy="10" r="8" fill="#ff4f8b" stroke="#1d1b4b" stroke-width="3"/>
+        </svg>
+      </div>
+      <p class="aviso-ipo salta" style="--i:3">Parody. Big Gull is a made-up character. Not a real IPO, not financial advice.</p>
+    </div>
+    <div class="fala" aria-live="off">
+      <span class="quem">Big Gull · Chairman of the Gull Board</span>
+      <span id="falaTxt"></span><span class="cursor" aria-hidden="true"></span>
+    </div>
+    <svg class="biggull" viewBox="0 0 300 360" role="img" aria-label="Big Gull, a made-up seagull tycoon with golden hair and a long red tie, making the OK sign with both hands">
+      <!-- braços (por trás) -->
+      <path d="M84 262 Q40 252 44 196" stroke="#1d1b4b" stroke-width="38" fill="none" stroke-linecap="round"/>
+      <path d="M84 262 Q40 252 44 196" stroke="#1f2a44" stroke-width="30" fill="none" stroke-linecap="round"/>
+      <path d="M216 262 Q260 252 256 196" stroke="#1d1b4b" stroke-width="38" fill="none" stroke-linecap="round"/>
+      <path d="M216 262 Q260 252 256 196" stroke="#1f2a44" stroke-width="30" fill="none" stroke-linecap="round"/>
+      <!-- fato -->
+      <path d="M58 360 L70 254 Q150 214 230 254 L242 360 Z" fill="#1f2a44" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M118 234 L150 306 L182 234 Z" fill="#ffffff" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M118 234 L136 290 L112 262 Z M182 234 L164 290 L188 262 Z" fill="#2c3a5e" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M142 242 L158 242 L163 256 L157 352 L150 360 L143 352 L137 256 Z" fill="#d62828" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+      <rect x="194" y="268" width="14" height="9" rx="2" fill="#3a86ff" stroke="#1d1b4b" stroke-width="2"/>
+      <!-- cabeça -->
+      <g class="cabeca">
+        <ellipse cx="150" cy="218" rx="38" ry="20" fill="#ffffff" stroke="#1d1b4b" stroke-width="4"/>
+        <circle cx="150" cy="150" r="62" fill="#ffffff" stroke="#1d1b4b" stroke-width="4"/>
+        <path d="M112 128 L140 134 M188 128 L160 134" stroke="#1d1b4b" stroke-width="6" stroke-linecap="round"/>
+        <path d="M118 146 Q128 138 138 146 M162 146 Q172 138 182 146" stroke="#1d1b4b" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M130 160 Q150 151 170 160 Q162 188 150 193 Q138 188 130 160 Z" fill="#ffd23f" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+        <circle cx="150" cy="182" r="4" fill="#ef233c"/>
+        <path d="M82 134 Q74 84 130 78 Q198 68 226 104 Q236 124 216 130 Q206 106 168 106 Q118 104 100 142 Z" fill="#f4c542" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M110 96 Q150 84 200 96 M104 112 Q150 98 210 112" stroke="#d9a520" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </g>
+      <!-- mãos a fazer OK -->
+      <g transform="translate(44 182)"><g class="mao esq">
+        <rect x="-15" y="-58" width="10" height="40" rx="5" fill="#ffffff" stroke="#1d1b4b" stroke-width="3" transform="rotate(-10)"/>
+        <rect x="-4" y="-62" width="10" height="44" rx="5" fill="#ffffff" stroke="#1d1b4b" stroke-width="3"/>
+        <rect x="7" y="-58" width="10" height="40" rx="5" fill="#ffffff" stroke="#1d1b4b" stroke-width="3" transform="rotate(10)"/>
+        <circle cx="-22" cy="-6" r="12" fill="none" stroke="#1d1b4b" stroke-width="13"/>
+        <circle cx="-22" cy="-6" r="12" fill="none" stroke="#ffffff" stroke-width="7"/>
+        <ellipse cx="0" cy="0" rx="20" ry="18" fill="#ffffff" stroke="#1d1b4b" stroke-width="3"/>
+      </g></g>
+      <g transform="translate(256 182) scale(-1 1)"><g class="mao dir">
+        <rect x="-15" y="-58" width="10" height="40" rx="5" fill="#ffffff" stroke="#1d1b4b" stroke-width="3" transform="rotate(-10)"/>
+        <rect x="-4" y="-62" width="10" height="44" rx="5" fill="#ffffff" stroke="#1d1b4b" stroke-width="3"/>
+        <rect x="7" y="-58" width="10" height="40" rx="5" fill="#ffffff" stroke="#1d1b4b" stroke-width="3" transform="rotate(10)"/>
+        <circle cx="-22" cy="-6" r="12" fill="none" stroke="#1d1b4b" stroke-width="13"/>
+        <circle cx="-22" cy="-6" r="12" fill="none" stroke="#ffffff" stroke-width="7"/>
+        <ellipse cx="0" cy="0" rx="20" ry="18" fill="#ffffff" stroke="#1d1b4b" stroke-width="3"/>
+      </g></g>
+    </svg>
   </section>
 </main>
 
 <div class="notas" id="notas" hidden></div>
-<nav class="nav" aria-label="Navegação dos slides">
-  <button type="button" id="ant" aria-label="Slide anterior">←</button>
+<nav class="nav" aria-label="Slide navigation">
+  <button type="button" id="ant" aria-label="Previous slide">←</button>
   <div class="pontos" id="pontos"></div>
-  <span class="contador" id="contador">1 / 14</span>
-  <button type="button" id="notasBtn" aria-pressed="false" title="Notas do orador (N)">📝</button>
-  <button type="button" id="ecraBtn" title="Ecrã inteiro (F)">⛶</button>
-  <button type="button" class="prox" id="prox" aria-label="Slide seguinte">→</button>
+  <span class="contador" id="contador">1 / 15</span>
+  <button type="button" id="notasBtn" aria-pressed="false" title="Speaker notes (N)">📝</button>
+  <button type="button" id="ecraBtn" title="Full screen (F)">⛶</button>
+  <button type="button" class="prox" id="prox" aria-label="Next slide">→</button>
 </nav>
 
 <script>
 (() => {
   const $ = id => document.getElementById(id);
+  const calma = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Destinatários e personagens, tal como em catalogo.js
+  // Recipients and characters, as in catalogo.js
   const DEST = [
-    ['👔','Chefe','formal e profissional'], ['👩‍👦','Mãe','dramático e afetuoso'], ['💘','Namorada','carinhoso'], ['🎓','Professor','respeitoso'],
-    ['👵','Sogra','a medir cada palavra'], ['🍻','Melhor amigo','descontraído, com piadas'], ['💼','Cliente','profissional e tranquilizador'],
-    ['🏠','Senhorio','cordial e firme'], ['🏋️','Treinador do ginásio','motivado e enérgico'], ['👥','Grupo da família','para várias pessoas ao mesmo tempo'],
+    ['👔','Boss','formal and professional'], ['👩‍👦','Mum','dramatic and loving'], ['💘','Girlfriend','sweet'], ['🎓','Teacher','respectful'],
+    ['👵','Mother-in-law','weighing every word'], ['🍻','Best friend','relaxed, with jokes'], ['💼','Client','professional and reassuring'],
+    ['🏠','Landlord','friendly but firm'], ['🏋️','Gym coach','pumped and energetic'], ['👥','Family group chat','for many people at once'],
   ];
   $('destinos').innerHTML = DEST.map(([e, n, t], i) =>
     `<div class="card dest salta" style="--i:${i + 3}"><span class="e">${e}</span><b>${n}</b><span>${t}</span></div>`).join('');
@@ -684,35 +794,52 @@
   $('desfile').innerHTML = PERS.map((e, i) =>
     `<span style="top:${8 + (i * 37) % 80}%;animation-duration:${5 + (i % 5)}s;animation-delay:${-(i * 0.9).toFixed(1)}s">${e}</span>`).join('');
 
-  // Velocímetro (mesmas zonas do site)
+  let timers = [];
+  const limpa = () => { timers.forEach(t => { clearTimeout(t); clearInterval(t); }); timers = []; };
+
+  // Gauge (same zones as the site)
   const ZONAS = [{ de: 0, ate: 20, cor: '#ef233c' }, { de: 20, ate: 50, cor: '#ff8c42' }, { de: 50, ate: 80, cor: '#ffd23f' }, { de: 80, ate: 100, cor: '#06d6a0' }];
-  const VERED = ['Ninguém acredita', 'Talvez cole', 'Convincente', 'Irrefutável'];
+  const VERED = ['Nobody buys it', 'Might work', 'Convincing', 'Irrefutable'];
   const pt = (v, r) => { const a = Math.PI * (1 - v / 100); return [170 + r * Math.cos(a), 170 - r * Math.sin(a)]; };
   $('arcos').innerHTML = ZONAS.map(z => {
     const [x1, y1] = pt(z.de, 132), [x2, y2] = pt(z.ate, 132);
     return `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)} A132 132 0 0 1 ${x2.toFixed(1)} ${y2.toFixed(1)}" fill="none" stroke="${z.cor}" stroke-width="34"/>`;
   }).join('') + `<path d="M${pt(0,151).join(' ')} A151 151 0 0 1 ${pt(100,151).join(' ')}" fill="none" stroke="#1d1b4b" stroke-width="3"/>`;
   $('etiquetas').innerHTML = [0, 20, 50, 80, 100].map(v => { const [x, y] = pt(v, 170); return `<text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}">${v}</text>`; }).join('');
-  let timers = [];
   function medidor(on) {
-    timers.forEach(clearTimeout); timers = [];
     const m = $('medidor'), p = $('ponteiro');
     m.classList.remove('carimbado'); p.style.transition = 'none'; p.style.transform = 'rotate(-90deg)';
-    $('num').textContent = '?'; $('veredito').textContent = 'À espera de provas…'; $('veredito').style.color = '';
+    $('num').textContent = '?'; $('veredito').textContent = 'Waiting for evidence…'; $('veredito').style.color = '';
     if (!on) return;
     const alvo = 87;
     timers.push(setTimeout(() => {
       p.style.transition = ''; p.style.transform = `rotate(${-90 + alvo * 1.8}deg)`;
-      let n = 0; const passo = setInterval(() => { n = Math.min(alvo, n + 3); $('num').textContent = n; if (n >= alvo) clearInterval(passo); }, 45);
-      timers.push(passo);
+      let n = 0; timers.push(setInterval(() => { n = Math.min(alvo, n + 3); $('num').textContent = n; }, 45));
     }, 700));
     timers.push(setTimeout(() => { $('veredito').textContent = VERED[3]; $('veredito').style.color = '#06a57b'; m.classList.add('carimbado'); }, 3000));
   }
 
-  // Navegação
+  // IPO: Big Gull's speech (made-up character) and the valuation counter
+  const DISCURSO = "Desculpómetro. Tremendous startup. The best startup in the history of startups, maybe in the history of the world. Everybody says so. People come up to me, big strong people, tears in their eyes: “Sir, we were late, and we had evidence.” Real facts. No fake excuses. And the seagull? Very smart bird. Many people don't know that. So we're going public. The biggest IPO ever. Billions and billions of dollars. Believe me.";
+  function ipo(on) {
+    const fala = $('falaTxt'), valor = $('valor');
+    fala.textContent = ''; valor.textContent = '$0';
+    if (!on) return;
+    if (calma) { fala.textContent = DISCURSO; valor.textContent = '$4,200,000,000'; return; }
+    let i = 0;
+    timers.push(setTimeout(() => timers.push(setInterval(() => {
+      i = Math.min(DISCURSO.length, i + 2); fala.textContent = DISCURSO.slice(0, i);
+    }, 38)), 1200));
+    let v = 0;
+    timers.push(setTimeout(() => timers.push(setInterval(() => {
+      v = Math.min(4.2e9, v + 4.2e9 / 60); valor.textContent = '$' + Math.round(v).toLocaleString('en-US');
+    }, 50)), 700));
+  }
+
+  // Navigation
   const slides = [...document.querySelectorAll('.slide')];
   const total = slides.length;
-  $('pontos').innerHTML = slides.map((_, i) => `<button type="button" aria-label="Ir para o slide ${i + 1}"></button>`).join('');
+  $('pontos').innerHTML = slides.map((_, i) => `<button type="button" aria-label="Go to slide ${i + 1}"></button>`).join('');
   const pontos = [...$('pontos').children];
   let atual = -1;
   function ir(n) {
@@ -725,7 +852,9 @@
     $('contador').textContent = `${n + 1} / ${total}`;
     $('progresso').style.width = `${((n + 1) / total) * 100}%`;
     $('notas').innerHTML = slides[n].dataset.notas || '';
+    limpa();
     medidor(slides[n].dataset.anim === 'medidor');
+    ipo(slides[n].dataset.anim === 'ipo');
     try { history.replaceState(null, '', `#s${n + 1}`); } catch (e) {}
   }
   pontos.forEach((p, i) => p.onclick = () => ir(i));

@@ -325,6 +325,8 @@
     <div id="secTribunal" class="hidden"></div>
 
     <div id="secParodia" class="hidden">
+      <h2><span data-t="h_video"></span> <span class="pill" data-t="ficcao_pill"></span></h2>
+      <div id="video" style="max-width:820px"></div>
       <div id="jornalWrap">
         <h2><span data-t="h_jornal"></span> <span class="pill" data-t="ficcao_pill"></span></h2>
         <div id="jornal"></div>
@@ -340,6 +342,7 @@ import { DESTINATARIOS, PERSONAGENS } from './catalogo.js';
 import { abrirMessenger, fecharMessenger } from './messenger.js';
 import { iniciarCronometro, pararCronometro, abrirTribunal } from './extras.js';
 import { boneco } from './bonecos.js';
+import { mostrarVideo } from './video.js';
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
@@ -368,7 +371,7 @@ const TEXTOS = {
     h_provas: '🧾 As provas', h_msg: '✉️ A mensagem', fonte: 'Fonte',
     copiar: '📋 Copiar mensagem', copiado: '✅ Copiado!', outra: '🎲 Gerar outra desculpa', verdade: '😇 Ou então diz a verdade', verdade_busy: '😬 A ganhar coragem...',
     h_verdade: '😇 A versão honesta', copiarV: '📋 Copiar versão honesta',
-    h_jornal: '🗞️ Prova de paródia: imprensa especializada', h_entrevista: '🎤 Prova de paródia: entrevista exclusiva', ficcao_pill: 'ficção',
+    h_jornal: '🗞️ Prova de paródia: imprensa especializada', h_video: '🎬 Prova de paródia: imagens da câmara de vigilância', h_entrevista: '🎤 Prova de paródia: entrevista exclusiva', ficcao_pill: 'ficção',
     sirene: 'MODO DESESPERO', emergencia: '🚨 Desculpa de emergência', ultimo: '☠️ ÚLTIMO RECURSO', numero: 'n.º',
     abrir: '🗂️ A abrir o processo...', concluida: '✅ Investigação concluída. Processo arquivado.',
     tools: { geocode: 'A localizar', get_weather: 'Meteorologia', get_traffic: 'Trânsito', get_transport_status: 'Transportes', get_events_nearby: 'Eventos', get_seagull_facts: 'Inteligência sobre gaivotas' },
@@ -400,7 +403,7 @@ const TEXTOS = {
     h_provas: '🧾 The evidence', h_msg: '✉️ The message', fonte: 'Source',
     copiar: '📋 Copy message', copiado: '✅ Copied!', outra: '🎲 Generate another excuse', verdade: '😇 Or just tell the truth', verdade_busy: '😬 Finding the courage...',
     h_verdade: '😇 The honest version', copiarV: '📋 Copy honest version',
-    h_jornal: '🗞️ Parody evidence: specialist press', h_entrevista: '🎤 Parody evidence: exclusive interview', ficcao_pill: 'fiction',
+    h_jornal: '🗞️ Parody evidence: specialist press', h_video: '🎬 Parody evidence: CCTV footage', h_entrevista: '🎤 Parody evidence: exclusive interview', ficcao_pill: 'fiction',
     sirene: 'DESPERATION MODE', emergencia: '🚨 Emergency excuse', ultimo: '☠️ LAST RESORT', numero: 'no.',
     abrir: '🗂️ Opening the case file...', concluida: '✅ Investigation complete. Case closed.',
     tools: { geocode: 'Locating', get_weather: 'Weather', get_traffic: 'Traffic', get_transport_status: 'Public transport', get_events_nearby: 'Events', get_seagull_facts: 'Seagull intelligence' },
@@ -634,6 +637,7 @@ function mostrarFinal(d) {
       : `<div class="absurda">${esc(t('emergencia'))}${num}: ${esc(a.titulo)}</div>`) : '';
   if (desespero) {
     const personagem = a?.personagem || (d.diario_do_bico ? 'gaivota' : 'outro');
+    mostrarVideo($('video'), { lang, personagem, video: d.video || {}, minutos: pedidoAtual?.minutos, fuga: pedidoAtual?.tipo === 'fuga' });
     $('jornalWrap').classList.toggle('hidden', !d.diario_do_bico);
     $('jornal').innerHTML = d.diario_do_bico ? renderJornal(d.diario_do_bico) : '';
     $('entrevista').innerHTML = d.entrevista ? renderEntrevista(d.entrevista, personagem) : '';
@@ -747,6 +751,7 @@ $('enviarBtn').onclick = () => {
     lang, resultado: ultimoResultado,
     destinatario: pedidoAtual.destinatario, destinatario_id: pedidoAtual.destinatario_id, emoji: d?.emoji || '🙂',
     gaivotaSVG, fotoHTML: p ? boneco(p, PERSONAGENS[p]?.emoji) : null,
+    videoOpcoes: ultimoResultado.modo_desespero && p ? { lang, personagem: p, video: ultimoResultado.video || {}, minutos: pedidoAtual.minutos, fuga: pedidoAtual.tipo === 'fuga' } : null,
   });
 };
 $('tribunalBtn').onclick = async () => {

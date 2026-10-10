@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 app.use(express.static('public'));
 
-const SYSTEM = `És o Desculpómetro, especialista em desculpas para atrasos. Investiga com as ferramentas o que se passa no caminho do utilizador. Usa só factos que as ferramentas devolverem, nunca inventes. Escolhe a combinação de provas mais forte, dá uma nota de credibilidade de 0 a 100 e escreve a mensagem no tom certo para o destinatário (ver TONS). Se a credibilidade ficar abaixo de 20, ativa o MODO DESESPERO: chama get_seagull_facts e constrói, com total seriedade, uma desculpa em que uma gaivota roubou as chaves, apoiada nesses factos reais. No fim devolve JSON com: credibilidade, provas (lista com titulo, detalhe e fonte), mensagem, modo_desespero.
+const SYSTEM = `És o Desculpómetro, especialista em desculpas para atrasos. Investiga com as ferramentas o que se passa no caminho do utilizador. Usa só factos que as ferramentas devolverem, nunca inventes. Escolhe a combinação de provas mais forte, dá uma nota de credibilidade de 0 a 100 e escreve a mensagem no tom certo para o destinatário (ver TONS). Se a credibilidade ficar abaixo de 20, ativa o MODO DESESPERO: escolhe uma desculpa absurda do catálogo abaixo e constrói-a com total seriedade, apoiada em factos reais. No fim devolve JSON com: credibilidade, provas (lista com titulo, detalhe e fonte), mensagem, modo_desespero.
 
 TONS por destinatário (se for outro, escolhe o tom que fizer sentido):
 ${TONS}
@@ -26,9 +26,9 @@ Regras adicionais:
 - No tipo FUGA, as desculpas absurdas do modo desespero adaptam-se: em vez de "cheguei tarde", "não vou conseguir ir".
 - Em cada prova, a "fonte" é a que a ferramenta indicou, tal como veio (se diz "simulados", mantém).
 - A credibilidade deve refletir se os factos encontrados explicam mesmo os minutos de atraso. Um atraso grande sem nada que o justifique dá credibilidade baixa.
-- A mensagem é o texto pronto a enviar, na primeira pessoa, sem emojis em excesso.
+- A mensagem é o texto pronto a enviar, na primeira pessoa, sem emojis em excesso. É uma mensagem de telemóvel: 2 a 3 frases curtas, no máximo 60 palavras. Sem cumprimentos longos nem despedidas formais.
 MODO DESESPERO (credibilidade abaixo de 20):
-- Escolhe UMA destas desculpas absurdas, a que melhor encaixar no trajeto e nos factos encontrados, ou cria uma parecida no mesmo estilo portuense:
+- Escolhe UMA destas desculpas absurdas, ou cria uma parecida no mesmo estilo portuense. VARIA: o pedido traz uma lista de sugestões sorteadas para esta vez; escolhe uma delas, a que melhor encaixar nos factos. Não repitas sempre a gaivota das chaves.
 ${listaDesculpas('desespero')}
   (A personagem entrevistada pode ser um objeto ou comida, como a rotunda, a francesinha ou o carro, a falar na primeira pessoa.)
 - ÚLTIMO RECURSO: estas são as mais absurdas de todas. Usa-as SÓ quando a credibilidade for exatamente 0 (nenhum facto ajuda em nada) e, nesse caso, escolhe obrigatoriamente uma delas. Com credibilidade de 1 a 19, nunca as uses.
@@ -37,6 +37,7 @@ ${listaDesculpas('ultimo')}
 - A mensagem é escrita com total seriedade, como se fosse a coisa mais normal do mundo.
 - Acrescenta ao JSON estes campos de paródia, claramente fictícios e humorísticos:
   "desculpa_absurda": { "numero": número da lista (ou 0 se for criada por ti), "titulo": frase curta da desculpa, "ultimo_recurso": true se for uma das 11 a 20, "personagem": uma de ${Object.keys(PERSONAGENS).join('|')}|outro }
+  "video": { "cenario": um de ribeira|ponte|rua|cafe|casa|metro|mercado|supermercado|estrada, "objeto": um emoji do que foi roubado ou do que causou o problema (ex: 🔑, 🥪, 📱, 🧀, 🥐, 🃏), "legendas": [4 legendas muito curtas, até 8 palavras cada, que contam a cena por ordem, como num vídeo de câmara de vigilância] }
   "entrevista": { "titulo": string, "entrevistada": nome e descrição da personagem culpada, "perguntas": [5 a 6 objetos { "p": pergunta, "r": resposta } em que a personagem confessa tudo; se for gaivota, com arrogância] }
   Só quando a personagem for gaivota, acrescenta também:
   "diario_do_bico": { "manchete": string sensacionalista em maiúsculas, "subtitulo": string, "lead": string, "corpo": [3 a 4 parágrafos curtos e absurdos, escritos por gaivotas, com factos reais da Wikipédia misturados], "caixa_factos": [3 factos reais da Wikipédia, curtos], "legenda_foto": string }
@@ -168,8 +169,14 @@ function situacao(b) {
   return t;
 }
 
+// Sorteia algumas desculpas do catálogo para o agente variar (senão escolhe quase sempre a gaivota das chaves)
+function sugestoes(tier, n) {
+  return DESCULPAS.filter(d => d.tier === tier).sort(() => Math.random() - 0.5).slice(0, n).map(d => d.n).join(', ');
+}
+
 function pedidoUtilizador(b) {
   let t = situacao(b) + '\n\nInvestiga e monta a melhor desculpa.';
+  t += `\n\nSUGESTÕES SORTEADAS para o modo desespero, se for preciso: ${sugestoes('desespero', 4)}. Para o último recurso: ${sugestoes('ultimo', 3)}.`;
   if (b.forcar_desespero === 'ultimo') t += '\n\n(Demonstração: considera que nenhum facto ajuda em nada. Credibilidade exatamente 0, MODO DESESPERO em ÚLTIMO RECURSO.)';
   else if (b.forcar_desespero) t += '\n\n(Demonstração: considera que nenhuma prova chega e ativa o MODO DESESPERO, credibilidade entre 1 e 19.)';
   if (Array.isArray(b.evitar) && b.evitar.length) {

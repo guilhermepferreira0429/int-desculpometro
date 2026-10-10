@@ -240,6 +240,8 @@ const B = {
     { comprido: true, letreiro: `<text x="50" y="96" font-size="8" font-weight="800" fill="#fff" text-anchor="middle" font-family="sans-serif">ESPAÑA</text>` }),
 };
 delete B.gato_teclado;
+// o protagonista (quem dá a desculpa), usado nos vídeos
+B.tu = () => pessoa({ cabelo: 'curto', corCabelo: '#2b2b2b', roupa: '#9aa3b5', calcas: '#3a3a5a', pele: '#f1c27d' });
 
 export const temBoneco = id => typeof B[id] === 'function';
 

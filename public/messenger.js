@@ -1,6 +1,8 @@
 // Bico Messenger: simulação animada do envio da desculpa, com o destinatário a responder (outra chamada à IA).
 // App inventada e genérica: sem logótipos nem cores de apps de mensagens reais.
 
+import { mostrarVideo } from './video.js';
+
 const TXT = {
   pt: {
     app: 'Bico Messenger', online: 'online', escrever: 'a escrever...', mensagem: 'Mensagem', hoje: 'HOJE',
@@ -33,6 +35,8 @@ const CSS = `
   .bm-marca { margin-left:auto; font-size:.65rem; font-weight:800; letter-spacing:1px; background:#fff3; padding:2px 8px; border-radius:99px; }
   .bm-chat { flex:1; overflow-y:auto; padding: 12px 10px; display:flex; flex-direction:column; gap:6px; scroll-behavior:smooth;
              background-image: radial-gradient(#5b4b8a1a 1.5px, transparent 1.5px); background-size: 18px 18px; }
+  .bm-chat > * { flex-shrink: 0; }
+  .bm-chat { scrollbar-width: none; } .bm-chat::-webkit-scrollbar { display: none; }
   .bm-dia { align-self:center; font-size:.68rem; font-weight:700; background:#fff; color:#666; padding: 3px 10px; border-radius: 8px; margin-bottom: 6px; }
   .bm-b { max-width: 82%; padding: 7px 10px 18px; border-radius: 14px; font-size:.9rem; line-height:1.35; position:relative; box-shadow: 0 1px 1px #0002; animation: bm-pop .3s cubic-bezier(.2,1.5,.4,1) both; white-space: pre-wrap; word-wrap: break-word; }
   @keyframes bm-pop { from { transform: scale(.6); opacity:0; } }
@@ -70,6 +74,7 @@ const CSS = `
   .bm-pag .lead { font-style: italic; font-size:.9rem; }
   .bm-pag .foto { background:#d8d1bd; border: 2px solid #111; height: 120px; display:flex; align-items:center; justify-content:center; font-size: 4rem; margin: 10px 0; }
   .bm-pag .foto svg { width: 150px; height: 112px; }
+  .bm-pag .video-bm { margin: 10px 0; }
   .bm-pag h4 { font-family: system-ui, sans-serif; margin: 12px 0 4px; font-size:.85rem; text-transform: uppercase; }
   .bm-pag .p { font-weight:700; font-size:.85rem; margin: 8px 0 2px; }
   .bm-pag .r { font-size:.85rem; margin:0; padding-left: 8px; border-left: 3px solid #d10f1f; }
@@ -84,7 +89,21 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 const espera = ms => new Promise(r => setTimeout(r, ms));
 const hora = () => new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
 
-let corrida = 0; // cada abertura tem um id; se o utilizador fechar, a sequência antiga pára
+let corrida = 0;
+
+// Divide a mensagem em até 3 bolhas, pelas frases
+function partir(texto) {
+  const frases = texto.split(/(?<=[.!?…])\s+/).filter(Boolean);
+  if (texto.length < 140 || frases.length < 2) return [texto];
+  const n = Math.min(3, frases.length), alvo = texto.length / n, out = [];
+  let atual = '';
+  for (const f of frases) {
+    if (atual && (atual.length + f.length) > alvo * 1.15 && out.length < n - 1) { out.push(atual); atual = f; }
+    else atual = atual ? atual + ' ' + f : f;
+  }
+  if (atual) out.push(atual);
+  return out;
+} // cada abertura tem um id; se o utilizador fechar, a sequência antiga pára
 
 // dados: { lang, resultado (JSON do agente), pedido (o que foi enviado ao agente), destinatario (rótulo), destinatario_id, emoji, gaivotaSVG, fotoHTML }
 export function abrirMessenger(dados) {
@@ -146,8 +165,9 @@ async function correr(id, dados, T) {
   const minha = async html => {
     const el = bolha('eu', `${html}<span class="bm-hora">${hora()} <span class="bm-vistos">🕓</span></span>`);
     const v = el.querySelector('.bm-vistos');
-    await espera(700); v.textContent = '✓';
-    await espera(700); v.textContent = '✓✓';
+    setTimeout(() => { v.textContent = '✓'; }, 500);
+    setTimeout(() => { v.textContent = '✓✓'; }, 1000);
+    await espera(650);
     return { el, lido: () => { v.classList.add('lido'); } };
   };
 
@@ -163,9 +183,12 @@ async function correr(id, dados, T) {
     }),
   }).then(x => x.json()).catch(e => ({ erro: e.message }));
 
-  const enviada = await minha(esc(r.mensagem));
+  // a desculpa vai em 2 ou 3 bolhas curtas, como se escreve no telemóvel
+  const bolhas = partir(r.mensagem || '');
+  const enviadas = [];
+  for (const b of bolhas) { enviadas.push(await minha(esc(b))); if (!vivo()) return; }
   await espera(900); if (!vivo()) return;
-  enviada.lido();
+  enviadas.forEach(m => m.lido());
 
   // 2. "a escrever..." enquanto a IA pensa
   sub(T.escrever);
@@ -221,10 +244,11 @@ async function abrirPagina(dados, conversa, T, vivo) {
       <span class="exc">${esc(T.exclusivo)}</span>
       <div class="man">${esc(j?.manchete || conversa.noticia_link?.manchete || '')}</div>
       <p class="lead">${esc(j?.lead || conversa.noticia_link?.lead || '')}</p>
-      <div class="foto">${foto}</div>
+      <div class="foto" id="bm-foto">${foto}</div>
       ${e ? `<h4>${esc(T.entrevista)}: ${esc(e.entrevistada)}</h4>${(e.perguntas || []).slice(0, 4).map(q => `<div class="p">— ${esc(q.p)}</div><p class="r">${esc(q.r)}</p>`).join('')}` : ''}
       ${!e && j?.corpo ? j.corpo.map(p => `<p>${esc(p)}</p>`).join('') : ''}
     </div>`;
+  if (dados.videoOpcoes) { const fv = document.getElementById('bm-foto'); fv.className = 'video-bm'; mostrarVideo(fv, dados.videoOpcoes); }
   let fechada = false;
   const fechar = () => { fechada = true; nav.classList.remove('aberto'); };
   nav.querySelector('.x').onclick = fechar;
