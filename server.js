@@ -27,10 +27,21 @@ MODO DESESPERO (credibilidade abaixo de 20):
   8. Uma tuna académica bloqueou a rua a cantar e era falta de respeito interromper [tuna]
   9. O meu gato sentou-se no teclado e mandou um email ao meu chefe, tive de resolver [gato]
   10. Um senhor no café quis explicar-me a tática do Porto e não o podia deixar a meio [senhor_do_cafe]
+  21. Uma gaivota roubou-me o telemóvel e mandou mensagem ao meu chefe a dizer que eu me demito, tive de ir buscá-lo ao telhado [gaivota]
+  22. Fiquei preso numa rotunda em Gaia, dei 37 voltas e não havia saída [rotunda]
+  23. Fui atrás de um cão que tinha o meu cachecol e acabei no meio de uma maratona, já agora terminei [cao]
+  24. Comi uma francesinha ao pequeno-almoço e entrei em coma digestivo temporário [francesinha]
+  25. Uma gaivota sindicalizou as outras e fizeram um piquete à porta do meu prédio [gaivota]
+  26. O elevador parou entre andares com a vizinha do terceiro esquerdo e ela contou-me a vida toda desde 1974 [vizinha]
+  27. Fui ao café só beber um cimbalino e a conversa sobre política ainda não acabou [senhor_do_cafe]
+  28. Uma senhora no mercado do Bolhão pôs-me a provar queijos e não aceita um não [vendedora]
+  29. Perdi as chaves, encontrei as chaves, perdi o carro, ainda não encontrei o carro [carro]
+  30. Uma gaivota reconheceu-me de outra vida e tivemos de pôr a conversa em dia [gaivota]
+  (A personagem entrevistada pode ser um objeto ou comida, como a rotunda, a francesinha ou o carro, a falar na primeira pessoa.)
 - Se a desculpa envolver gaivotas, chama get_seagull_facts e usa esses factos reais. Nas outras, mistura os factos reais que as outras ferramentas devolveram (tempo, trânsito, transportes, eventos).
 - A mensagem é escrita com total seriedade, como se fosse a coisa mais normal do mundo.
 - Acrescenta ao JSON estes campos de paródia, claramente fictícios e humorísticos:
-  "desculpa_absurda": { "numero": número da lista (ou 0 se for criada por ti), "titulo": frase curta da desculpa, "personagem": uma de gaivota|turista|vizinha|avo|maquinista|padeira|tuna|gato|senhor_do_cafe|outro }
+  "desculpa_absurda": { "numero": número da lista (ou 0 se for criada por ti), "titulo": frase curta da desculpa, "personagem": uma de gaivota|turista|vizinha|avo|maquinista|padeira|tuna|gato|senhor_do_cafe|rotunda|cao|francesinha|vendedora|carro|outro }
   "entrevista": { "titulo": string, "entrevistada": nome e descrição da personagem culpada, "perguntas": [5 a 6 objetos { "p": pergunta, "r": resposta } em que a personagem confessa tudo; se for gaivota, com arrogância] }
   Só quando a personagem for gaivota, acrescenta também:
   "diario_do_bico": { "manchete": string sensacionalista em maiúsculas, "subtitulo": string, "lead": string, "corpo": [3 a 4 parágrafos curtos e absurdos, escritos por gaivotas, com factos reais da Wikipédia misturados], "caixa_factos": [3 factos reais da Wikipédia, curtos], "legenda_foto": string }
