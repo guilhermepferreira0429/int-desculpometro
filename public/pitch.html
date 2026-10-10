@@ -4,8 +4,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
-  /* Mesma linguagem visual do site (index.html / ferramentas.html): creme com pontos, tinta azul-noite, bordas de 3px e sombras duras.
-     Apresentação de slides em ecrã inteiro; uma secção .slide por página, animações só no slide ativo. Visual único (claro), cores explícitas. */
+  /* Mesma linguagem visual do site: creme com pontos, tinta azul-noite, bordas de 3px e sombras duras.
+     Palco 16:9 fixo (1600x900) que escala para caber no ecrã: nenhum slide faz scroll. Visual único (claro), cores explícitas. */
   :root {
     --bg:#fff6e0; --ink:#1d1b4b; --card:#ffffff; --mut:#6b6893;
     --amarelo:#ffd23f; --rosa:#ff4f8b; --azul:#3a86ff; --verde:#06d6a0; --laranja:#ff8c42; --vermelho:#ef233c; --roxo:#8338ec;
@@ -15,69 +15,76 @@
     color-scheme: light;
   }
   * { box-sizing: border-box; }
-  html { font-size: clamp(15px, 0.9vw + 6px, 25px); height: 100%; }
+  html { font-size: 20px; height: 100%; }
   body { margin: 0; height: 100%; overflow: hidden; font-family: var(--f); background: var(--bg); color: var(--ink);
          background-image: radial-gradient(#1d1b4b14 1.5px, transparent 1.5px); background-size: 22px 22px; }
   button { font: inherit; font-weight: 800; color: #fff; background: var(--rosa); border: var(--borda); border-radius: 14px;
            padding: .4rem 1rem; box-shadow: 4px 4px 0 var(--ink); cursor: pointer; transition: transform .1s, box-shadow .1s; }
   button:hover { transform: translate(-1px,-1px); box-shadow: 6px 6px 0 var(--ink); }
   button:active { transform: translate(3px,3px); box-shadow: 1px 1px 0 var(--ink); }
-  button:focus-visible, a:focus-visible { outline: 3px solid var(--rosa); outline-offset: 3px; }
+  button:focus-visible { outline: 3px solid var(--rosa); outline-offset: 3px; }
   .card { background: var(--card); border: var(--borda); border-radius: 18px; box-shadow: var(--sombra); }
   code { font-family: var(--mono); font-size: .88em; background: #1d1b4b12; border-radius: 6px; padding: 0 5px; }
 
-  /* ---------- palco de slides ---------- */
-  .deck { position: fixed; inset: 0; }
-  .slide { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; padding: 3.2rem max(16px, 4vw) 5.5rem;
-           display: flex; flex-direction: column; justify-content: center; opacity: 0; visibility: hidden; transform: translateX(40px);
+  /* ---------- palco ---------- */
+  .deck { position: fixed; left: 50%; top: 50%; width: 1600px; height: 900px; margin: -450px 0 0 -800px; transform: scale(var(--k, 1)); overflow: hidden; }
+  .slide { position: absolute; inset: 0; overflow: hidden; padding: 64px 72px 92px; display: flex; flex-direction: column; justify-content: center;
+           opacity: 0; visibility: hidden; transform: translateX(40px);
            transition: opacity .35s, transform .45s cubic-bezier(.2,1.3,.4,1), visibility 0s .35s; }
   .slide.ativo { opacity: 1; visibility: visible; transform: none; transition: opacity .35s, transform .45s cubic-bezier(.2,1.3,.4,1); }
   .slide.antes { transform: translateX(-40px); }
-  .in { width: 100%; max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.2rem; }
+  .in { width: 100%; max-width: 1456px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.1rem; position: relative; z-index: 2; }
 
-  .marca { position: fixed; top: max(12px, env(safe-area-inset-top, 0px)); left: max(16px, 2vw); z-index: 40; font-weight: 800; font-size: 1.15rem; letter-spacing: -.5px;
+  .marca { position: absolute; top: 16px; left: 24px; z-index: 40; font-weight: 800; font-size: 1.1rem; letter-spacing: -.5px;
            background: #fff; border: var(--borda); border-radius: 99px; padding: 0 .8rem; box-shadow: 3px 3px 0 var(--ink); transition: opacity .3s; }
   .marca .o, .logo .o { color: var(--rosa); display: inline-block; animation: abana 2.5s ease-in-out infinite; }
   @keyframes abana { 50% { transform: rotate(-12deg) translateY(-4px); } }
-  body[data-slide="1"] .marca { opacity: 0; }
+  .deck[data-slide="1"] .marca, .deck[data-anim="ipo"] .marca { opacity: 0; }
 
   .eyebrow { align-self: flex-start; font-weight: 800; font-size: .95rem; background: var(--amarelo); border: var(--borda); border-radius: 99px; padding: 0 .9rem; box-shadow: 3px 3px 0 var(--ink); }
   .eyebrow.ink { background: var(--ink); color: var(--amarelo); }
   h1, h2 { margin: 0; font-weight: 800; line-height: 1.05; letter-spacing: -1px; text-wrap: balance; }
-  h2 { font-size: 2.9rem; }
-  .lead { margin: 0; font-size: 1.3rem; line-height: 1.45; color: var(--mut); max-width: 62ch; }
+  h2 { font-size: 2.5rem; }
+  .lead { margin: 0; font-size: 1.25rem; line-height: 1.45; color: var(--mut); max-width: 62ch; }
   .lead b { color: var(--ink); }
   .grelha { display: grid; gap: 1rem; }
   .g2 { grid-template-columns: repeat(2, minmax(0,1fr)); } .g3 { grid-template-columns: repeat(3, minmax(0,1fr)); } .g4 { grid-template-columns: repeat(4, minmax(0,1fr)); } .g5 { grid-template-columns: repeat(5, minmax(0,1fr)); }
 
-  /* entradas animadas (só no slide ativo; estado final visível) */
   .slide.ativo .salta { animation: salta .55s cubic-bezier(.2,1.6,.4,1) both; animation-delay: calc(var(--i, 0) * .12s + .15s); }
   @keyframes salta { from { opacity: 0; transform: translateY(24px) scale(.92); } }
 
-  /* ---------- barra de navegação ---------- */
-  .nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; display: flex; align-items: center; gap: .7rem; justify-content: center;
-         padding: .6rem 16px calc(.7rem + env(safe-area-inset-bottom, 0px)); pointer-events: none; }
+  /* ---------- navegação (dentro do palco) ---------- */
+  .nav { position: absolute; left: 0; right: 0; bottom: 18px; z-index: 50; display: flex; align-items: center; gap: .7rem; justify-content: center; pointer-events: none; }
   .nav > * { pointer-events: auto; }
-  .nav button { padding: .2rem .9rem; font-size: 1rem; background: #fff; color: var(--ink); }
+  .nav button { padding: .1rem .9rem; font-size: 1rem; background: #fff; color: var(--ink); }
   .nav button.prox { background: var(--rosa); color: #fff; }
-  .pontos { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; background: #fff; border: var(--borda); border-radius: 99px; padding: 6px 10px; box-shadow: 3px 3px 0 var(--ink); }
+  .pontos { display: flex; gap: 6px; background: #fff; border: var(--borda); border-radius: 99px; padding: 6px 10px; box-shadow: 3px 3px 0 var(--ink); }
   .pontos button { width: 14px; height: 14px; padding: 0; border-radius: 50%; border: 2px solid var(--ink); box-shadow: none; background: #fff; }
   .pontos button[aria-current="true"] { background: var(--rosa); transform: scale(1.25); }
   .contador { font-weight: 800; font-variant-numeric: tabular-nums; background: var(--ink); color: var(--amarelo); border-radius: 99px; padding: 0 .7rem; font-size: .9rem; }
-  .progresso { position: fixed; top: 0; left: 0; height: 6px; background: var(--rosa); z-index: 60; transition: width .4s; border-right: 3px solid var(--ink); }
-  .notas { position: fixed; left: 50%; bottom: 4.2rem; transform: translateX(-50%); width: min(900px, calc(100% - 32px)); z-index: 45;
+  .progresso { position: absolute; top: 0; left: 0; height: 6px; background: var(--rosa); z-index: 60; transition: width .4s; border-right: 3px solid var(--ink); }
+  .notas { position: absolute; left: 50%; bottom: 76px; transform: translateX(-50%); width: 900px; z-index: 45;
            background: var(--ink); color: #fff; border-radius: 16px; padding: .8rem 1.1rem; font-size: 1rem; line-height: 1.45; box-shadow: 5px 5px 0 var(--rosa); }
   .notas b { color: var(--amarelo); }
 
+  /* ---------- equipa ---------- */
+  .equipa { display: flex; gap: .9rem; flex-wrap: wrap; }
+  .membro { display: flex; align-items: center; gap: .6rem; padding: .35rem .9rem .35rem .4rem; border-radius: 99px; }
+  .membro .av { width: 52px; height: 52px; flex: none; border: var(--borda); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; overflow: hidden; }
+  .membro .av svg { width: 48px; height: 48px; }
+  .membro .av .bn { width: 58px; height: 64px; margin-top: 8px; }
+  .membro b { display: block; font-size: 1.05rem; line-height: 1.1; }
+  .membro span { display: block; font-size: .8rem; color: var(--mut); line-height: 1.2; }
+
   /* ---------- 1. capa ---------- */
-  .capa .logo { font-size: clamp(3.4rem, 9vw, 8rem); line-height: .95; letter-spacing: -3px; }
-  .capa .lead { font-size: 1.55rem; color: var(--ink); }
+  .capa .logo { font-size: 7.5rem; line-height: .95; letter-spacing: -3px; }
+  .capa .lead { font-size: 1.5rem; color: var(--ink); }
   .pills { display: flex; gap: .7rem; flex-wrap: wrap; }
   .pill { font-weight: 800; background: #fff; border: var(--borda); border-radius: 99px; padding: .1rem 1rem; box-shadow: 3px 3px 0 var(--ink); }
   .pill.ink { background: var(--ink); color: var(--amarelo); }
-  .voadora { position: absolute; top: 14%; left: -260px; width: clamp(160px, 18vw, 300px); pointer-events: none; filter: drop-shadow(4px 6px 0 #0003); }
+  .voadora { position: absolute; top: 110px; left: -300px; width: 260px; pointer-events: none; filter: drop-shadow(4px 6px 0 #0003); z-index: 1; }
   .slide.ativo .voadora { animation: voa 8s linear infinite; }
-  @keyframes voa { 0% { left: -300px; transform: translateY(0) rotate(-4deg); } 25% { transform: translateY(60px) rotate(5deg); } 50% { transform: translateY(-10px) rotate(-4deg); } 75% { transform: translateY(70px) rotate(5deg); } 100% { left: 110vw; transform: translateY(0) rotate(-4deg); } }
+  @keyframes voa { 0% { left: -300px; transform: translateY(0) rotate(-4deg); } 25% { transform: translateY(60px) rotate(5deg); } 50% { transform: translateY(-10px) rotate(-4deg); } 75% { transform: translateY(70px) rotate(5deg); } 100% { left: 1700px; transform: translateY(0) rotate(-4deg); } }
   .asa { transform-box: fill-box; transform-origin: bottom center; animation: bate .32s ease-in-out infinite alternate; }
   @keyframes bate { to { transform: scaleY(-.5); } }
 
@@ -93,9 +100,9 @@
   /* ---------- 3. o que faz ---------- */
   .fluxo { display: grid; grid-template-columns: minmax(0, 1.25fr) auto minmax(0, 1fr); gap: 1.2rem; align-items: center; }
   .seta { font-size: 2.6rem; font-weight: 800; color: var(--rosa); text-align: center; }
-  .slide.ativo .seta { animation: empurra 1.2s ease-in-out infinite; }
+  .slide.ativo .fluxo > .seta { animation: empurra 1.2s ease-in-out infinite; }
   @keyframes empurra { 50% { transform: translateX(8px); } }
-  form.mock { background: var(--amarelo); padding: 1rem; display: flex; flex-wrap: wrap; gap: .7rem; }
+  form.mock { background: var(--amarelo); padding: 1rem; display: flex; flex-wrap: wrap; gap: .7rem; margin: 0; }
   .mock .tipos { flex: 1 1 100%; display: flex; gap: .5rem; flex-wrap: wrap; }
   .mock .tipos span { font-weight: 800; background: #fff; border: var(--borda); border-radius: 12px; padding: .1rem .7rem; box-shadow: 3px 3px 0 var(--ink); font-size: .95rem; }
   .mock .tipos span.on { background: var(--ink); color: var(--amarelo); }
@@ -121,7 +128,7 @@
   /* ---------- 5. diagrama do ciclo (igual a ferramentas.html) ---------- */
   .diagrama { padding: 1.1rem; }
   .linha { display: flex; align-items: stretch; gap: 10px; }
-  .diagrama .seta { flex: none; display: flex; align-items: center; justify-content: center; font-size: 2rem; width: 34px; animation: none !important; }
+  .diagrama .seta { flex: none; display: flex; align-items: center; justify-content: center; font-size: 2rem; width: 34px; }
   .passo { flex: 1 1 0; min-width: 0; background: #fff; border: var(--borda); border-radius: 16px; padding: .6rem .7rem; box-shadow: 3px 3px 0 var(--ink); }
   .slide.ativo .passo { animation: acende 12s ease-in-out infinite; }
   .passo .e { font-size: 1.8rem; line-height: 1; }
@@ -179,40 +186,48 @@
   .regra b { display: block; font-size: 1.12rem; margin: 2px 0 2px; }
   .regra:nth-child(1) { border-left: 12px solid var(--azul); } .regra:nth-child(2) { border-left: 12px solid var(--verde); } .regra:nth-child(3) { border-left: 12px solid var(--roxo); }
 
-  /* ---------- 8. modo desespero ---------- */
-  .slide.desespero { background: #fff6e0; }
-  .flash { position: absolute; inset: 0; background: var(--vermelho); opacity: 0; pointer-events: none; }
+  /* ---------- 8. modo desespero, com os bonecos do site ---------- */
+  .flash { position: absolute; inset: 0; background: var(--vermelho); opacity: 0; pointer-events: none; z-index: 0; }
   .slide.ativo .flash { animation: alarme 1.1s ease-in-out infinite; }
-  @keyframes alarme { 50% { opacity: .55; } }
-  .desespero .in { position: relative; z-index: 2; }
-  .sirene { position: absolute; top: 1rem; right: max(16px, 3vw); z-index: 3; width: 110px; text-align: center; }
+  @keyframes alarme { 50% { opacity: .5; } }
+  .sirene { position: absolute; top: 18px; right: 28px; z-index: 3; width: 190px; text-align: center; }
   .sirene .luz { position: relative; width: 80px; height: 56px; margin: 0 auto; background: var(--vermelho); border: var(--borda); border-radius: 40px 40px 6px 6px; overflow: hidden; box-shadow: 0 0 40px 12px #ef233caa; }
   .slide.ativo .sirene .luz { animation: brilho .5s steps(2) infinite; }
   .sirene .luz::after { content: ''; position: absolute; inset: -60px; background: conic-gradient(transparent 0 300deg, #fff 330deg, transparent 360deg); }
   .slide.ativo .sirene .luz::after { animation: roda .6s linear infinite; }
   .sirene .base { width: 100px; height: 16px; margin: -2px auto 0; background: var(--ink); border-radius: 4px; }
-  .sirene .txt { margin-top: 6px; background: var(--ink); color: var(--amarelo); font-weight: 800; font-size: .7rem; border-radius: 8px; padding: 2px 6px; letter-spacing: 1px; }
+  .sirene .txt { display: inline-block; margin-top: 6px; background: var(--ink); color: var(--amarelo); font-weight: 800; font-size: .75rem; border-radius: 8px; padding: 2px 10px; letter-spacing: 1px; white-space: nowrap; }
   @keyframes brilho { 50% { box-shadow: 0 0 10px 2px #ef233c66; } }
   @keyframes roda { to { transform: rotate(360deg); } }
   .desfile { position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
-  .desfile span { position: absolute; left: -140px; font-size: 3rem; line-height: 1; filter: drop-shadow(3px 4px 0 #0003); }
+  .desfile span { position: absolute; left: -170px; }
+  .desfile span.rtl { left: auto; right: -170px; }
+  .desfile .bn { width: 120px; height: 140px; display: block; }
+  .desfile span.rtl .bn { transform: scaleX(-1); }
   .slide.ativo .desfile span { animation: passa linear infinite; }
-  @keyframes passa { 0% { transform: translate(0,0) rotate(-8deg); } 25% { transform: translate(28vw,-22px) rotate(8deg); } 50% { transform: translate(56vw,0) rotate(-8deg); } 75% { transform: translate(84vw,-22px) rotate(8deg); } 100% { transform: translate(calc(100vw + 280px),0) rotate(-8deg); } }
-  .painel-d { padding: 1.2rem 1.4rem; display: flex; flex-direction: column; gap: .8rem; }
+  .slide.ativo .desfile span.rtl { animation-name: passa-rtl; }
+  @keyframes passa { 0% { transform: translate(0,0) rotate(-6deg); } 25% { transform: translate(450px,-20px) rotate(6deg); } 50% { transform: translate(900px,0) rotate(-6deg); } 75% { transform: translate(1350px,-20px) rotate(6deg); } 100% { transform: translate(1940px,0) rotate(-6deg); } }
+  @keyframes passa-rtl { 0% { transform: translate(0,0) rotate(6deg); } 25% { transform: translate(-450px,-20px) rotate(-6deg); } 50% { transform: translate(-900px,0) rotate(6deg); } 75% { transform: translate(-1350px,-20px) rotate(-6deg); } 100% { transform: translate(-1940px,0) rotate(6deg); } }
+  .painel-d { padding: 1.1rem 1.3rem; display: flex; flex-direction: column; gap: .7rem; }
   .absurda { align-self: flex-start; background: var(--vermelho); color: #fff; border: var(--borda); border-radius: 12px; padding: .1rem .8rem; font-weight: 800; box-shadow: 3px 3px 0 var(--ink); }
   .absurda.ultimo { background: #111; color: var(--amarelo); }
   .slide.ativo .absurda.ultimo { animation: treme .25s linear infinite; }
   @keyframes treme { 25% { transform: translate(-1px,1px) rotate(-.5deg); } 75% { transform: translate(1px,-1px) rotate(.5deg); } }
-  .exemplos { display: flex; flex-direction: column; gap: .5rem; margin: 0; padding: 0; list-style: none; }
-  .exemplos li { display: flex; gap: .6rem; align-items: baseline; font-size: 1.08rem; line-height: 1.35; }
+  .exemplos { display: flex; flex-direction: column; gap: .45rem; margin: 0; padding: 0; list-style: none; }
+  .exemplos li { display: flex; gap: .6rem; align-items: baseline; font-size: 1.05rem; line-height: 1.35; }
   .exemplos .n { flex: none; font-weight: 800; font-size: .8rem; border: 2px solid var(--ink); border-radius: 8px; padding: 0 6px; background: var(--bg); font-variant-numeric: tabular-nums; }
   .numeros { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .8rem; }
-  .numero { padding: .6rem .8rem; text-align: center; }
-  .numero b { display: block; font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; }
-  .numero span { font-weight: 700; color: var(--mut); font-size: .95rem; }
+  .numero { padding: .5rem .8rem; text-align: center; }
+  .numero b { display: block; font-size: 2.4rem; line-height: 1; font-variant-numeric: tabular-nums; }
+  .numero span { font-weight: 700; color: var(--mut); font-size: .92rem; }
+  .elenco { padding: .8rem 1rem; }
+  .elenco h3 { margin: 0 0 .2rem; font-size: 1.1rem; }
+  .elenco .fila { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: .4rem; text-align: center; }
+  .elenco .bn { width: 84px; height: 98px; display: block; margin: 0 auto; }
+  .elenco span { font-size: .72rem; font-weight: 700; line-height: 1.15; display: block; }
 
   /* ---------- 9. Diário do Bico (igual ao site) ---------- */
-  .par { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 1.4rem; align-items: start; }
+  .par { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 1.6rem; align-items: center; }
   .jornal { background: #f4efe1; color: #111; font-family: Georgia, "Times New Roman", serif; padding: 1rem 1.2rem 1.2rem; border: 3px solid #111; box-shadow: 8px 8px 0 #111; transform: rotate(-.7deg); }
   .jornal .aviso { font-family: system-ui, sans-serif; font-size: .62rem; text-transform: uppercase; letter-spacing: 2px; text-align: center; border-bottom: 1px solid #111; padding-bottom: 6px; }
   .jornal .titulo-j { font-family: Impact, "Arial Black", sans-serif; font-size: 2.8rem; color: #d10f1f; text-transform: uppercase; text-align: center; border-bottom: 6px double #111; line-height: 1.15; padding: 4px 0; }
@@ -228,21 +243,18 @@
   .jornal .caixa ul { margin: .2rem 0 0; padding-left: 1rem; }
   .slide.ativo .jornal { animation: imprime .7s cubic-bezier(.2,1.4,.4,1) both .2s; }
   @keyframes imprime { from { transform: rotate(-14deg) scale(.4); opacity: 0; } }
-  .entrevista { padding: 1rem 1.2rem; display: flex; flex-direction: column; gap: .3rem; }
+  .entrevista { padding: 1.1rem 1.3rem; display: flex; flex-direction: column; gap: .3rem; }
   .entrevista .topo { display: flex; gap: .8rem; align-items: center; }
-  .avatar { width: 4rem; height: 4rem; flex: none; border: var(--borda); border-radius: 50%; background: var(--amarelo); display: flex; align-items: center; justify-content: center; overflow: hidden; }
-  .avatar svg { width: 3.6rem; }
+  .avatar { width: 4.4rem; height: 4.4rem; flex: none; border: var(--borda); border-radius: 50%; background: var(--amarelo); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .avatar svg { width: 4rem; }
   .entrevista .sel { display: inline-block; background: var(--vermelho); color: #fff; font-size: .68rem; font-weight: 800; letter-spacing: 2px; padding: 0 8px; border-radius: 6px; }
-  .entrevista h3 { margin: 2px 0 0; font-size: 1.2rem; line-height: 1.15; }
-  .entrevista .p { font-weight: 800; margin: .5rem 0 2px; font-size: .95rem; }
-  .entrevista .r { margin: 0; padding: .3rem .7rem; background: var(--bg); border-left: 6px solid var(--rosa); border-radius: 0 12px 12px 0; font-size: .95rem; line-height: 1.4; }
-  .limite { background: var(--ink); color: #fff; padding: .8rem 1rem; font-size: .98rem; line-height: 1.4; box-shadow: 5px 5px 0 var(--rosa); }
-  .limite b { color: var(--amarelo); }
-  .ficcao { font-size: .78rem; color: var(--mut); }
+  .entrevista h3 { margin: 2px 0 0; font-size: 1.3rem; line-height: 1.15; }
+  .entrevista .p { font-weight: 800; margin: .6rem 0 2px; font-size: 1.02rem; }
+  .entrevista .r { margin: 0; padding: .35rem .8rem; background: var(--bg); border-left: 6px solid var(--rosa); border-radius: 0 12px 12px 0; font-size: 1.02rem; line-height: 1.4; }
 
   /* ---------- 10. Bico Messenger ---------- */
-  .msgr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2rem; align-items: center; }
-  .tel { position: relative; width: min(330px, 80vw); height: min(560px, 68vh); background: #111; border-radius: 42px; padding: 10px; box-shadow: 0 24px 60px #0006, inset 0 0 0 3px #333; justify-self: center; }
+  .msgr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2.4rem; align-items: center; }
+  .tel { position: relative; width: 330px; height: 580px; background: #111; border-radius: 42px; padding: 10px; box-shadow: 0 24px 60px #0006, inset 0 0 0 3px #333; justify-self: center; }
   .slide.ativo .tel { animation: sobe .6s cubic-bezier(.2,1.3,.4,1) both; }
   @keyframes sobe { from { transform: translateY(60px) scale(.9); opacity: 0; } }
   .ecra { position: relative; height: 100%; border-radius: 33px; overflow: hidden; background: #f1ede4; display: flex; flex-direction: column; font-family: system-ui, "Segoe UI", sans-serif; }
@@ -265,18 +277,46 @@
   @keyframes escreve { 0% { opacity: 0; } 10%, 85% { opacity: 1; } 100% { opacity: 0; height: 0; padding: 0; } }
   .desfecho { align-self: center; font-weight: 800; font-size: .85rem; background: var(--verde); border: 2px solid #111; border-radius: 99px; padding: 2px 12px; font-family: var(--f); color: #111; }
   .slide.ativo .desfecho { animation: pop .45s cubic-bezier(.2,1.8,.4,1) both; animation-delay: var(--d); }
-  .passos { display: flex; flex-direction: column; gap: .7rem; }
-  .passo-m { display: flex; gap: .8rem; align-items: flex-start; padding: .7rem .9rem; font-size: 1.05rem; line-height: 1.4; }
+  .passos { display: flex; flex-direction: column; gap: .8rem; }
+  .passo-m { display: flex; gap: .8rem; align-items: flex-start; padding: .8rem 1rem; font-size: 1.1rem; line-height: 1.4; }
   .passo-m .e { flex: none; font-size: 1.6rem; line-height: 1.1; }
 
-  /* ---------- 11. verdade ---------- */
-  .verdade-card { padding: 1.4rem 1.6rem; background: #e6f7ff; position: relative; font-size: 1.25rem; line-height: 1.6; max-width: 46rem; }
-  .verdade-card::before { content: '😇'; position: absolute; top: -26px; left: 18px; font-size: 2.3rem; }
+  /* ---------- 11. a verdade, e a gaivota que a destrói ---------- */
   .botoes { display: flex; gap: .8rem; flex-wrap: wrap; }
   .botoes span { font-weight: 800; border: var(--borda); border-radius: 14px; padding: .25rem 1rem; box-shadow: 4px 4px 0 var(--ink); }
   .b-roxo { background: var(--roxo); color: #fff; } .b-verde { background: var(--verde); } .b-azul { background: var(--azul); color: #fff; } .b-branco { background: #fff; }
-  .slide.ativo .b-branco { animation: chama 1.6s ease-in-out infinite .8s; }
-  @keyframes chama { 50% { transform: translate(-2px,-3px) rotate(-2deg); box-shadow: 7px 7px 0 var(--ink); background: var(--amarelo); } }
+  .slide.ativo .b-branco { animation: chama .5s ease-in-out 2 alternate .5s; }
+  @keyframes chama { to { transform: translate(-2px,-3px) rotate(-2deg); box-shadow: 7px 7px 0 var(--ink); background: var(--amarelo); } }
+  .verdade-palco { position: relative; width: 920px; height: 190px; margin-top: 1.4rem; }
+  .metade { position: absolute; inset: 0; padding: 1.4rem 1.6rem; background: #e6f7ff; font-size: 1.25rem; line-height: 1.6; }
+  .metade::before { content: '😇'; position: absolute; top: -26px; left: 18px; font-size: 2.3rem; }
+  .metade.esq { clip-path: polygon(0 0, 52% 0, 48% 14%, 54% 30%, 47% 46%, 53% 62%, 48% 78%, 52% 92%, 49% 100%, 0 100%); }
+  .metade.dir { clip-path: polygon(52% 0, 100% 0, 100% 100%, 49% 100%, 52% 92%, 48% 78%, 53% 62%, 47% 46%, 54% 30%, 48% 14%); }
+  .slide.ativo .metade { animation: abana-papel .09s linear 8 alternate 3.1s, cai-esq 1s cubic-bezier(.5,0,.8,.4) forwards 3.9s; }
+  .slide.ativo .metade.dir { animation-name: abana-papel, cai-dir; }
+  @keyframes abana-papel { to { transform: translate(3px, -2px) rotate(.8deg); } }
+  @keyframes cai-esq { to { transform: translate(-260px, 560px) rotate(-38deg); opacity: 0; } }
+  @keyframes cai-dir { to { transform: translate(300px, 600px) rotate(44deg); opacity: 0; } }
+  .bocado { position: absolute; width: 22px; height: 16px; background: #e6f7ff; border: 2px solid var(--ink); opacity: 0; left: 50%; top: 40%; }
+  .slide.ativo .bocado { animation: voa-bocado 1.1s ease-out forwards; animation-delay: 3.9s; }
+  @keyframes voa-bocado { 0% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translate(var(--x), var(--y)) rotate(var(--r)); } }
+  .ataque { position: absolute; width: 230px; left: 1100px; top: -170px; z-index: 5; opacity: 0; filter: drop-shadow(4px 6px 0 #0003); }
+  .slide.ativo .ataque { animation: ataca 3.2s linear forwards 2.4s; }
+  @keyframes ataca {
+    0% { left: 1100px; top: -170px; opacity: 1; transform: rotate(-10deg); }
+    22% { left: 380px; top: -70px; transform: rotate(8deg); }
+    30%, 50% { left: 340px; top: -30px; transform: rotate(18deg); }
+    34%, 42% { transform: rotate(30deg) translateY(16px); }
+    38%, 46% { transform: rotate(14deg); }
+    60% { left: 300px; top: -80px; transform: rotate(-6deg); opacity: 1; }
+    100% { left: -320px; top: -360px; transform: rotate(-16deg); opacity: 1; }
+  }
+  .nao-vai { font-size: 2rem; font-weight: 800; color: var(--rosa); transform: rotate(-2deg); align-self: flex-start; }
+  .slide.ativo .nao-vai { animation: salta .5s cubic-bezier(.2,1.6,.4,1) both 1.8s; }
+  .depois { position: absolute; left: 0; top: 30px; display: flex; align-items: center; gap: 1rem; opacity: 0; }
+  .slide.ativo .depois { animation: pop .5s cubic-bezier(.2,1.8,.4,1) forwards 4.9s; }
+  .depois .card { padding: .9rem 1.3rem; font-size: 1.35rem; font-weight: 800; background: var(--amarelo); }
+  .depois .carimbo2 { transform: rotate(-10deg); border: 6px double var(--vermelho); color: var(--vermelho); font-weight: 800; font-size: 1.5rem; letter-spacing: 2px; padding: 0 .7rem; border-radius: 10px; background: #fff8; }
 
   /* ---------- 12. por dentro ---------- */
   .stack .card { padding: .9rem 1rem; display: flex; flex-direction: column; gap: .3rem; }
@@ -284,86 +324,99 @@
   .stack ul { margin: 0; padding-left: 1.1rem; font-size: .95rem; line-height: 1.45; }
   .codigo { position: relative; background: #17152f; color: #e9e6ff; border: var(--borda); border-radius: 14px; box-shadow: 4px 4px 0 var(--ink); overflow-x: auto; }
   .codigo pre { margin: 0; padding: .8rem 1rem; font-family: var(--mono); font-size: .85rem; line-height: 1.5; white-space: pre; }
-  .codigo .k { color: #ffd23f; } .codigo .s { color: #7ef0c8; } .codigo .c { color: #ff8fb6; }
+  .codigo .s { color: #7ef0c8; } .codigo .c { color: #ff8fb6; }
 
   /* ---------- 13. challenge ---------- */
   .criterio { padding: .9rem 1rem; display: flex; flex-direction: column; gap: .3rem; }
   .criterio .e { font-size: 1.8rem; line-height: 1; }
   .criterio b { font-size: 1.12rem; line-height: 1.2; }
   .criterio span { font-size: .92rem; line-height: 1.4; color: var(--mut); }
-  .criterio .ok { align-self: flex-start; margin-top: auto; font-size: .78rem; font-weight: 800; border: 2px solid var(--ink); border-radius: 99px; padding: 0 9px; background: #c9f7e6; }
+  .criterio .ok { align-self: flex-start; margin-top: auto; font-size: .78rem; font-weight: 800; border: 2px solid var(--ink); border-radius: 99px; padding: 0 9px; background: #c9f7e6; color: var(--ink); }
   .perguntas { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: .8rem; }
   .pergunta { padding: .6rem .8rem; background: var(--amarelo); }
   .pergunta b { display: block; font-size: 1rem; line-height: 1.2; }
   .pergunta span { font-size: .85rem; line-height: 1.35; }
 
-  /* ---------- 14. fecho ---------- */
-  .fecho h2 { font-size: clamp(2.6rem, 6vw, 5.2rem); letter-spacing: -2px; }
-  .fecho .rosa { color: var(--rosa); }
+  /* ---------- 14. pricing ---------- */
+  .ciclo-preco { display: inline-flex; align-self: flex-start; border: var(--borda); border-radius: 99px; overflow: hidden; box-shadow: 3px 3px 0 var(--ink); font-weight: 800; font-size: .9rem; }
+  .ciclo-preco span { padding: .1rem .9rem; background: #fff; }
+  .ciclo-preco span.on { background: var(--ink); color: var(--amarelo); }
+  .planos { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 1.1rem; align-items: stretch; margin-top: .6rem; }
+  .plano { position: relative; padding: 1.1rem 1.1rem 1rem; display: flex; flex-direction: column; gap: .45rem; }
+  .plano h3 { margin: 0; font-size: 1.3rem; line-height: 1.15; }
+  .plano .desc { font-size: .9rem; color: var(--mut); line-height: 1.35; min-height: 2.4rem; }
+  .plano .preco { font-size: 2.6rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+  .plano .preco small { font-size: .9rem; color: var(--mut); font-weight: 700; }
+  .plano ul { margin: .2rem 0 .4rem; padding: 0; list-style: none; display: flex; flex-direction: column; gap: .3rem; font-size: .92rem; line-height: 1.3; }
+  .plano li { display: flex; gap: .4rem; }
+  .plano li::before { content: '✓'; font-weight: 800; color: #06a57b; flex: none; }
+  .plano .cta { margin-top: auto; text-align: center; font-weight: 800; border: var(--borda); border-radius: 14px; padding: .3rem .6rem; box-shadow: 4px 4px 0 var(--ink); background: #fff; }
+  .plano.top { background: #fff7d6; transform: translateY(-10px); box-shadow: 8px 8px 0 var(--ink); }
+  .plano.top .cta { background: var(--rosa); color: #fff; }
+  .plano.ent { background: var(--ink); color: #fff; }
+  .plano.ent .desc, .plano.ent .preco small { color: #c8c5ee; }
+  .plano.ent li::before { color: var(--amarelo); }
+  .plano.ent .cta { background: var(--amarelo); color: var(--ink); }
+  .fita-top { position: absolute; top: -16px; right: 14px; background: var(--rosa); color: #fff; border: var(--borda); border-radius: 99px; padding: 0 .8rem; font-weight: 800; font-size: .8rem; }
+  .slide.ativo .plano.top { animation: salta .55s cubic-bezier(.2,1.6,.4,1) both .5s, flutua 2.2s ease-in-out infinite 1.1s; }
+  @keyframes flutua { 0%, 100% { transform: translateY(-10px); } 50% { transform: translateY(-18px); } }
 
   /* ---------- 15. IPO com o Big Gull (personagem inventada) ---------- */
-  .slide.ipo { padding-top: 5.2rem; }
-  .fita { position: absolute; top: 0; left: 0; right: 0; z-index: 3; background: var(--ink); color: var(--amarelo); border-bottom: var(--borda); overflow: hidden; white-space: nowrap; font-family: var(--mono); font-weight: 700; font-size: .9rem; padding: .35rem 0; }
-  .fita div { display: inline-block; padding-left: 100%; }
-  .slide.ativo .fita div { animation: fita 22s linear infinite; }
-  @keyframes fita { to { transform: translateX(-100%); } }
-  .fita .sobe { color: var(--verde); } .fita .desce { color: #ff8fa3; }
-  .ipo .in { padding-right: clamp(0px, 24vw, 420px); }
-  .bolsa { padding: 1rem 1.2rem; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .3rem 1.2rem; align-items: center; }
-  .bolsa .tick { font-family: var(--mono); font-weight: 700; font-size: 1.6rem; background: var(--ink); color: var(--amarelo); border-radius: 12px; padding: 0 .7rem; }
-  .bolsa .val { font-size: 2.6rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
-  .bolsa .sub { grid-column: 1 / -1; font-weight: 700; color: var(--mut); }
-  .bolsa .sub b { color: #06a57b; }
-  .bolsa svg { grid-column: 1 / -1; width: 100%; height: auto; display: block; }
-  .linha-bolsa { stroke-dasharray: 1200; stroke-dashoffset: 1200; }
+  .slide.ipo { padding-top: 70px; justify-content: flex-start; }
+  .ipo-grelha { display: grid; grid-template-columns: minmax(0, 1fr) 460px; gap: 1.6rem; align-items: start; height: 100%; }
+  .ipo-esq { display: flex; flex-direction: column; gap: 1rem; }
+  .bolsa { padding: 1.1rem 1.3rem; display: flex; flex-direction: column; gap: .9rem; }
+  .bolsa-topo { display: flex; align-items: center; gap: 1rem; }
+  .bolsa .tick { font-family: var(--mono); font-weight: 700; font-size: 1.4rem; background: var(--ink); color: var(--amarelo); border-radius: 12px; padding: .1rem .7rem; }
+  .bolsa .nomeb { font-weight: 800; font-size: 1.1rem; line-height: 1.1; }
+  .bolsa .nomeb span { display: block; font-size: .8rem; color: var(--mut); }
+  .bolsa .preco-b { margin-left: auto; font-size: 2.4rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+  .bolsa .var { font-weight: 800; background: #c9f7e6; border: 2px solid var(--ink); border-radius: 99px; padding: 0 .7rem; color: #05795a; }
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: .7rem; }
+  .stat { border: 2px solid var(--ink); border-radius: 12px; padding: .4rem .7rem; background: var(--bg); }
+  .stat span { display: block; font-size: .75rem; font-weight: 700; color: var(--mut); text-transform: uppercase; letter-spacing: 1px; }
+  .stat b { display: block; font-size: 1.25rem; line-height: 1.2; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .grafico svg { width: 100%; height: auto; display: block; }
+  .linha-bolsa { stroke-dasharray: 1400; stroke-dashoffset: 1400; }
   .slide.ativo .linha-bolsa { animation: desenha 3s cubic-bezier(.5,0,.3,1) forwards .6s; }
   @keyframes desenha { to { stroke-dashoffset: 0; } }
-  .slide:not(.ativo) .linha-bolsa { stroke-dashoffset: 0; }
+  .ponto-final { opacity: 0; }
+  .slide.ativo .ponto-final { animation: pop .4s cubic-bezier(.2,1.8,.4,1) forwards 3.5s; transform-box: fill-box; transform-origin: center; }
   .sino { display: inline-block; transform-origin: top center; }
   .slide.ativo .sino { animation: toca .5s ease-in-out infinite alternate; }
   @keyframes toca { from { transform: rotate(-16deg); } to { transform: rotate(16deg); } }
-  .fala { position: absolute; right: clamp(150px, 19vw, 330px); bottom: clamp(220px, 34vh, 380px); width: min(30rem, 42vw); z-index: 4;
-          background: #fff; border: var(--borda); border-radius: 22px; box-shadow: var(--sombra); padding: .9rem 1.1rem; font-size: 1.02rem; line-height: 1.45; }
-  .fala::after { content: ''; position: absolute; right: 2.2rem; bottom: -22px; width: 30px; height: 30px; background: #fff; border-right: var(--borda); border-bottom: var(--borda); transform: rotate(45deg) skew(12deg, 12deg); }
-  .fala .quem { display: block; font-weight: 800; font-size: .8rem; letter-spacing: 1px; text-transform: uppercase; color: var(--rosa); margin-bottom: .2rem; }
+  .aviso-ipo { font-size: .75rem; color: var(--mut); margin: 0; }
+  .ipo-dir { display: flex; flex-direction: column; align-items: center; gap: 1.1rem; }
+  .fala { position: relative; width: 100%; background: #fff; border: var(--borda); border-radius: 22px; box-shadow: var(--sombra); padding: .9rem 1.1rem; font-size: .95rem; line-height: 1.45; min-height: 15.5rem; }
+  .fala::after { content: ''; position: absolute; left: 50%; bottom: -17px; width: 28px; height: 28px; margin-left: -14px; background: #fff; border-right: var(--borda); border-bottom: var(--borda); transform: rotate(45deg); }
+  .fala .quem { display: block; font-weight: 800; font-size: .78rem; letter-spacing: 1px; text-transform: uppercase; color: var(--rosa); margin-bottom: .2rem; }
   .fala .cursor { display: inline-block; width: .5em; height: 1em; background: var(--ink); vertical-align: -2px; margin-left: 2px; }
   .slide.ativo .fala .cursor { animation: pisca 1s steps(2) infinite; }
   @keyframes pisca { 50% { opacity: 0; } }
-  .biggull { position: absolute; right: max(10px, 1.5vw); bottom: 3.6rem; width: clamp(170px, 22vw, 360px); z-index: 4; filter: drop-shadow(6px 8px 0 #1d1b4b33); }
-  .slide.ativo .biggull { animation: entra-canto .8s cubic-bezier(.2,1.5,.4,1) both .4s; }
+  .biggull { width: 300px; height: 340px; filter: drop-shadow(6px 8px 0 #1d1b4b33); }
+  .slide.ativo .biggull { animation: entra-canto .8s cubic-bezier(.2,1.5,.4,1) both .3s; }
   @keyframes entra-canto { from { transform: translate(60%, 60%) rotate(20deg); opacity: 0; } }
   .slide.ativo .biggull .mao { animation: ok .55s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: bottom center; }
   .slide.ativo .biggull .mao.dir { animation-delay: .27s; }
   @keyframes ok { from { transform: translateY(0) rotate(-6deg); } to { transform: translateY(-10px) rotate(6deg); } }
   .slide.ativo .biggull .cabeca { animation: acena 1.1s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: bottom center; }
   @keyframes acena { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
-  .aviso-ipo { font-size: .8rem; color: var(--mut); }
+  .slide.ativo .biggull .bandeira { animation: ondula 1s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: left center; }
+  @keyframes ondula { to { transform: skewY(-5deg) scaleX(.94); } }
 
-  @media (max-width: 900px) {
-    .ipo .in { padding-right: 0; }
-    .fala { position: relative; right: auto; bottom: auto; width: auto; }
-    .biggull { position: relative; right: auto; bottom: auto; align-self: center; width: 200px; }
-    h2 { font-size: 2.1rem; }
-    .g3, .g4, .g5, .perguntas { grid-template-columns: repeat(2, minmax(0,1fr)); }
-    .g2, .fluxo, .cred, .par, .msgr, .numeros { grid-template-columns: minmax(0,1fr); }
-    .fluxo .seta { transform: rotate(90deg); }
-    .linha { flex-direction: column; }
-    .diagrama .seta { width: auto; transform: rotate(90deg); height: 30px; }
-    .passo.pedido { flex: 1 1 auto; }
-    .pacote { display: none; }
-    .desce { justify-content: center; padding: 0; }
-    .jornal .gr { grid-template-columns: 1fr; }
-    .slide { justify-content: flex-start; }
-    .sirene { display: none; }
-  }
-  @media (max-width: 520px) { .g3, .g4, .g5, .perguntas { grid-template-columns: minmax(0,1fr); } .pontos { display: none; } }
+  /* ---------- 16. fecho ---------- */
+  .fecho h2 { font-size: 4.6rem; letter-spacing: -2px; }
+  .fecho .rosa { color: var(--rosa); }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
     .slide.ativo .flash { opacity: .25; }
+    .ataque, .bocado { display: none; }
+    .depois { opacity: 1; position: static; margin-top: 1rem; }
   }
 </style>
 
-<!-- Seagull with the keys in its beak (same art as the site) -->
+<!-- Gaivota com as chaves no bico (a mesma arte do site) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="gaivota" viewBox="0 0 210 140">
     <path class="asa" d="M95 64 Q62 8 8 22 Q52 40 80 70 Z" fill="#cfd6dd" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
@@ -386,21 +439,18 @@
   </symbol>
 </svg>
 
-<div class="progresso" id="progresso"></div>
-<div class="marca">Desculp<span class="o">ó</span>metro</div>
-
 <main class="deck" id="deck">
+  <div class="progresso" id="progresso"></div>
+  <div class="marca">Desculp<span class="o">ó</span>metro</div>
 
   <!-- 1. Cover -->
-  <section class="slide capa" data-notas="<b>10 s.</b> “Hands up if you were late this week.” Pause. “Right. So we built the Desculpómetro, the excuse-o-meter.”">
+  <section class="slide capa" data-notas="<b>10 s.</b> “Hands up if you were late this week.” Pause. “Right. We're Tiki Taska, and we built the Desculpómetro.”">
     <svg class="voadora" viewBox="0 0 210 140" aria-hidden="true"><use href="#gaivota"/></svg>
     <div class="in">
-      <span class="eyebrow ink salta">Agentic AI Challenge · Pitch</span>
+      <span class="eyebrow ink salta">Agentic AI Challenge · Team Tiki Taska</span>
       <h1 class="logo salta" style="--i:1">Desculp<span class="o">ó</span>metro</h1>
       <p class="lead salta" style="--i:2">Running late? An <b>AI agent</b> checks what is really happening on your way and builds the most believable excuse possible. <b>Using only true facts.</b></p>
-      <div class="pills salta" style="--i:3">
-        <span class="pill">🔎 6 tools</span><span class="pill">🧠 Claude Sonnet 5.5</span><span class="pill">🐦 1 seagull</span><span class="pill ink">[Team name]</span>
-      </div>
+      <div class="equipa salta" style="--i:3" data-equipa></div>
     </div>
   </section>
 
@@ -533,7 +583,7 @@
   </section>
 
   <!-- 8. Desperation mode -->
-  <section class="slide desespero" data-notas="<b>20 s.</b> And when there is no evidence? Clear skies, empty roads. Below 20: DESPERATION MODE. The screen flashes, the siren goes off, the characters parade across. A catalogue of 30 absurd excuses and 22 characters. At 0, last resort: the most absurd ones.">
+  <section class="slide" data-notas="<b>20 s.</b> And when there is no evidence? Clear skies, empty roads. Below 20: DESPERATION MODE. The screen flashes, the siren goes off, and the cast of the story runs across the screen. 40 excuses in the catalogue, 26 drawn characters. At 0, last resort: the most absurd ones.">
     <div class="flash" aria-hidden="true"></div>
     <div class="desfile" aria-hidden="true" id="desfile"></div>
     <div class="sirene" aria-hidden="true"><div class="luz"></div><div class="base"></div><div class="txt">DESPERATION MODE</div></div>
@@ -542,25 +592,29 @@
       <h2 class="salta" style="--i:1">Desperation mode: blame the seagull.</h2>
       <div class="grelha g2">
         <div class="card painel-d salta" style="--i:2">
-          <span class="absurda">🚨 Absurd excuse activated</span>
+          <span class="absurda">Absurd excuse activated</span>
           <ul class="exemplos">
             <li><span class="n">#1</span>A gull stole my keys at the Ribeira and I had to negotiate with it</li>
             <li><span class="n">#22</span>I got stuck on a roundabout in Gaia, went round 37 times and there was no exit</li>
             <li><span class="n">#5</span>My granny called “just for a minute”</li>
           </ul>
-          <span class="absurda ultimo">☠️ LAST RESORT · credibility 0</span>
+          <span class="absurda ultimo">LAST RESORT · credibility 0</span>
           <ul class="exemplos">
             <li><span class="n">#18</span>The sat nav told me to turn right into the Douro</li>
           </ul>
         </div>
         <div class="grelha">
           <div class="numeros">
-            <div class="card numero salta" style="--i:3"><b>30</b><span>absurd excuses</span></div>
-            <div class="card numero salta" style="--i:4"><b>22</b><span>characters</span></div>
+            <div class="card numero salta" style="--i:3"><b>40</b><span>excuses</span></div>
+            <div class="card numero salta" style="--i:4"><b>26</b><span>characters</span></div>
             <div class="card numero salta" style="--i:5"><b>10</b><span>recipients</span></div>
           </div>
-          <div class="card painel-d salta" style="--i:6">
-            <p class="lead" style="color:var(--ink);font-size:1.15rem">The agent fetches <b>real facts</b> about the yellow-legged gull from Wikipedia and defends the story with a completely straight face.</p>
+          <div class="card elenco salta" style="--i:6">
+            <h3>The cast</h3>
+            <div class="fila" id="elenco"></div>
+          </div>
+          <div class="card painel-d salta" style="--i:7">
+            <p class="lead" style="color:var(--ink);font-size:1.05rem">The agent fetches <b>real facts</b> about the yellow-legged gull from Wikipedia and defends the story with a completely straight face.</p>
           </div>
         </div>
       </div>
@@ -568,13 +622,13 @@
   </section>
 
   <!-- 9. Diário do Bico + interview -->
-  <section class="slide" data-notas="<b>15 s.</b> Evidence to match: a page from the Diário do Bico, the Beak Gazette, official newspaper of the seagulls of Porto, plus an exclusive interview with the culprit. All clearly parody. A limit we set on purpose: it never produces anything that could pass as real.">
+  <section class="slide" data-notas="<b>15 s.</b> Evidence to match: a page from the Diário do Bico, the official newspaper of the seagulls of Porto, plus an exclusive interview with the culprit.">
     <div class="in">
-      <span class="eyebrow salta">Parody evidence</span>
-      <h2 class="salta" style="--i:1">The Beak Gazette has the exclusive.</h2>
+      <span class="eyebrow salta">The evidence</span>
+      <h2 class="salta" style="--i:1">The Diário do Bico has the exclusive.</h2>
       <div class="par">
-        <div class="jornal" aria-label="Example page of the Diário do Bico">
-          <div class="aviso">Diário do Bico (The Beak Gazette), official newspaper of the seagulls of Porto · fictional publication</div>
+        <div class="jornal" aria-label="Page of the Diário do Bico">
+          <div class="aviso">Diário do Bico · official newspaper of the seagulls of Porto</div>
           <div class="titulo-j">Diário do Bico</div>
           <div class="meta"><span>Ribeira, Porto</span><span>Today's edition</span><span>Price: 1 chip</span></div>
           <div class="manchete">Gull steals keys, demands ransom in francesinhas</div>
@@ -590,35 +644,32 @@
             </div>
           </div>
         </div>
-        <div class="grelha">
-          <div class="card entrevista salta" style="--i:2">
-            <div class="topo"><div class="avatar"><svg viewBox="0 0 210 140" aria-hidden="true"><use href="#gaivota"/></svg></div>
-              <div><span class="sel">EXCLUSIVE</span><h3>Interview with the guilty gull</h3></div></div>
-            <div class="p">Why did you take the keys?</div>
-            <p class="r">They were shiny. I am a Porto seagull. I owe humans no explanations.</p>
-            <div class="p">Any regrets?</div>
-            <p class="r">Only that I did not take the wallet too.</p>
-            <p class="ficcao">Illustrative example. In the app, the agent writes this text.</p>
-          </div>
-          <div class="card limite salta" style="--i:3"><b>A line we don't cross.</b> It never produces doctor's notes, police reports, official statements or news from real outlets. The people in the interviews are made up.</div>
+        <div class="card entrevista salta" style="--i:2">
+          <div class="topo"><div class="avatar"><svg viewBox="0 0 210 140" aria-hidden="true"><use href="#gaivota"/></svg></div>
+            <div><span class="sel">EXCLUSIVE</span><h3>Interview with the guilty gull</h3></div></div>
+          <div class="p">Why did you take the keys?</div>
+          <p class="r">They were shiny. I am a Porto seagull. I owe humans no explanations.</p>
+          <div class="p">Any regrets?</div>
+          <p class="r">Only that I did not take the wallet too.</p>
+          <div class="p">Will you give them back?</div>
+          <p class="r">For two francesinhas and a public apology. In the Diário do Bico.</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- 10. Bico Messenger -->
-  <section class="slide" data-notas="<b>15 s.</b> To close the story, we simulate sending it. A phone running Bico Messenger, a made-up app. The recipient replies through AI in their own style, opens the Beak Gazette link, and there is an ending: they bought it, they gave up arguing, or they want to speak to the seagull.">
+  <section class="slide" data-notas="<b>15 s.</b> To close the story, we simulate sending it on Bico Messenger. The recipient replies through AI in their own style, opens the Diário do Bico link, and there is an ending: they bought it, they gave up arguing, or they want to speak to the seagull.">
     <div class="in">
       <span class="eyebrow salta">The final simulation</span>
       <h2 class="salta" style="--i:1">Send it on Bico Messenger. Watch the reaction.</h2>
       <div class="msgr">
         <div class="passos">
-          <div class="card passo-m salta" style="--i:2"><span class="e">📱</span><span>A phone with a <b>made-up</b> messaging app, no real brands.</span></div>
-          <div class="card passo-m salta" style="--i:3"><span class="e">🤖</span><span>The recipient replies through <b>AI</b>, in their own style: mum asks if you have eaten, the boss is curt, the mother-in-law brings up last time.</span></div>
-          <div class="card passo-m salta" style="--i:4"><span class="e">📰</span><span>The <b>Beak Gazette</b> link opens inside the app.</span></div>
-          <div class="card passo-m salta" style="--i:5"><span class="e">🏁</span><span>An animated ending in about 30 seconds: <b>they bought it</b>, <b>they gave up arguing</b> or <b>they want to talk to the seagull</b>.</span></div>
+          <div class="card passo-m salta" style="--i:2"><span class="e">🤖</span><span>The recipient replies through <b>AI</b>, in their own style: mum asks if you have eaten, the boss is curt, the mother-in-law brings up last time.</span></div>
+          <div class="card passo-m salta" style="--i:3"><span class="e">📰</span><span>The <b>Diário do Bico</b> link opens inside the app.</span></div>
+          <div class="card passo-m salta" style="--i:4"><span class="e">🏁</span><span>An animated ending in about 30 seconds: <b>they bought it</b>, <b>they gave up arguing</b> or <b>they want to talk to the seagull</b>.</span></div>
         </div>
-        <div class="tel" aria-label="Example conversation on Bico Messenger">
+        <div class="tel" aria-label="Conversation on Bico Messenger">
           <div class="ecra">
             <div class="notch"></div>
             <div class="bm-topo"><div class="bm-av">👩‍👦</div><div><div class="bm-nome">Mum</div><div class="bm-sub">online</div></div><span class="bm-marca">BICO MESSENGER</span></div>
@@ -638,13 +689,23 @@
   </section>
 
   <!-- 11. Tell the truth -->
-  <section class="slide" data-notas="<b>10 s.</b> And the bravest button: “Or just tell the truth”. The same agent writes an honest, humble apology. Sometimes the best excuse is no excuse.">
+  <section class="slide" data-notas="<b>15 s.</b> And the bravest button: “Or just tell the truth”. The same agent writes an honest, humble apology. Pause. “…but let's be honest, this is never going to work.” The seagull takes care of it.">
     <div class="in">
       <span class="eyebrow salta">The bravest button in the app</span>
       <h2 class="salta" style="--i:1">Or… just tell the truth.</h2>
       <div class="botoes salta" style="--i:2"><span class="b-roxo">📱 Send</span><span class="b-verde">📋 Copy</span><span class="b-azul">🎲 Another excuse</span><span class="b-branco">😇 Or just tell the truth</span></div>
-      <div class="card verdade-card salta" style="--i:3">I'm sorry I'm late. There was no seagull: I left home late and should have warned you sooner. It won't happen again.</div>
-      <p class="lead salta" style="--i:4">One click and the same agent writes an <b>honest, humble</b> apology. No evidence, no seagulls.</p>
+      <div class="verdade-palco">
+        <div class="card metade esq">I'm sorry I'm late. There was no seagull: I left home late and should have warned you sooner. It won't happen again.</div>
+        <div class="card metade dir">I'm sorry I'm late. There was no seagull: I left home late and should have warned you sooner. It won't happen again.</div>
+        <span class="bocado" style="--x:-180px;--y:-140px;--r:-120deg"></span>
+        <span class="bocado" style="--x:160px;--y:-170px;--r:200deg"></span>
+        <span class="bocado" style="--x:-60px;--y:220px;--r:90deg"></span>
+        <span class="bocado" style="--x:240px;--y:120px;--r:-60deg"></span>
+        <span class="bocado" style="--x:-260px;--y:60px;--r:160deg"></span>
+        <div class="depois"><span class="carimbo2">TRUTH REJECTED</span><span class="card">Back to the seagull excuse. 🐦</span></div>
+        <svg class="ataque" viewBox="0 0 210 140" aria-hidden="true"><use href="#gaivota"/></svg>
+      </div>
+      <p class="nao-vai">…but let's be honest: this is never going to work.</p>
     </div>
   </section>
 
@@ -673,7 +734,7 @@
       <h2 class="salta" style="--i:1">The five criteria, one by one.</h2>
       <div class="grelha g5">
         <div class="card criterio salta" style="--i:2"><span class="e">🧰</span><b>Real-world usefulness</b><span>Everyone runs late. Real evidence in seconds, in the right tone.</span><span class="ok">✓ checked</span></div>
-        <div class="card criterio salta" style="--i:3"><span class="e">🐦</span><b>Creativity</b><span>Desperation mode, the Beak Gazette, Bico Messenger.</span><span class="ok">✓ checked</span></div>
+        <div class="card criterio salta" style="--i:3"><span class="e">🐦</span><b>Creativity</b><span>Desperation mode, the Diário do Bico, Bico Messenger.</span><span class="ok">✓ checked</span></div>
         <div class="card criterio salta" style="--i:4"><span class="e">✨</span><b>User experience</b><span>You watch the agent work. Gauge, cards, one-click copy.</span><span class="ok">✓ checked</span></div>
         <div class="card criterio salta" style="--i:5"><span class="e">🧠</span><b>Smart use of GenAI</b><span>An agent with tools that decides alone and never invents. Also over MCP.</span><span class="ok">✓ checked</span></div>
         <div class="card criterio salta" style="--i:6"><span class="e">🎬</span><b>Demo and storytelling</b><span>One delay with evidence, one that ends with the seagull.</span><span class="ok">✓ checked</span></div>
@@ -687,200 +748,294 @@
     </div>
   </section>
 
-  <!-- 14. Closing line -->
-  <section class="slide fecho" data-notas="<b>10 s.</b> “Next time you are late, it's not your fault. It's the seagull's.” Then: “One more thing…”">
-    <svg class="voadora" viewBox="0 0 210 140" aria-hidden="true"><use href="#gaivota"/></svg>
+  <!-- 14. Pricing -->
+  <section class="slide" data-notas="<b>15 s.</b> “If you liked what you saw, you can get the Desculpómetro on one of these plans.” Point at Chronically Late: “most of this room is on this one.”">
     <div class="in">
-      <span class="eyebrow ink salta">Desculpómetro</span>
-      <h2 class="salta" style="--i:1">Next time, it's not your fault.<br><span class="rosa">It's the seagull's.</span></h2>
-      <div class="pills salta" style="--i:2"><span class="pill">🙏 Thank you</span><span class="pill">👀 One more thing…</span><span class="pill ink">[Team name]</span></div>
+      <span class="eyebrow salta">Pricing</span>
+      <h2 class="salta" style="--i:1">Liked what you saw? Get the Desculpómetro.</h2>
+      <p class="lead salta" style="--i:2">Pick the plan that matches how late you usually are.</p>
+      <div class="ciclo-preco salta" style="--i:3"><span class="on">Monthly</span><span>Yearly · 2 months late, free</span></div>
+      <div class="planos">
+        <div class="card plano salta" style="--i:4">
+          <h3>Occasionally Late</h3>
+          <div class="desc">For the once-a-year slip.</div>
+          <div class="preco">€0 <small>/ month</small></div>
+          <ul><li>3 excuses a month</li><li>Facts-only mode</li><li>Boss, Mum and Teacher</li><li>Seagull watermark</li></ul>
+          <span class="cta">Start for free</span>
+        </div>
+        <div class="card plano top">
+          <span class="fita-top">Most popular</span>
+          <h3>Chronically Late</h3>
+          <div class="desc">For people who say “5 minutes” and mean 25.</div>
+          <div class="preco">€4.99 <small>/ month</small></div>
+          <ul><li>Unlimited excuses</li><li>Desperation mode</li><li>Bico Messenger</li><li>All 10 recipients</li></ul>
+          <span class="cta">Be late now</span>
+        </div>
+        <div class="card plano salta" style="--i:6">
+          <h3>Professionally Late</h3>
+          <div class="desc">For CEOs, consultants and anyone with a calendar.</div>
+          <div class="preco">€19.99 <small>/ month</small></div>
+          <ul><li>Last resort mode</li><li>Diário do Bico exclusives</li><li>Excuse Court verdicts</li><li>Priority seagull</li></ul>
+          <span class="cta">Go pro</span>
+        </div>
+        <div class="card plano ent salta" style="--i:7">
+          <h3>Gull Enterprise</h3>
+          <div class="desc">For whole teams that are never on time.</div>
+          <div class="preco">Let's talk</div>
+          <ul><li>MCP server for your agents</li><li>Your own trained seagull</li><li>99.9% excuse uptime</li><li>On-site francesinha onboarding</li></ul>
+          <span class="cta">Contact sales (we'll be late)</span>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- 15. IPO -->
-  <section class="slide ipo" data-anim="ipo" data-notas="<b>20 s, finale.</b> “One more thing: we're going public.” Let the Big Gull speech play (or read it in your best rally voice). End on: “Believe me. Thank you!” Then live demo.">
-    <div class="fita" aria-hidden="true"><div>
-      DSCLP <span class="sobe">▲ 9,999%</span> · GULL <span class="sobe">▲ 312%</span> · FRANCESINHA <span class="sobe">▲ 48%</span> · ALARM-CLOCK <span class="desce">▼ 87%</span> · VAGUE-EXCUSES <span class="desce">▼ 100%</span> · TRAFFIC <span class="sobe">▲ always</span> · KEYS <span class="desce">▼ stolen</span> ·
-      DSCLP <span class="sobe">▲ 9,999%</span> · GULL <span class="sobe">▲ 312%</span> · FRANCESINHA <span class="sobe">▲ 48%</span> · ALARM-CLOCK <span class="desce">▼ 87%</span> · VAGUE-EXCUSES <span class="desce">▼ 100%</span> · TRAFFIC <span class="sobe">▲ always</span> · KEYS <span class="desce">▼ stolen</span> ·
-    </div></div>
-    <div class="in">
-      <span class="eyebrow ink salta">One more thing</span>
-      <h2 class="salta" style="--i:1">We're going public. <span class="sino" aria-hidden="true">🔔</span></h2>
-      <div class="card bolsa salta" style="--i:2">
-        <span class="tick">$DSCLP</span>
-        <span class="val" id="valor">$0</span>
-        <span class="sub">Listed on the Gull Street Exchange · <b>▲ 9,999% since the hackathon started</b></span>
-        <svg viewBox="0 0 600 170" aria-label="Share price chart going straight up">
-          <g stroke="#1d1b4b22" stroke-width="2"><line x1="0" y1="40" x2="600" y2="40"/><line x1="0" y1="85" x2="600" y2="85"/><line x1="0" y1="130" x2="600" y2="130"/></g>
-          <polyline class="linha-bolsa" points="10,160 60,150 100,155 150,138 190,145 240,120 280,128 330,98 370,104 410,72 450,80 490,46 530,52 570,16 590,10" fill="none" stroke="#06d6a0" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
-          <circle cx="590" cy="10" r="8" fill="#ff4f8b" stroke="#1d1b4b" stroke-width="3"/>
+  <section class="slide ipo" data-anim="ipo" data-notas="<b>20 s.</b> “One more thing: we're going public.” Let the Big Gull speech play (or read it in your best rally voice). End on: “Believe me.”">
+    <div class="ipo-grelha">
+      <div class="ipo-esq">
+        <span class="eyebrow ink salta">One more thing</span>
+        <h2 class="salta" style="--i:1">We're going public. <span class="sino" aria-hidden="true">🔔</span></h2>
+        <div class="card bolsa salta" style="--i:2">
+          <div class="bolsa-topo">
+            <span class="tick">$DSCLP</span>
+            <div class="nomeb">Desculpómetro Inc.<span>Gull Street Exchange</span></div>
+            <span class="preco-b" id="preco">$0.00</span>
+            <span class="var">▲ 9,999%</span>
+          </div>
+          <div class="stats">
+            <div class="stat"><span>Market cap</span><b id="valor">$0</b></div>
+            <div class="stat"><span>IPO date</span><b>Today</b></div>
+            <div class="stat"><span>Shares</span><b>100M</b></div>
+            <div class="stat"><span>Seagulls on the board</span><b>1</b></div>
+          </div>
+          <div class="grafico">
+            <svg viewBox="0 0 860 250" aria-label="Share price chart going straight up">
+              <g stroke="#1d1b4b22" stroke-width="2"><line x1="70" y1="30" x2="850" y2="30"/><line x1="70" y1="110" x2="850" y2="110"/><line x1="70" y1="190" x2="850" y2="190"/></g>
+              <line x1="70" y1="20" x2="70" y2="215" stroke="#1d1b4b" stroke-width="3"/><line x1="70" y1="215" x2="850" y2="215" stroke="#1d1b4b" stroke-width="3"/>
+              <g font-family="Baloo 2, sans-serif" font-weight="800" font-size="16" fill="#6b6893" text-anchor="end">
+                <text x="60" y="35">$4B</text><text x="60" y="115">$2B</text><text x="60" y="195">$0</text>
+              </g>
+              <g font-family="Baloo 2, sans-serif" font-weight="800" font-size="16" fill="#6b6893" text-anchor="middle">
+                <text x="110" y="240">Hackathon start</text><text x="460" y="240">Demo</text><text x="810" y="240">Now</text>
+              </g>
+              <polyline class="linha-bolsa" points="90,200 140,192 180,196 230,180 270,186 320,165 360,172 410,140 450,148 500,112 540,120 590,84 630,92 680,58 720,64 770,34 830,22" fill="none" stroke="#06d6a0" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle class="ponto-final" cx="830" cy="22" r="10" fill="#ff4f8b" stroke="#1d1b4b" stroke-width="3"/>
+            </svg>
+          </div>
+        </div>
+        <p class="aviso-ipo salta" style="--i:3">Parody. Big Gull is a made-up character. Not a real IPO, not financial advice.</p>
+      </div>
+      <div class="ipo-dir">
+        <div class="fala salta" style="--i:2">
+          <span class="quem">Big Gull · Chairman of the Gull Board</span>
+          <span id="falaTxt"></span><span class="cursor" aria-hidden="true"></span>
+        </div>
+        <svg class="biggull" viewBox="0 0 300 340" role="img" aria-label="Big Gull, a made-up seagull tycoon with orange skin, golden hair, a long red tie and a flag on his suit, making the OK sign with both hands">
+          <!-- braços -->
+          <path d="M84 252 Q40 242 44 186" stroke="#1d1b4b" stroke-width="38" fill="none" stroke-linecap="round"/>
+          <path d="M84 252 Q40 242 44 186" stroke="#1f2a44" stroke-width="30" fill="none" stroke-linecap="round"/>
+          <path d="M216 252 Q260 242 256 186" stroke="#1d1b4b" stroke-width="38" fill="none" stroke-linecap="round"/>
+          <path d="M216 252 Q260 242 256 186" stroke="#1f2a44" stroke-width="30" fill="none" stroke-linecap="round"/>
+          <!-- fato -->
+          <path d="M58 340 L70 244 Q150 204 230 244 L242 340 Z" fill="#1f2a44" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M118 224 L150 296 L182 224 Z" fill="#ffffff" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M118 224 L136 280 L112 252 Z M182 224 L164 280 L188 252 Z" fill="#2c3a5e" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M142 232 L158 232 L163 246 L157 332 L150 340 L143 332 L137 246 Z" fill="#d62828" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+          <!-- bandeira dos EUA no fato -->
+          <g class="bandeira" transform="translate(178 262)">
+            <rect x="0" y="0" width="48" height="32" fill="#ffffff" stroke="#1d1b4b" stroke-width="2.5"/>
+            <g fill="#b22234"><rect x="0" y="0" width="48" height="3.6"/><rect x="0" y="7.2" width="48" height="3.6"/><rect x="0" y="14.4" width="48" height="3.6"/><rect x="0" y="21.6" width="48" height="3.6"/><rect x="0" y="28.4" width="48" height="3.6"/></g>
+            <rect x="0" y="0" width="21" height="17.5" fill="#3c3b6e"/>
+            <g fill="#ffffff"><circle cx="4" cy="4" r="1.3"/><circle cx="10.5" cy="4" r="1.3"/><circle cx="17" cy="4" r="1.3"/><circle cx="7" cy="8.7" r="1.3"/><circle cx="14" cy="8.7" r="1.3"/><circle cx="4" cy="13.4" r="1.3"/><circle cx="10.5" cy="13.4" r="1.3"/><circle cx="17" cy="13.4" r="1.3"/></g>
+            <rect x="0" y="0" width="48" height="32" fill="none" stroke="#1d1b4b" stroke-width="2.5"/>
+          </g>
+          <!-- cabeça laranja -->
+          <g class="cabeca">
+            <ellipse cx="150" cy="208" rx="38" ry="20" fill="#f6a04d" stroke="#1d1b4b" stroke-width="4"/>
+            <circle cx="150" cy="140" r="62" fill="#f6a04d" stroke="#1d1b4b" stroke-width="4"/>
+            <ellipse cx="128" cy="137" rx="14" ry="9" fill="#fde2c4"/><ellipse cx="172" cy="137" rx="14" ry="9" fill="#fde2c4"/>
+            <path d="M112 118 L140 124 M188 118 L160 124" stroke="#1d1b4b" stroke-width="6" stroke-linecap="round"/>
+            <path d="M118 136 Q128 128 138 136 M162 136 Q172 128 182 136" stroke="#1d1b4b" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M130 150 Q150 141 170 150 Q162 178 150 183 Q138 178 130 150 Z" fill="#ffd23f" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+            <circle cx="150" cy="172" r="4" fill="#ef233c"/>
+            <path d="M82 124 Q74 74 130 68 Q198 58 226 94 Q236 114 216 120 Q206 96 168 96 Q118 94 100 132 Z" fill="#f4c542" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M110 86 Q150 74 200 86 M104 102 Q150 88 210 102" stroke="#d9a520" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>
+          <!-- mãos laranja a fazer OK -->
+          <g transform="translate(44 172)"><g class="mao esq">
+            <rect x="-15" y="-58" width="10" height="40" rx="5" fill="#f6a04d" stroke="#1d1b4b" stroke-width="3" transform="rotate(-10)"/>
+            <rect x="-4" y="-62" width="10" height="44" rx="5" fill="#f6a04d" stroke="#1d1b4b" stroke-width="3"/>
+            <rect x="7" y="-58" width="10" height="40" rx="5" fill="#f6a04d" stroke="#1d1b4b" stroke-width="3" transform="rotate(10)"/>
+            <circle cx="-22" cy="-6" r="12" fill="none" stroke="#1d1b4b" stroke-width="13"/>
+            <circle cx="-22" cy="-6" r="12" fill="none" stroke="#f6a04d" stroke-width="7"/>
+            <ellipse cx="0" cy="0" rx="20" ry="18" fill="#f6a04d" stroke="#1d1b4b" stroke-width="3"/>
+          </g></g>
+          <g transform="translate(256 172) scale(-1 1)"><g class="mao dir">
+            <rect x="-15" y="-58" width="10" height="40" rx="5" fill="#f6a04d" stroke="#1d1b4b" stroke-width="3" transform="rotate(-10)"/>
+            <rect x="-4" y="-62" width="10" height="44" rx="5" fill="#f6a04d" stroke="#1d1b4b" stroke-width="3"/>
+            <rect x="7" y="-58" width="10" height="40" rx="5" fill="#f6a04d" stroke="#1d1b4b" stroke-width="3" transform="rotate(10)"/>
+            <circle cx="-22" cy="-6" r="12" fill="none" stroke="#1d1b4b" stroke-width="13"/>
+            <circle cx="-22" cy="-6" r="12" fill="none" stroke="#f6a04d" stroke-width="7"/>
+            <ellipse cx="0" cy="0" rx="20" ry="18" fill="#f6a04d" stroke="#1d1b4b" stroke-width="3"/>
+          </g></g>
         </svg>
       </div>
-      <p class="aviso-ipo salta" style="--i:3">Parody. Big Gull is a made-up character. Not a real IPO, not financial advice.</p>
     </div>
-    <div class="fala" aria-live="off">
-      <span class="quem">Big Gull · Chairman of the Gull Board</span>
-      <span id="falaTxt"></span><span class="cursor" aria-hidden="true"></span>
-    </div>
-    <svg class="biggull" viewBox="0 0 300 360" role="img" aria-label="Big Gull, a made-up seagull tycoon with golden hair and a long red tie, making the OK sign with both hands">
-      <!-- braços (por trás) -->
-      <path d="M84 262 Q40 252 44 196" stroke="#1d1b4b" stroke-width="38" fill="none" stroke-linecap="round"/>
-      <path d="M84 262 Q40 252 44 196" stroke="#1f2a44" stroke-width="30" fill="none" stroke-linecap="round"/>
-      <path d="M216 262 Q260 252 256 196" stroke="#1d1b4b" stroke-width="38" fill="none" stroke-linecap="round"/>
-      <path d="M216 262 Q260 252 256 196" stroke="#1f2a44" stroke-width="30" fill="none" stroke-linecap="round"/>
-      <!-- fato -->
-      <path d="M58 360 L70 254 Q150 214 230 254 L242 360 Z" fill="#1f2a44" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round"/>
-      <path d="M118 234 L150 306 L182 234 Z" fill="#ffffff" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M118 234 L136 290 L112 262 Z M182 234 L164 290 L188 262 Z" fill="#2c3a5e" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M142 242 L158 242 L163 256 L157 352 L150 360 L143 352 L137 256 Z" fill="#d62828" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
-      <rect x="194" y="268" width="14" height="9" rx="2" fill="#3a86ff" stroke="#1d1b4b" stroke-width="2"/>
-      <!-- cabeça -->
-      <g class="cabeca">
-        <ellipse cx="150" cy="218" rx="38" ry="20" fill="#ffffff" stroke="#1d1b4b" stroke-width="4"/>
-        <circle cx="150" cy="150" r="62" fill="#ffffff" stroke="#1d1b4b" stroke-width="4"/>
-        <path d="M112 128 L140 134 M188 128 L160 134" stroke="#1d1b4b" stroke-width="6" stroke-linecap="round"/>
-        <path d="M118 146 Q128 138 138 146 M162 146 Q172 138 182 146" stroke="#1d1b4b" stroke-width="5" fill="none" stroke-linecap="round"/>
-        <path d="M130 160 Q150 151 170 160 Q162 188 150 193 Q138 188 130 160 Z" fill="#ffd23f" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
-        <circle cx="150" cy="182" r="4" fill="#ef233c"/>
-        <path d="M82 134 Q74 84 130 78 Q198 68 226 104 Q236 124 216 130 Q206 106 168 106 Q118 104 100 142 Z" fill="#f4c542" stroke="#1d1b4b" stroke-width="4" stroke-linejoin="round"/>
-        <path d="M110 96 Q150 84 200 96 M104 112 Q150 98 210 112" stroke="#d9a520" stroke-width="3" fill="none" stroke-linecap="round"/>
-      </g>
-      <!-- mãos a fazer OK -->
-      <g transform="translate(44 182)"><g class="mao esq">
-        <rect x="-15" y="-58" width="10" height="40" rx="5" fill="#ffffff" stroke="#1d1b4b" stroke-width="3" transform="rotate(-10)"/>
-        <rect x="-4" y="-62" width="10" height="44" rx="5" fill="#ffffff" stroke="#1d1b4b" stroke-width="3"/>
-        <rect x="7" y="-58" width="10" height="40" rx="5" fill="#ffffff" stroke="#1d1b4b" stroke-width="3" transform="rotate(10)"/>
-        <circle cx="-22" cy="-6" r="12" fill="none" stroke="#1d1b4b" stroke-width="13"/>
-        <circle cx="-22" cy="-6" r="12" fill="none" stroke="#ffffff" stroke-width="7"/>
-        <ellipse cx="0" cy="0" rx="20" ry="18" fill="#ffffff" stroke="#1d1b4b" stroke-width="3"/>
-      </g></g>
-      <g transform="translate(256 182) scale(-1 1)"><g class="mao dir">
-        <rect x="-15" y="-58" width="10" height="40" rx="5" fill="#ffffff" stroke="#1d1b4b" stroke-width="3" transform="rotate(-10)"/>
-        <rect x="-4" y="-62" width="10" height="44" rx="5" fill="#ffffff" stroke="#1d1b4b" stroke-width="3"/>
-        <rect x="7" y="-58" width="10" height="40" rx="5" fill="#ffffff" stroke="#1d1b4b" stroke-width="3" transform="rotate(10)"/>
-        <circle cx="-22" cy="-6" r="12" fill="none" stroke="#1d1b4b" stroke-width="13"/>
-        <circle cx="-22" cy="-6" r="12" fill="none" stroke="#ffffff" stroke-width="7"/>
-        <ellipse cx="0" cy="0" rx="20" ry="18" fill="#ffffff" stroke="#1d1b4b" stroke-width="3"/>
-      </g></g>
-    </svg>
   </section>
+
+  <!-- 16. Closing -->
+  <section class="slide fecho" data-notas="<b>10 s.</b> “Next time you are late, it's not your fault. It's the seagull's. We're Tiki Taska, thank you!” Then the live demo.">
+    <svg class="voadora" viewBox="0 0 210 140" aria-hidden="true"><use href="#gaivota"/></svg>
+    <div class="in">
+      <span class="eyebrow ink salta">Desculpómetro · Team Tiki Taska</span>
+      <h2 class="salta" style="--i:1">Next time, it's not your fault.<br><span class="rosa">It's the seagull's.</span></h2>
+      <div class="equipa salta" style="--i:2" data-equipa></div>
+      <div class="pills salta" style="--i:3"><span class="pill">🙏 Thank you</span><span class="pill ink">🔎 Live demo next</span></div>
+    </div>
+  </section>
+
+  <div class="notas" id="notas" hidden></div>
+  <nav class="nav" aria-label="Slide navigation">
+    <button type="button" id="ant" aria-label="Previous slide">←</button>
+    <div class="pontos" id="pontos"></div>
+    <span class="contador" id="contador">1 / 16</span>
+    <button type="button" id="notasBtn" aria-pressed="false" title="Speaker notes (N)">📝</button>
+    <button type="button" id="ecraBtn" title="Full screen (F)">⛶</button>
+    <button type="button" class="prox" id="prox" aria-label="Next slide">→</button>
+  </nav>
 </main>
 
-<div class="notas" id="notas" hidden></div>
-<nav class="nav" aria-label="Slide navigation">
-  <button type="button" id="ant" aria-label="Previous slide">←</button>
-  <div class="pontos" id="pontos"></div>
-  <span class="contador" id="contador">1 / 15</span>
-  <button type="button" id="notasBtn" aria-pressed="false" title="Speaker notes (N)">📝</button>
-  <button type="button" id="ecraBtn" title="Full screen (F)">⛶</button>
-  <button type="button" class="prox" id="prox" aria-label="Next slide">→</button>
-</nav>
+<script type="module">
+import { boneco } from './bonecos.js';
 
-<script>
-(() => {
-  const $ = id => document.getElementById(id);
-  const calma = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = id => document.getElementById(id);
+const deck = $('deck');
+const calma = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Recipients and characters, as in catalogo.js
-  const DEST = [
-    ['👔','Boss','formal and professional'], ['👩‍👦','Mum','dramatic and loving'], ['💘','Girlfriend','sweet'], ['🎓','Teacher','respectful'],
-    ['👵','Mother-in-law','weighing every word'], ['🍻','Best friend','relaxed, with jokes'], ['💼','Client','professional and reassuring'],
-    ['🏠','Landlord','friendly but firm'], ['🏋️','Gym coach','pumped and energetic'], ['👥','Family group chat','for many people at once'],
-  ];
-  $('destinos').innerHTML = DEST.map(([e, n, t], i) =>
-    `<div class="card dest salta" style="--i:${i + 3}"><span class="e">${e}</span><b>${n}</b><span>${t}</span></div>`).join('');
+// Palco 1600x900 escalado para caber no ecrã
+const escala = () => deck.style.setProperty('--k', Math.min(innerWidth / 1600, innerHeight / 900));
+addEventListener('resize', escala); escala();
 
-  const PERS = ['🐦','📸','🙋‍♀️','👵','🚇','🥐','🎸','🐈','☕','🔄','🐕','🥪','🧀','🚙','🚌','🛒','🃏','🤳','🗺️','📡','🚍','🕊️'];
-  $('desfile').innerHTML = PERS.map((e, i) =>
-    `<span style="top:${8 + (i * 37) % 80}%;animation-duration:${5 + (i % 5)}s;animation-delay:${-(i * 0.9).toFixed(1)}s">${e}</span>`).join('');
+// Equipa Tiki Taska
+const claudeAv = `<svg viewBox="0 0 48 48" aria-hidden="true"><g stroke="#fff" stroke-width="4" stroke-linecap="round">${[0, 30, 60, 90, 120, 150].map(a => `<line x1="24" y1="10" x2="24" y2="38" transform="rotate(${a} 24 24)"/>`).join('')}</g></svg>`;
+const duck = boneco('gaivota').replaceAll('fill="#fff"', 'fill="#ffd23f"').replaceAll('fill="#b9c2ca"', 'fill="#f4b400"').replaceAll('fill="#8d99a6"', 'fill="#e0a800"');
+const EQUIPA = [
+  { av: 'GF', cor: '#dbe8ff', nome: 'Guilherme Ferreira', papel: 'Tiki Taska' },
+  { av: 'DV', cor: '#d7fbef', nome: 'David Vieira', papel: 'Tiki Taska' },
+  { av: claudeAv, cor: '#d97757', nome: 'Claude Opus 5.5', papel: 'AI teammate' },
+  { av: duck, cor: '#fff2bf', nome: 'Duck', papel: 'the yellow seagull' },
+];
+document.querySelectorAll('[data-equipa]').forEach(el => {
+  el.innerHTML = EQUIPA.map(m => `<div class="card membro"><span class="av" style="background:${m.cor}">${m.av}</span><div><b>${m.nome}</b><span>${m.papel}</span></div></div>`).join('');
+});
 
-  let timers = [];
-  const limpa = () => { timers.forEach(t => { clearTimeout(t); clearInterval(t); }); timers = []; };
+// Destinatários, como em catalogo.js
+const DEST = [
+  ['👔','Boss','formal and professional'], ['👩‍👦','Mum','dramatic and loving'], ['💘','Girlfriend','sweet'], ['🎓','Teacher','respectful'],
+  ['👵','Mother-in-law','weighing every word'], ['🍻','Best friend','relaxed, with jokes'], ['💼','Client','professional and reassuring'],
+  ['🏠','Landlord','friendly but firm'], ['🏋️','Gym coach','pumped and energetic'], ['👥','Family group chat','for many people at once'],
+];
+$('destinos').innerHTML = DEST.map(([e, n, t], i) =>
+  `<div class="card dest salta" style="--i:${i + 3}"><span class="e">${e}</span><b>${n}</b><span>${t}</span></div>`).join('');
 
-  // Gauge (same zones as the site)
-  const ZONAS = [{ de: 0, ate: 20, cor: '#ef233c' }, { de: 20, ate: 50, cor: '#ff8c42' }, { de: 50, ate: 80, cor: '#ffd23f' }, { de: 80, ate: 100, cor: '#06d6a0' }];
-  const VERED = ['Nobody buys it', 'Might work', 'Convincing', 'Irrefutable'];
-  const pt = (v, r) => { const a = Math.PI * (1 - v / 100); return [170 + r * Math.cos(a), 170 - r * Math.sin(a)]; };
-  $('arcos').innerHTML = ZONAS.map(z => {
-    const [x1, y1] = pt(z.de, 132), [x2, y2] = pt(z.ate, 132);
-    return `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)} A132 132 0 0 1 ${x2.toFixed(1)} ${y2.toFixed(1)}" fill="none" stroke="${z.cor}" stroke-width="34"/>`;
-  }).join('') + `<path d="M${pt(0,151).join(' ')} A151 151 0 0 1 ${pt(100,151).join(' ')}" fill="none" stroke="#1d1b4b" stroke-width="3"/>`;
-  $('etiquetas').innerHTML = [0, 20, 50, 80, 100].map(v => { const [x, y] = pt(v, 170); return `<text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}">${v}</text>`; }).join('');
-  function medidor(on) {
-    const m = $('medidor'), p = $('ponteiro');
-    m.classList.remove('carimbado'); p.style.transition = 'none'; p.style.transform = 'rotate(-90deg)';
-    $('num').textContent = '?'; $('veredito').textContent = 'Waiting for evidence…'; $('veredito').style.color = '';
-    if (!on) return;
-    const alvo = 87;
-    timers.push(setTimeout(() => {
-      p.style.transition = ''; p.style.transform = `rotate(${-90 + alvo * 1.8}deg)`;
-      let n = 0; timers.push(setInterval(() => { n = Math.min(alvo, n + 3); $('num').textContent = n; }, 45));
-    }, 700));
-    timers.push(setTimeout(() => { $('veredito').textContent = VERED[3]; $('veredito').style.color = '#06a57b'; m.classList.add('carimbado'); }, 3000));
-  }
+// Modo desespero: elenco e desfile com os bonecos do site
+const ELENCO = [['gaivota', 'Seagull'], ['avo', 'Granny'], ['turista', 'Lost tourist'], ['rotunda', 'Gaia roundabout'], ['pombo', 'Ribeira pigeon'], ['gps', 'Sat nav']];
+$('elenco').innerHTML = ELENCO.map(([id, n]) => `<div>${boneco(id)}<span>${n}</span></div>`).join('');
+const DESFILE = ['gaivota', 'tu', 'excursao', 'gato', 'turista', 'cao', 'maquinista', 'vizinha', 'cone', 'francesinha'];
+const FAIXAS = [18, 150, 300, 450, 600, 720];
+$('desfile').innerHTML = DESFILE.map((id, i) => {
+  const dur = 7 + (i % 4) * 1.5;
+  return `<span class="${i % 2 ? 'rtl' : ''}" style="top:${FAIXAS[i % FAIXAS.length]}px;animation-duration:${dur}s;animation-delay:${-(i * 1.7).toFixed(1)}s">${boneco(id)}</span>`;
+}).join('');
 
-  // IPO: Big Gull's speech (made-up character) and the valuation counter
-  const DISCURSO = "Desculpómetro. Tremendous startup. The best startup in the history of startups, maybe in the history of the world. Everybody says so. People come up to me, big strong people, tears in their eyes: “Sir, we were late, and we had evidence.” Real facts. No fake excuses. And the seagull? Very smart bird. Many people don't know that. So we're going public. The biggest IPO ever. Billions and billions of dollars. Believe me.";
-  function ipo(on) {
-    const fala = $('falaTxt'), valor = $('valor');
-    fala.textContent = ''; valor.textContent = '$0';
-    if (!on) return;
-    if (calma) { fala.textContent = DISCURSO; valor.textContent = '$4,200,000,000'; return; }
-    let i = 0;
-    timers.push(setTimeout(() => timers.push(setInterval(() => {
-      i = Math.min(DISCURSO.length, i + 2); fala.textContent = DISCURSO.slice(0, i);
-    }, 38)), 1200));
-    let v = 0;
-    timers.push(setTimeout(() => timers.push(setInterval(() => {
-      v = Math.min(4.2e9, v + 4.2e9 / 60); valor.textContent = '$' + Math.round(v).toLocaleString('en-US');
-    }, 50)), 700));
-  }
+let timers = [];
+const limpa = () => { timers.forEach(t => { clearTimeout(t); clearInterval(t); }); timers = []; };
 
-  // Navigation
-  const slides = [...document.querySelectorAll('.slide')];
-  const total = slides.length;
-  $('pontos').innerHTML = slides.map((_, i) => `<button type="button" aria-label="Go to slide ${i + 1}"></button>`).join('');
-  const pontos = [...$('pontos').children];
-  let atual = -1;
-  function ir(n) {
-    n = Math.max(0, Math.min(total - 1, n));
-    if (n === atual) return;
-    slides.forEach((s, i) => { s.classList.toggle('ativo', i === n); s.classList.toggle('antes', i < n); s.setAttribute('aria-hidden', i !== n); s.scrollTop = 0; });
-    pontos.forEach((p, i) => p.setAttribute('aria-current', i === n));
-    atual = n;
-    document.body.dataset.slide = n + 1;
-    $('contador').textContent = `${n + 1} / ${total}`;
-    $('progresso').style.width = `${((n + 1) / total) * 100}%`;
-    $('notas').innerHTML = slides[n].dataset.notas || '';
-    limpa();
-    medidor(slides[n].dataset.anim === 'medidor');
-    ipo(slides[n].dataset.anim === 'ipo');
-    try { history.replaceState(null, '', `#s${n + 1}`); } catch (e) {}
-  }
-  pontos.forEach((p, i) => p.onclick = () => ir(i));
-  $('ant').onclick = () => ir(atual - 1);
-  $('prox').onclick = () => ir(atual + 1);
-  const alternarNotas = () => { const n = $('notas'); n.hidden = !n.hidden; $('notasBtn').setAttribute('aria-pressed', !n.hidden); };
-  $('notasBtn').onclick = alternarNotas;
-  const ecra = async () => { try { document.fullscreenElement ? await document.exitFullscreen() : await document.documentElement.requestFullscreen(); } catch (e) {} };
-  $('ecraBtn').onclick = ecra;
-  document.addEventListener('keydown', e => {
-    if (e.altKey || e.ctrlKey || e.metaKey) return;
-    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); ir(atual + 1); }
-    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); ir(atual - 1); }
-    else if (e.key === 'Home') ir(0);
-    else if (e.key === 'End') ir(total - 1);
-    else if (e.key === 'n' || e.key === 'N') alternarNotas();
-    else if (e.key === 'f' || e.key === 'F') ecra();
-  });
-  let x0 = null;
-  document.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
-  document.addEventListener('touchend', e => {
-    if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null;
-    if (Math.abs(dx) > 60) ir(atual + (dx < 0 ? 1 : -1));
-  }, { passive: true });
+// Velocímetro (mesmas zonas do site)
+const ZONAS = [{ de: 0, ate: 20, cor: '#ef233c' }, { de: 20, ate: 50, cor: '#ff8c42' }, { de: 50, ate: 80, cor: '#ffd23f' }, { de: 80, ate: 100, cor: '#06d6a0' }];
+const pt = (v, r) => { const a = Math.PI * (1 - v / 100); return [170 + r * Math.cos(a), 170 - r * Math.sin(a)]; };
+$('arcos').innerHTML = ZONAS.map(z => {
+  const [x1, y1] = pt(z.de, 132), [x2, y2] = pt(z.ate, 132);
+  return `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)} A132 132 0 0 1 ${x2.toFixed(1)} ${y2.toFixed(1)}" fill="none" stroke="${z.cor}" stroke-width="34"/>`;
+}).join('') + `<path d="M${pt(0,151).join(' ')} A151 151 0 0 1 ${pt(100,151).join(' ')}" fill="none" stroke="#1d1b4b" stroke-width="3"/>`;
+$('etiquetas').innerHTML = [0, 20, 50, 80, 100].map(v => { const [x, y] = pt(v, 170); return `<text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}">${v}</text>`; }).join('');
+function medidor(on) {
+  const m = $('medidor'), p = $('ponteiro');
+  m.classList.remove('carimbado'); p.style.transition = 'none'; p.style.transform = 'rotate(-90deg)';
+  $('num').textContent = '?'; $('veredito').textContent = 'Waiting for evidence…'; $('veredito').style.color = '';
+  if (!on) return;
+  const alvo = 87;
+  timers.push(setTimeout(() => {
+    p.style.transition = ''; p.style.transform = `rotate(${-90 + alvo * 1.8}deg)`;
+    let n = 0; timers.push(setInterval(() => { n = Math.min(alvo, n + 3); $('num').textContent = n; }, 45));
+  }, 700));
+  timers.push(setTimeout(() => { $('veredito').textContent = 'Irrefutable'; $('veredito').style.color = '#06a57b'; m.classList.add('carimbado'); }, 3000));
+}
 
-  const m = /^#s(\d+)$/.exec(location.hash);
-  ir(m ? Number(m[1]) - 1 : 0);
-})();
+// IPO: discurso do Big Gull (personagem inventada), preço e capitalização
+const DISCURSO = "Desculpómetro. Tremendous startup. The best startup in the history of startups, maybe in the history of the world. Everybody says so. People come up to me, big strong people, tears in their eyes: “Sir, we were late, and we had evidence.” Real facts. No fake excuses. And the seagull? Very smart bird. Many people don't know that. So we're going public. The biggest IPO ever. Billions and billions of dollars. Believe me.";
+function ipo(on) {
+  const fala = $('falaTxt');
+  fala.textContent = ''; $('valor').textContent = '$0'; $('preco').textContent = '$0.00';
+  if (!on) return;
+  if (calma) { fala.textContent = DISCURSO; $('valor').textContent = '$4.2B'; $('preco').textContent = '$42.00'; return; }
+  let i = 0;
+  timers.push(setTimeout(() => timers.push(setInterval(() => {
+    i = Math.min(DISCURSO.length, i + 2); fala.textContent = DISCURSO.slice(0, i);
+  }, 38)), 1200));
+  let f = 0;
+  timers.push(setTimeout(() => timers.push(setInterval(() => {
+    f = Math.min(1, f + 1 / 60);
+    $('valor').textContent = '$' + (4.2 * f).toFixed(1) + 'B';
+    $('preco').textContent = '$' + (42 * f).toFixed(2);
+  }, 50)), 700));
+}
+
+// Navegação
+const slides = [...document.querySelectorAll('.slide')];
+const total = slides.length;
+$('pontos').innerHTML = slides.map((_, i) => `<button type="button" aria-label="Go to slide ${i + 1}"></button>`).join('');
+const pontos = [...$('pontos').children];
+let atual = -1;
+function ir(n) {
+  n = Math.max(0, Math.min(total - 1, n));
+  if (n === atual) return;
+  slides.forEach((s, i) => { s.classList.toggle('ativo', i === n); s.classList.toggle('antes', i < n); s.setAttribute('aria-hidden', i !== n); });
+  pontos.forEach((p, i) => p.setAttribute('aria-current', i === n));
+  atual = n;
+  deck.dataset.slide = n + 1;
+  deck.dataset.anim = slides[n].dataset.anim || '';
+  $('contador').textContent = `${n + 1} / ${total}`;
+  $('progresso').style.width = `${((n + 1) / total) * 100}%`;
+  $('notas').innerHTML = slides[n].dataset.notas || '';
+  limpa();
+  medidor(slides[n].dataset.anim === 'medidor');
+  ipo(slides[n].dataset.anim === 'ipo');
+  try { history.replaceState(null, '', `#s${n + 1}`); } catch (e) {}
+}
+pontos.forEach((p, i) => p.onclick = () => ir(i));
+$('ant').onclick = () => ir(atual - 1);
+$('prox').onclick = () => ir(atual + 1);
+const alternarNotas = () => { const n = $('notas'); n.hidden = !n.hidden; $('notasBtn').setAttribute('aria-pressed', !n.hidden); };
+$('notasBtn').onclick = alternarNotas;
+const ecra = async () => { try { document.fullscreenElement ? await document.exitFullscreen() : await document.documentElement.requestFullscreen(); } catch (e) {} };
+$('ecraBtn').onclick = ecra;
+document.addEventListener('keydown', e => {
+  if (e.altKey || e.ctrlKey || e.metaKey) return;
+  if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); ir(atual + 1); }
+  else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); ir(atual - 1); }
+  else if (e.key === 'Home') ir(0);
+  else if (e.key === 'End') ir(total - 1);
+  else if (e.key === 'n' || e.key === 'N') alternarNotas();
+  else if (e.key === 'f' || e.key === 'F') ecra();
+});
+let x0 = null;
+document.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', e => {
+  if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null;
+  if (Math.abs(dx) > 60) ir(atual + (dx < 0 ? 1 : -1));
+}, { passive: true });
+
+const m = /^#s(\d+)$/.exec(location.hash);
+ir(m ? Number(m[1]) - 1 : 0);
 </script>
