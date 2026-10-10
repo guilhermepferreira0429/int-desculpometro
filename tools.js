@@ -1,5 +1,6 @@
 // Ferramentas do agente. Reais: geocode, get_weather, get_traffic (TomTom), get_seagull_facts.
 // Simuladas (e assinaladas como tal na fonte): get_transport_status, get_events_nearby, e o trânsito sem chave.
+// Todas recebem (input, { lang }) para devolver texto em português ou inglês.
 
 const UA = { 'User-Agent': 'Desculpometro/1.0 (hackathon)' };
 
@@ -16,13 +17,15 @@ function seeded(str) {
   return () => ((h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0) % 10000) / 10000;
 }
 const pick = (rnd, arr) => arr[Math.floor(rnd() * arr.length)];
+const L = (lang, pt, en) => (lang === 'en' ? en : pt);
+const SIMULADO = lang => L(lang, 'Dados simulados', 'Simulated data');
 
 // ---------- 1. geocode ----------
-export async function geocode({ local }) {
+export async function geocode({ local }, { lang } = {}) {
   // A Open-Meteo só conhece localidades, não ruas: tenta o texto todo e depois cada parte
   const partes = [local, ...local.split(',').map(s => s.trim()).reverse()].filter(Boolean);
   for (const nome of partes) {
-    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(nome)}&count=1&language=pt&format=json`;
+    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(nome)}&count=1&language=${lang === 'en' ? 'en' : 'pt'}&format=json`;
     const d = await getJSON(url);
     const r = d.results?.[0];
     if (r) {
@@ -35,19 +38,20 @@ export async function geocode({ local }) {
       };
     }
   }
-  return { erro: `Não encontrei "${local}"`, fonte: 'Open-Meteo Geocoding API' };
+  return { erro: L(lang, `Não encontrei "${local}"`, `Could not find "${local}"`), fonte: 'Open-Meteo Geocoding API' };
 }
 
 // ---------- 2. get_weather ----------
 const WMO = {
-  0: 'céu limpo', 1: 'pouco nublado', 2: 'parcialmente nublado', 3: 'muito nublado',
-  45: 'nevoeiro', 48: 'nevoeiro com geada', 51: 'chuvisco fraco', 53: 'chuvisco', 55: 'chuvisco forte',
-  61: 'chuva fraca', 63: 'chuva', 65: 'chuva forte', 66: 'chuva gelada', 67: 'chuva gelada forte',
-  71: 'neve fraca', 73: 'neve', 75: 'neve forte', 80: 'aguaceiros fracos', 81: 'aguaceiros',
-  82: 'aguaceiros violentos', 95: 'trovoada', 96: 'trovoada com granizo', 99: 'trovoada com granizo forte',
+  0: ['céu limpo', 'clear sky'], 1: ['pouco nublado', 'mainly clear'], 2: ['parcialmente nublado', 'partly cloudy'], 3: ['muito nublado', 'overcast'],
+  45: ['nevoeiro', 'fog'], 48: ['nevoeiro com geada', 'freezing fog'], 51: ['chuvisco fraco', 'light drizzle'], 53: ['chuvisco', 'drizzle'], 55: ['chuvisco forte', 'heavy drizzle'],
+  61: ['chuva fraca', 'light rain'], 63: ['chuva', 'rain'], 65: ['chuva forte', 'heavy rain'], 66: ['chuva gelada', 'freezing rain'], 67: ['chuva gelada forte', 'heavy freezing rain'],
+  71: ['neve fraca', 'light snow'], 73: ['neve', 'snow'], 75: ['neve forte', 'heavy snow'], 80: ['aguaceiros fracos', 'light showers'], 81: ['aguaceiros', 'showers'],
+  82: ['aguaceiros violentos', 'violent showers'], 95: ['trovoada', 'thunderstorm'], 96: ['trovoada com granizo', 'thunderstorm with hail'], 99: ['trovoada com granizo forte', 'thunderstorm with heavy hail'],
 };
+const wmo = (code, lang) => WMO[code]?.[lang === 'en' ? 1 : 0] ?? `${L(lang, 'código', 'code')} ${code}`;
 
-export async function get_weather({ lat, lon }) {
+export async function get_weather({ lat, lon }, { lang } = {}) {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
     `&current=temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,visibility` +
     `&hourly=precipitation_probability,precipitation,weather_code,wind_gusts_10m&forecast_hours=6&timezone=auto`;
@@ -56,7 +60,8 @@ export async function get_weather({ lat, lon }) {
   return {
     agora: {
       hora: c.time,
-      estado: WMO[c.weather_code] ?? `código ${c.weather_code}`,
+      estado: wmo(c.weather_code, lang),
+      codigo: c.weather_code,
       temperatura_c: c.temperature_2m,
       sensacao_c: c.apparent_temperature,
       precipitacao_mm: c.precipitation,
@@ -66,41 +71,42 @@ export async function get_weather({ lat, lon }) {
     },
     proximas_horas: d.hourly.time.map((t, i) => ({
       hora: t.slice(11),
-      estado: WMO[d.hourly.weather_code[i]] ?? '?',
+      estado: wmo(d.hourly.weather_code[i], lang),
       prob_chuva_pct: d.hourly.precipitation_probability[i],
       precipitacao_mm: d.hourly.precipitation[i],
       rajadas_kmh: d.hourly.wind_gusts_10m[i],
     })),
-    fonte: 'Open-Meteo Forecast API (dados reais)',
+    fonte: L(lang, 'Open-Meteo Forecast API (dados reais)', 'Open-Meteo Forecast API (real data)'),
   };
 }
 
 // ---------- 3. get_traffic ----------
-function trafficSimulado(origem, destino, motivo) {
+function trafficSimulado(origem, destino, motivo, lang) {
   const rnd = seeded(origem + destino + new Date().toDateString());
   const normal = 12 + Math.floor(rnd() * 25);
   const atraso = 4 + Math.floor(rnd() * 22);
+  const causa = pick(rnd, L(lang,
+    ['Acidente com dois veículos', 'Obras com corte de faixa', 'Veículo avariado na via', 'Semáforos avariados num cruzamento'],
+    ['Two-vehicle collision', 'Roadworks with a lane closure', 'Broken-down vehicle on the road', 'Faulty traffic lights at a junction']));
+  const via = pick(rnd, ['VCI', 'A28', 'Circunvalação', 'A1', 'Avenida da Boavista', 'IC19', '2ª Circular']);
   return {
     origem, destino,
     tempo_normal_min: normal,
     tempo_com_transito_min: normal + atraso,
     atraso_transito_min: atraso,
-    incidentes: [
-      pick(rnd, ['Acidente com dois veículos', 'Obras com corte de faixa', 'Veículo avariado na via', 'Semáforos avariados num cruzamento']) +
-        ' ' + pick(rnd, ['na VCI', 'na A28', 'na Circunvalação', 'na A1', 'na Avenida da Boavista', 'no IC19', 'na 2ª Circular']),
-    ],
-    fonte: `Dados simulados (${motivo})`,
+    incidentes: [L(lang, `${causa} na ${via}`, `${causa} on ${via}`)],
+    fonte: `${SIMULADO(lang)} (${motivo})`,
   };
 }
 
-export async function get_traffic({ origem, destino }) {
+export async function get_traffic({ origem, destino }, { lang } = {}) {
   const key = process.env.TOMTOM_API_KEY;
-  if (!key) return trafficSimulado(origem, destino, 'sem TOMTOM_API_KEY');
+  if (!key) return trafficSimulado(origem, destino, L(lang, 'sem TOMTOM_API_KEY', 'no TOMTOM_API_KEY'), lang);
   try {
-    const [a, b] = await Promise.all([geocode({ local: origem }), geocode({ local: destino })]);
-    if (a.erro || b.erro) return trafficSimulado(origem, destino, 'local não geocodificado');
+    const [a, b] = await Promise.all([geocode({ local: origem }, { lang }), geocode({ local: destino }, { lang })]);
+    if (a.erro || b.erro) return trafficSimulado(origem, destino, L(lang, 'local não geocodificado', 'place not geocoded'), lang);
     const url = `https://api.tomtom.com/routing/1/calculateRoute/${a.lat},${a.lon}:${b.lat},${b.lon}/json` +
-      `?key=${key}&traffic=true&travelMode=car&computeTravelTimeFor=all&language=pt-PT`;
+      `?key=${key}&traffic=true&travelMode=car&computeTravelTimeFor=all&language=${lang === 'en' ? 'en-GB' : 'pt-PT'}`;
     const d = await getJSON(url);
     const s = d.routes[0].summary;
     return {
@@ -109,63 +115,74 @@ export async function get_traffic({ origem, destino }) {
       tempo_sem_transito_min: Math.round((s.noTrafficTravelTimeInSeconds ?? s.travelTimeInSeconds) / 60),
       tempo_com_transito_min: Math.round(s.travelTimeInSeconds / 60),
       atraso_transito_min: Math.round(s.trafficDelayInSeconds / 60),
-      fonte: 'TomTom Routing API com trânsito em tempo real',
+      fonte: L(lang, 'TomTom Routing API com trânsito em tempo real', 'TomTom Routing API with live traffic'),
     };
   } catch (e) {
-    return trafficSimulado(origem, destino, `TomTom falhou: ${e.message}`);
+    return trafficSimulado(origem, destino, `TomTom ${L(lang, 'falhou', 'failed')}: ${e.message}`, lang);
   }
 }
 
 // ---------- 4. get_transport_status (simulado) ----------
-export async function get_transport_status({ cidade }) {
+export async function get_transport_status({ cidade }, { lang } = {}) {
   const rnd = seeded('transp' + cidade + new Date().toDateString() + new Date().getHours());
   const porto = /porto|gaia|matosinhos|maia/i.test(cidade);
   const linhas = porto
-    ? ['Metro do Porto, linha A (Azul)', 'Metro do Porto, linha B (Vermelha, até à Póvoa de Varzim)', 'Metro do Porto, linha D (Amarela)', 'STCP 500', 'CP Urbanos do Porto, linha de Braga']
-    : ['Metro de Lisboa, linha Verde', 'Metro de Lisboa, linha Azul', 'Carris 728', 'CP Urbanos de Lisboa, linha de Sintra'];
-  const problemas = ['avaria técnica numa composição', 'perturbação por pessoa na via', 'greve parcial de maquinistas', 'falha de sinalização', 'intervalos alargados por falta de material'];
+    ? [L(lang, 'Metro do Porto, linha A (Azul)', 'Porto Metro, line A (Blue)'), L(lang, 'Metro do Porto, linha B (Vermelha, até à Póvoa de Varzim)', 'Porto Metro, line B (Red, to Póvoa de Varzim)'), L(lang, 'Metro do Porto, linha D (Amarela)', 'Porto Metro, line D (Yellow)'), L(lang, 'STCP 500', 'STCP bus 500'), L(lang, 'CP Urbanos do Porto, linha de Braga', 'CP Porto suburban trains, Braga line')]
+    : [L(lang, 'Metro de Lisboa, linha Verde', 'Lisbon Metro, Green line'), L(lang, 'Metro de Lisboa, linha Azul', 'Lisbon Metro, Blue line'), L(lang, 'Carris 728', 'Carris bus 728'), L(lang, 'CP Urbanos de Lisboa, linha de Sintra', 'CP Lisbon suburban trains, Sintra line')];
+  const problemas = L(lang,
+    ['avaria técnica numa composição', 'perturbação por pessoa na via', 'greve parcial de maquinistas', 'falha de sinalização', 'intervalos alargados por falta de material'],
+    ['technical fault on a train', 'person on the tracks', 'partial drivers\' strike', 'signalling failure', 'longer intervals due to a shortage of trains']);
   return {
     cidade,
     linhas: linhas.map(l => {
       const mal = rnd() < 0.4;
-      return { linha: l, estado: mal ? 'perturbada' : 'normal', detalhe: mal ? `${pick(rnd, problemas)}, atrasos de ${5 + Math.floor(rnd() * 20)} min` : 'circulação normal' };
+      return {
+        linha: l,
+        estado: mal ? 'perturbada' : 'normal',
+        detalhe: mal ? L(lang, `${pick(rnd, problemas)}, atrasos de ${5 + Math.floor(rnd() * 20)} min`, `${pick(rnd, problemas)}, delays of ${5 + Math.floor(rnd() * 20)} min`) : L(lang, 'circulação normal', 'good service'),
+      };
     }),
-    fonte: 'Dados simulados (demo)',
+    fonte: `${SIMULADO(lang)} (demo)`,
   };
 }
 
 // ---------- 5. get_events_nearby (simulado) ----------
-export async function get_events_nearby({ cidade }) {
+export async function get_events_nearby({ cidade }, { lang } = {}) {
   const rnd = seeded('ev' + cidade + new Date().toDateString());
   const porto = /porto|gaia|matosinhos|maia/i.test(cidade);
   const eventos = porto
-    ? [['Jogo de futebol no Estádio do Dragão', 'Antas'], ['Concerto no Coliseu do Porto', 'Baixa'], ['Festival no Parque da Cidade', 'Foz'], ['Corrida de atletismo com cortes de estrada', 'Avenida dos Aliados']]
-    : [['Jogo de futebol no Estádio da Luz', 'Benfica'], ['Concerto na MEO Arena', 'Parque das Nações'], ['Jogo de futebol em Alvalade', 'Lumiar'], ['Meia maratona com cortes na Ponte 25 de Abril', 'Alcântara']];
+    ? [[L(lang, 'Jogo de futebol no Estádio do Dragão', 'Football match at Estádio do Dragão'), 'Antas'], [L(lang, 'Concerto no Coliseu do Porto', 'Concert at Coliseu do Porto'), 'Baixa'], [L(lang, 'Festival no Parque da Cidade', 'Festival at Parque da Cidade'), 'Foz'], [L(lang, 'Corrida de atletismo com cortes de estrada', 'Road race with road closures'), 'Avenida dos Aliados']]
+    : [[L(lang, 'Jogo de futebol no Estádio da Luz', 'Football match at Estádio da Luz'), 'Benfica'], [L(lang, 'Concerto na MEO Arena', 'Concert at MEO Arena'), 'Parque das Nações'], [L(lang, 'Jogo de futebol em Alvalade', 'Football match at Alvalade'), 'Lumiar'], [L(lang, 'Meia maratona com cortes na Ponte 25 de Abril', 'Half marathon closing the 25 de Abril Bridge'), 'Alcântara']];
+  const impactos = L(lang,
+    ['condicionamento de trânsito nas imediações', 'estacionamento esgotado e filas nos acessos', 'cortes de estrada a partir de 2 horas antes'],
+    ['traffic restrictions in the surrounding area', 'parking full and queues on the access roads', 'road closures starting 2 hours before']);
   const n = 1 + Math.floor(rnd() * 2);
   return {
     cidade,
     eventos: eventos.sort(() => rnd() - 0.5).slice(0, n).map(([nome, zona]) => ({
       evento: nome, zona, hora: `${17 + Math.floor(rnd() * 5)}:${pick(rnd, ['00', '30'])}`,
-      impacto: pick(rnd, ['condicionamento de trânsito nas imediações', 'estacionamento esgotado e filas nos acessos', 'cortes de estrada a partir de 2 horas antes']),
+      impacto: pick(rnd, impactos),
     })),
-    fonte: 'Dados simulados (demo)',
+    fonte: `${SIMULADO(lang)} (demo)`,
   };
 }
 
 // ---------- 6. get_seagull_facts ----------
-export async function get_seagull_facts() {
-  const titulos = ['Gaivota-de-patas-amarelas', 'Laridae'];
-  const url = `https://pt.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&exsectionformat=plain&format=json&redirects=1&titles=${encodeURIComponent(titulos.join('|'))}`;
+export async function get_seagull_facts(_input, { lang } = {}) {
+  const en = lang === 'en';
+  const host = en ? 'en.wikipedia.org' : 'pt.wikipedia.org';
+  const titulos = en ? ['Yellow-legged gull'] : ['Gaivota-de-patas-amarelas'];
+  const url = `https://${host}/w/api.php?action=query&prop=extracts&explaintext=1&exsectionformat=plain&format=json&redirects=1&titles=${encodeURIComponent(titulos.join('|'))}`;
   const d = await getJSON(url);
   const paginas = Object.values(d.query.pages).filter(p => p.extract);
   return {
     artigos: paginas.map(p => ({
       titulo: p.title,
-      url: `https://pt.wikipedia.org/wiki/${encodeURIComponent(p.title.replace(/ /g, '_'))}`,
+      url: `https://${host}/wiki/${encodeURIComponent(p.title.replace(/ /g, '_'))}`,
       texto: p.extract.slice(0, 3500),
     })),
-    nota: 'A gaivota-de-patas-amarelas (Larus michahellis) é a espécie que domina os telhados do Porto.',
-    fonte: 'Wikipédia em português (API MediaWiki)',
+    nota: L(lang, 'A gaivota-de-patas-amarelas (Larus michahellis) é a espécie que domina os telhados do Porto.', 'The yellow-legged gull (Larus michahellis) is the species that rules the rooftops of Porto.'),
+    fonte: L(lang, 'Wikipédia em português (API MediaWiki)', 'English Wikipedia (MediaWiki API)'),
   };
 }
 
@@ -199,7 +216,7 @@ export const toolDefs = [
   },
   {
     name: 'get_seagull_facts',
-    description: 'Factos reais sobre gaivotas do Porto, da Wikipédia em português. Só usar no MODO DESESPERO (credibilidade abaixo de 20) quando a desculpa absurda envolver gaivotas.',
+    description: 'Factos reais sobre gaivotas do Porto, da Wikipédia. Só usar no MODO DESESPERO (credibilidade abaixo de 20) quando a desculpa absurda envolver gaivotas.',
     input_schema: { type: 'object', properties: {} },
   },
 ];

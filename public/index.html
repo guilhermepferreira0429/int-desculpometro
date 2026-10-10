@@ -158,11 +158,25 @@
     .jornal .manchete { font-size: 1.8rem; }
     .logo { font-size: 2.5rem; }
   }
+
+  /* formulário v2: tipo de pedido, campos que mudam, contexto livre */
+  form.card { display:flex; flex-wrap:wrap; gap:14px; padding:18px; background: var(--amarelo); }
+  form.card > label { flex: 1 1 170px; }
+  form.card > label.largo { flex: 2 1 320px; }
+  form.card > label.cheio, form.card > .tipos, form.card > .linha2 { flex: 1 1 100%; }
+  .tipos { display:flex; gap:10px; flex-wrap:wrap; }
+  .tipos button { background:#fff; color: var(--ink); font-size:1.05rem; padding: 8px 18px; }
+  .tipos button.ativo { background: var(--ink); color: var(--amarelo); }
+  textarea { font: inherit; font-size:1rem; font-weight:500; color: var(--ink); background:#fff; border: var(--borda); border-radius:12px; padding:9px 12px; resize: vertical; min-height: 70px; }
+  textarea:focus { outline: 3px solid var(--rosa); outline-offset: 2px; }
+  .ajuda { font-weight:500; color: var(--mut); font-size:.8rem; }
+  body[data-tipo="atraso"] .so-fuga, body[data-tipo="fuga"] .so-atraso { display:none !important; }
+  .lingua { white-space:nowrap; margin-left:auto; align-self:flex-start; background:#fff; color: var(--ink); font-size:1rem; padding: 6px 14px; }
 </style>
 </head>
-<body>
+<body data-tipo="atraso">
 <div id="flash"></div>
-<div id="sirene" class="hidden"><div class="luz"></div><div class="base"></div><div class="txt">MODO DESESPERO</div></div>
+<div id="sirene" class="hidden"><div class="luz"></div><div class="base"></div><div class="txt" data-t="sirene"></div></div>
 
 <!-- Gaivota com as chaves no bico (reutilizada no jornal, no avatar e no ícone) -->
 <svg id="gaivota" class="hidden" viewBox="0 0 210 140" aria-hidden="true">
@@ -191,41 +205,62 @@
   <header>
     <div>
       <h1 class="logo">Desculp<span class="o">ó</span>metro</h1>
-      <p class="tag">Um agente de IA investiga o teu caminho e monta a desculpa mais credível possível. Só com factos verdadeiros.</p>
+      <p class="tag" data-t="tag"></p>
     </div>
+    <button type="button" class="lingua" id="lingua"></button>
   </header>
 
   <form id="f" class="card">
-    <label>📍 Onde estás
-      <input name="origem" required value="Porto" placeholder="ex: Porto">
+    <div class="tipos">
+      <button type="button" data-tipo="atraso" data-t="tipo_atraso"></button>
+      <button type="button" data-tipo="fuga" data-t="tipo_fuga"></button>
+    </div>
+    <label class="so-fuga largo"><span data-t="evento"></span>
+      <input name="evento" data-tp="evento_ph">
     </label>
-    <label>🏁 Para onde vais
-      <input name="destino" required value="Matosinhos" placeholder="ex: Matosinhos">
+    <label class="so-fuga"><span data-t="quando"></span>
+      <input name="quando" data-tp="quando_ph">
     </label>
-    <label>⏰ Atraso (min)
-      <input name="minutos" type="number" min="1" max="999" required value="25">
+    <label><span data-t="origem"></span>
+      <input name="origem" required value="Porto" placeholder="Porto">
     </label>
-    <label>🙈 Tens de explicar a
+    <label><span class="so-atraso" data-t="destino_atraso"></span><span class="so-fuga" data-t="destino_fuga"></span>
+      <input name="destino" required value="Matosinhos" placeholder="Matosinhos">
+    </label>
+    <label class="so-atraso"><span data-t="minutos"></span>
+      <input name="minutos" type="number" min="1" max="999" value="25">
+    </label>
+    <label><span data-t="dest"></span>
       <select name="destinatario">
-        <option value="chefe">Chefe</option>
-        <option value="mãe">Mãe</option>
-        <option value="namorada">Namorada</option>
-        <option value="professor">Professor</option>
+        <option value="chefe" data-t="d_chefe"></option>
+        <option value="mae" data-t="d_mae"></option>
+        <option value="namorada" data-t="d_namorada"></option>
+        <option value="professor" data-t="d_professor"></option>
       </select>
     </label>
+    <label class="cheio"><span data-t="contexto"></span>
+      <textarea name="contexto" maxlength="1000" rows="2" data-tp="contexto_ph"></textarea>
+      <span class="ajuda" data-t="contexto_ajuda"></span>
+    </label>
     <div class="linha2">
-      <label class="chk">🎬 Modo demo <select name="forcar_desespero"><option value="">normal (o agente decide)</option><option value="desespero">forçar desespero</option><option value="ultimo">forçar último recurso (credibilidade 0)</option></select></label>
-      <button id="go">Gerar desculpa 🔎</button>
+      <label class="chk"><span data-t="demo"></span>
+        <select name="forcar_desespero">
+          <option value="" data-t="demo_normal"></option>
+          <option value="desespero" data-t="demo_desespero"></option>
+          <option value="ultimo" data-t="demo_ultimo"></option>
+        </select>
+      </label>
+      <button id="go" data-t="go"></button>
     </div>
   </form>
 
   <div class="palco">
     <section>
-      <h2>🕵️ O agente está a investigar...</h2>
-      <div id="invest"><div class="vazio">Preenche o formulário e o agente vai consultar o tempo, o trânsito, os transportes e os eventos no teu caminho.</div></div>
+      <h2 data-t="h_invest"></h2>
+      <div id="invest"><div class="vazio" data-t="vazio"></div></div>
     </section>
     <aside class="lado">
-      <h2>📈 Credibilidade</h2>
+      <h2 data-t="h_cred"></h2>
       <div class="medidor card" id="medidor">
         <svg viewBox="-50 -12 440 204" aria-hidden="true">
           <g id="arcos"></g>
@@ -236,8 +271,8 @@
           <circle cx="170" cy="170" r="14" fill="#ff4f8b" stroke="#1d1b4b" stroke-width="3"/>
         </svg>
         <div class="num" id="num">?</div>
-        <div class="veredito" id="veredito">à espera de factos</div>
-        <div class="aovivo hidden" id="aovivo">estimativa ao vivo</div>
+        <div class="veredito" id="veredito" data-t="a_espera"></div>
+        <div class="aovivo hidden" id="aovivo" data-t="aovivo"></div>
         <div id="carimboSlot"></div>
       </div>
     </aside>
@@ -245,29 +280,29 @@
 
   <section id="secRes" class="hidden">
     <div id="absurdaSlot"></div>
-    <h2>🧾 As provas</h2>
+    <h2 data-t="h_provas"></h2>
     <div id="provas"></div>
 
-    <h2>✉️ A mensagem</h2>
+    <h2 data-t="h_msg"></h2>
     <div class="msg card" id="msg"></div>
     <div class="acoes">
-      <button id="copiar" class="verde">📋 Copiar mensagem</button>
-      <button id="outra" class="azul">🎲 Gerar outra desculpa</button>
-      <button id="verdadeBtn" class="branco">😇 Ou então diz a verdade</button>
+      <button id="copiar" class="verde" data-t="copiar"></button>
+      <button id="outra" class="azul" data-t="outra"></button>
+      <button id="verdadeBtn" class="branco" data-t="verdade"></button>
     </div>
 
     <div id="secVerdade" class="hidden">
-      <h2>😇 A versão honesta</h2>
+      <h2 data-t="h_verdade"></h2>
       <div class="msg verdade card" id="msgVerdade"></div>
-      <div class="acoes"><button id="copiarV" class="verde">📋 Copiar versão honesta</button></div>
+      <div class="acoes"><button id="copiarV" class="verde" data-t="copiarV"></button></div>
     </div>
 
     <div id="secParodia" class="hidden">
       <div id="jornalWrap">
-        <h2>🗞️ Prova de paródia: imprensa especializada <span class="pill">ficção</span></h2>
+        <h2><span data-t="h_jornal"></span> <span class="pill" data-t="ficcao_pill"></span></h2>
         <div id="jornal"></div>
       </div>
-      <h2>🎤 Prova de paródia: entrevista exclusiva <span class="pill">ficção</span></h2>
+      <h2><span data-t="h_entrevista"></span> <span class="pill" data-t="ficcao_pill"></span></h2>
       <div id="entrevista"></div>
     </div>
   </section>
@@ -278,31 +313,119 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 const gaivotaSVG = (w = 46) => `<svg viewBox="0 0 210 140" width="${w}">${$('gaivotaArte').outerHTML.replace('id="gaivotaArte"', '')}</svg>`;
 
+/* ---------- textos PT / EN ---------- */
+const TEXTOS = {
+  pt: {
+    locale: 'pt-PT', lingua: '🌐 English',
+    tag: 'Um agente de IA investiga o teu caminho e monta a desculpa mais credível possível. Só com factos verdadeiros.',
+    tipo_atraso: '⏰ Vou chegar atrasado', tipo_fuga: '🏃 Quero fugir de um compromisso',
+    origem: '📍 Onde estás', destino_atraso: '🏁 Para onde vais', destino_fuga: '📌 Onde é', minutos: '⏰ Atraso (min)',
+    evento: '🎉 De que queres fugir', evento_ph: 'ex: jantar com os sogros', quando: '🕗 Quando', quando_ph: 'ex: hoje às 20h',
+    dest: '🙈 A desculpa é para', d_chefe: 'Chefe', d_mae: 'Mãe', d_namorada: 'Namorada', d_professor: 'Professor',
+    contexto: '✍️ Conta-me o contexto (opcional)',
+    contexto_ph: 'ex: não me apetece nada ir ao jantar com a família da minha namorada, já faltei ao último e ela vai desconfiar...',
+    contexto_ajuda: 'O agente usa isto para acertar no tom e na desculpa. Não conta como prova: as provas vêm só das ferramentas.',
+    demo: '🎬 Modo demo', demo_normal: 'normal (o agente decide)', demo_desespero: 'forçar desespero', demo_ultimo: 'forçar último recurso (credibilidade 0)',
+    go: 'Gerar desculpa 🔎', go_busy: 'A investigar... 🕵️',
+    h_invest: '🕵️ O agente está a investigar...', vazio: 'Preenche o formulário e o agente vai consultar o tempo, o trânsito, os transportes e os eventos no teu caminho.',
+    h_cred: '📈 Credibilidade', a_espera: 'à espera de factos', aovivo: 'estimativa ao vivo', a_pesar: 'a pesar as provas...', interrompida: 'investigação interrompida',
+    zonas: [['ninguém', 'acredita'], ['talvez', 'cole'], ['convincente'], ['irrefutável']],
+    veredito: ['Ninguém acredita', 'Talvez cole', 'Convincente', 'Irrefutável'], carimbo: 'IRREFUTÁVEL',
+    h_provas: '🧾 As provas', h_msg: '✉️ A mensagem', fonte: 'Fonte',
+    copiar: '📋 Copiar mensagem', copiado: '✅ Copiado!', outra: '🎲 Gerar outra desculpa', verdade: '😇 Ou então diz a verdade', verdade_busy: '😬 A ganhar coragem...',
+    h_verdade: '😇 A versão honesta', copiarV: '📋 Copiar versão honesta',
+    h_jornal: '🗞️ Prova de paródia: imprensa especializada', h_entrevista: '🎤 Prova de paródia: entrevista exclusiva', ficcao_pill: 'ficção',
+    sirene: 'MODO DESESPERO', emergencia: '🚨 Desculpa de emergência', ultimo: '☠️ ÚLTIMO RECURSO', numero: 'n.º',
+    abrir: '🗂️ A abrir o processo...', concluida: '✅ Investigação concluída. Processo arquivado.',
+    tools: { geocode: 'A localizar', get_weather: 'Meteorologia', get_traffic: 'Trânsito', get_transport_status: 'Transportes', get_events_nearby: 'Eventos', get_seagull_facts: 'Inteligência sobre gaivotas' },
+    consultar: 'a consultar', feito: 'feito ✓', falhou: 'falhou', erro: 'Erro',
+    agora: 'Agora', rajadas: 'rajadas de', chuva: 'mm de chuva', com_transito: 'com trânsito', as: 'às', wiki: 'Wikipédia',
+    j_aviso: 'Diário do Bico, jornal oficial das gaivotas do Porto · publicação fictícia e humorística',
+    j_edicao: 'Edição de telhado', j_preco: 'Preço: 1 batata frita', j_factos: 'Factos verdadeiros (Wikipédia)',
+    j_rodape: 'O Diário do Bico não existe. Nenhuma gaivota foi ouvida em sede própria. Os factos da caixa amarela vêm da Wikipédia.',
+    e_selo: 'ENTREVISTA EXCLUSIVA', e_quem: 'Entrevistada', e_ficcao: 'Entrevista fictícia e humorística. Qualquer semelhança com vizinhas, avós ou gaivotas reais é pura coincidência.',
+  },
+  en: {
+    locale: 'en-GB', lingua: '🌐 Português',
+    tag: 'An AI agent investigates your route and builds the most believable excuse possible. Using only true facts.',
+    tipo_atraso: "⏰ I'm running late", tipo_fuga: '🏃 I want to get out of something',
+    origem: '📍 Where are you', destino_atraso: '🏁 Where are you going', destino_fuga: '📌 Where is it', minutos: '⏰ Delay (min)',
+    evento: '🎉 What are you dodging', evento_ph: 'e.g. dinner with the in-laws', quando: '🕗 When', quando_ph: 'e.g. tonight at 8pm',
+    dest: '🙈 The excuse is for', d_chefe: 'Boss', d_mae: 'Mum', d_namorada: 'Girlfriend', d_professor: 'Teacher',
+    contexto: '✍️ Tell me the context (optional)',
+    contexto_ph: "e.g. I really don't feel like going to dinner with my girlfriend's family, I skipped the last one and she'll get suspicious...",
+    contexto_ajuda: 'The agent uses this to get the tone and the excuse right. It does not count as evidence: evidence only comes from the tools.',
+    demo: '🎬 Demo mode', demo_normal: 'normal (the agent decides)', demo_desespero: 'force desperation', demo_ultimo: 'force last resort (credibility 0)',
+    go: 'Generate excuse 🔎', go_busy: 'Investigating... 🕵️',
+    h_invest: '🕵️ The agent is investigating...', vazio: 'Fill in the form and the agent will check the weather, traffic, public transport and events along your way.',
+    h_cred: '📈 Credibility', a_espera: 'waiting for facts', aovivo: 'live estimate', a_pesar: 'weighing the evidence...', interrompida: 'investigation interrupted',
+    zonas: [['nobody', 'buys it'], ['might', 'work'], ['convincing'], ['irrefutable']],
+    veredito: ['Nobody buys it', 'Might work', 'Convincing', 'Irrefutable'], carimbo: 'IRREFUTABLE',
+    h_provas: '🧾 The evidence', h_msg: '✉️ The message', fonte: 'Source',
+    copiar: '📋 Copy message', copiado: '✅ Copied!', outra: '🎲 Generate another excuse', verdade: '😇 Or just tell the truth', verdade_busy: '😬 Finding the courage...',
+    h_verdade: '😇 The honest version', copiarV: '📋 Copy honest version',
+    h_jornal: '🗞️ Parody evidence: specialist press', h_entrevista: '🎤 Parody evidence: exclusive interview', ficcao_pill: 'fiction',
+    sirene: 'DESPERATION MODE', emergencia: '🚨 Emergency excuse', ultimo: '☠️ LAST RESORT', numero: 'no.',
+    abrir: '🗂️ Opening the case file...', concluida: '✅ Investigation complete. Case closed.',
+    tools: { geocode: 'Locating', get_weather: 'Weather', get_traffic: 'Traffic', get_transport_status: 'Public transport', get_events_nearby: 'Events', get_seagull_facts: 'Seagull intelligence' },
+    consultar: 'checking', feito: 'done ✓', falhou: 'failed', erro: 'Error',
+    agora: 'Now', rajadas: 'gusts of', chuva: 'mm of rain', com_transito: 'with traffic', as: 'at', wiki: 'Wikipedia',
+    j_aviso: 'Diário do Bico (The Beak Gazette), official newspaper of the seagulls of Porto · fictional and humorous publication',
+    j_edicao: 'Rooftop edition', j_preco: 'Price: 1 chip', j_factos: 'True facts (Wikipedia)',
+    j_rodape: 'The Diário do Bico does not exist. No seagull was formally interviewed. The facts in the yellow box come from Wikipedia.',
+    e_selo: 'EXCLUSIVE INTERVIEW', e_quem: 'Interviewee', e_ficcao: 'Fictional and humorous interview. Any resemblance to real neighbours, grannies or seagulls is purely coincidental.',
+  },
+};
+const params = new URLSearchParams(location.search);
+let lang = (params.get('lang') || localStorage.getItem('lang')) === 'en' ? 'en' : 'pt';
+const t = k => TEXTOS[lang][k] ?? TEXTOS.pt[k] ?? k;
+
+function aplicarLingua() {
+  document.documentElement.lang = t('locale');
+  document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t(el.dataset.t); });
+  document.querySelectorAll('[data-tp]').forEach(el => { el.placeholder = t(el.dataset.tp); });
+  $('lingua').textContent = t('lingua');
+  if ($('num').textContent === '?') $('veredito').textContent = t('a_espera');
+  desenharMedidor();
+}
+
+/* ---------- tipo de pedido: atraso ou fuga ---------- */
+let tipo = 'atraso';
+function mudarTipo(novo) {
+  tipo = novo;
+  document.body.dataset.tipo = novo;
+  document.querySelectorAll('.tipos button').forEach(b => b.classList.toggle('ativo', b.dataset.tipo === novo));
+  document.querySelector('[name=minutos]').required = novo === 'atraso';
+  document.querySelector('[name=evento]').required = novo === 'fuga';
+}
+document.querySelectorAll('.tipos button').forEach(b => b.onclick = () => mudarTipo(b.dataset.tipo));
+
 let pedidoAtual = null, historico = [], estimativa = 8, oscilador = null;
 
 /* ---------- velocímetro ---------- */
 const CX = 170, CY = 170, R = 125;
 const ponto = (v, r = R) => { const a = Math.PI - v / 100 * Math.PI; return [CX + r * Math.cos(a), CY - r * Math.sin(a)]; };
 const ZONAS = [
-  { de: 0, ate: 20, cor: '#ef233c', nome: ['ninguém', 'acredita'] },
-  { de: 20, ate: 50, cor: '#ff8c42', nome: ['talvez', 'cole'] },
-  { de: 50, ate: 80, cor: '#3a86ff', nome: ['convincente'] },
-  { de: 80, ate: 100, cor: '#06d6a0', nome: ['irrefutável'] },
+  { de: 0, ate: 20, cor: '#ef233c' },
+  { de: 20, ate: 50, cor: '#ff8c42' },
+  { de: 50, ate: 80, cor: '#3a86ff' },
+  { de: 80, ate: 100, cor: '#06d6a0' },
 ];
-(function desenharMedidor() {
+function desenharMedidor() {
   $('arcos').innerHTML = ZONAS.map(z => {
     const [x1, y1] = ponto(z.de), [x2, y2] = ponto(z.ate);
     return `<path d="M${x1} ${y1} A${R} ${R} 0 0 1 ${x2} ${y2}" fill="none" stroke="${z.cor}" stroke-width="30"/>`;
   }).join('') + `<path d="M${ponto(0, R + 15)} A${R + 15} ${R + 15} 0 0 1 ${ponto(100, R + 15)}" fill="none" stroke="#1d1b4b" stroke-width="3"/>` +
     `<path d="M${ponto(0, R - 15)} A${R - 15} ${R - 15} 0 0 1 ${ponto(100, R - 15)}" fill="none" stroke="#1d1b4b" stroke-width="3"/>` +
     Array.from({ length: 11 }, (_, i) => { const [a, b] = ponto(i * 10, R - 15), [c, d] = ponto(i * 10, R - 26); return `<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="#1d1b4b" stroke-width="3"/>`; }).join('');
-  $('etiquetas').innerHTML = ZONAS.map(z => {
+  $('etiquetas').innerHTML = ZONAS.map((z, zi) => {
+    const nome = t('zonas')[zi];
     const [x, y] = ponto((z.de + z.ate) / 2, R + 44);
-    return `<text x="${x}" y="${y - (z.nome.length - 1) * 6}">${z.nome.map((l, i) => `<tspan x="${x}" dy="${i ? 13 : 0}">${l}</tspan>`).join('')}</text>`;
+    return `<text x="${x}" y="${y - (nome.length - 1) * 6}">${nome.map((l, i) => `<tspan x="${x}" dy="${i ? 13 : 0}">${esc(l)}</tspan>`).join('')}</text>`;
   }).join('');
-})();
+}
 
-const veredito = n => n < 20 ? 'Ninguém acredita' : n < 50 ? 'Talvez cole' : n < 80 ? 'Convincente' : 'Irrefutável';
+const veredito = n => t('veredito')[n < 20 ? 0 : n < 50 ? 1 : n < 80 ? 2 : 3];
 function moverPonteiro(v) { $('ponteiro').style.transform = `rotate(${-90 + Math.max(0, Math.min(100, v)) * 1.8}deg)`; }
 
 // Enquanto o agente investiga, o ponteiro tremelica à volta de uma estimativa feita com os factos já recolhidos
@@ -315,18 +438,18 @@ function comecarOscilar() {
     const v = estimativa + (Math.random() * 12 - 6);
     moverPonteiro(v);
     $('num').textContent = Math.round(Math.max(0, v));
-    $('veredito').textContent = 'a pesar as provas...';
+    $('veredito').textContent = t('a_pesar');
   }, 1100);
 }
 function pararOscilar() { clearInterval(oscilador); oscilador = null; $('aovivo').classList.add('hidden'); }
 
 function atualizarEstimativa(nome, r, minutos) {
   if (!r || r.erro) return;
-  if (nome === 'get_traffic') estimativa += Math.min(40, (r.atraso_transito_min || 0) / Math.max(1, minutos) * 40);
+  if (nome === 'get_traffic') estimativa += Math.min(40, (r.atraso_transito_min || 0) / Math.max(1, minutos || 30) * 40);
   if (nome === 'get_transport_status') estimativa += Math.min(24, r.linhas.filter(l => l.estado !== 'normal').length * 12);
   if (nome === 'get_events_nearby') estimativa += Math.min(18, r.eventos.length * 9);
   if (nome === 'get_weather') {
-    if (r.agora.precipitacao_mm > 0 || /chuva|aguaceiro|trovoada|chuvisco/.test(r.agora.estado)) estimativa += 15;
+    if (r.agora.precipitacao_mm > 0 || r.agora.codigo >= 51) estimativa += 15;
     if (r.agora.rajadas_kmh > 50) estimativa += 8;
   }
   estimativa = Math.min(92, estimativa);
@@ -337,46 +460,46 @@ function mostrarCredibilidade(alvo) {
   $('medidor').classList.add('final');
   moverPonteiro(alvo);
   const de = parseInt($('num').textContent) || 0, t0 = performance.now();
-  (function passo(t) {
-    const p = Math.min(1, (t - t0) / 2600), v = Math.round(de + (alvo - de) * (1 - Math.pow(1 - p, 3)));
+  (function passo(tt) {
+    const p = Math.min(1, (tt - t0) / 2600), v = Math.round(de + (alvo - de) * (1 - Math.pow(1 - p, 3)));
     $('num').textContent = v; $('veredito').textContent = veredito(v);
     $('veredito').style.color = ZONAS.find(z => v < z.ate || z.ate === 100).cor;
     if (p < 1) requestAnimationFrame(passo);
-    else if (alvo > 80) $('carimboSlot').innerHTML = '<div class="carimbo">IRREFUTÁVEL</div>';
+    else if (alvo > 80) $('carimboSlot').innerHTML = `<div class="carimbo">${esc(t('carimbo'))}</div>`;
   })(t0);
 }
 
 /* ---------- cartões das ferramentas ---------- */
 const ICONES = {
-  geocode: { i: '📍', cor: '#ffd23f', nome: 'A localizar' },
-  get_weather: { i: '☁️', cor: '#8ecdff', nome: 'Meteorologia' },
-  get_traffic: { i: '🚗', cor: '#ff8c42', nome: 'Trânsito' },
-  get_transport_status: { i: '🚇', cor: '#c3a6ff', nome: 'Transportes' },
-  get_events_nearby: { i: '🏟️', cor: '#06d6a0', nome: 'Eventos' },
-  get_seagull_facts: { i: null, cor: '#ff9db5', nome: 'Inteligência sobre gaivotas' },
+  geocode: { i: '📍', cor: '#ffd23f' },
+  get_weather: { i: '☁️', cor: '#8ecdff' },
+  get_traffic: { i: '🚗', cor: '#ff8c42' },
+  get_transport_status: { i: '🚇', cor: '#c3a6ff' },
+  get_events_nearby: { i: '🏟️', cor: '#06d6a0' },
+  get_seagull_facts: { i: null, cor: '#ff9db5' },
 };
 
 function resumo(nome, r) {
-  if (r.erro) return `Erro: ${esc(r.erro)}`;
+  if (r.erro) return `${t('erro')}: ${esc(r.erro)}`;
   switch (nome) {
     case 'geocode': return `${esc(r.encontrado)}`;
-    case 'get_weather': return `Agora: <b>${esc(r.agora.estado)}</b>, ${r.agora.temperatura_c}°C, rajadas de ${r.agora.rajadas_kmh} km/h, ${r.agora.precipitacao_mm} mm de chuva <i>· ${esc(r.fonte)}</i>`;
-    case 'get_traffic': return `<b>${r.tempo_com_transito_min} min</b> com trânsito (+${r.atraso_transito_min} min)${r.incidentes ? '<br>⚠️ ' + esc(r.incidentes.join(', ')) : ''} <i>· ${esc(r.fonte)}</i>`;
+    case 'get_weather': return `${t('agora')}: <b>${esc(r.agora.estado)}</b>, ${r.agora.temperatura_c}°C, ${t('rajadas')} ${r.agora.rajadas_kmh} km/h, ${r.agora.precipitacao_mm} ${t('chuva')} <i>· ${esc(r.fonte)}</i>`;
+    case 'get_traffic': return `<b>${r.tempo_com_transito_min} min</b> ${t('com_transito')} (+${r.atraso_transito_min} min)${r.incidentes ? '<br>⚠️ ' + esc(r.incidentes.join(', ')) : ''} <i>· ${esc(r.fonte)}</i>`;
     case 'get_transport_status': return r.linhas.map(l => `${l.estado === 'normal' ? '🟢' : '🔴'} ${esc(l.linha)}${l.estado !== 'normal' ? ': ' + esc(l.detalhe) : ''}`).join('<br>') + ` <i>· ${esc(r.fonte)}</i>`;
-    case 'get_events_nearby': return r.eventos.map(e => `🎟️ ${esc(e.evento)} às ${esc(e.hora)}: ${esc(e.impacto)}`).join('<br>') + ` <i>· ${esc(r.fonte)}</i>`;
-    case 'get_seagull_facts': return r.artigos.map(a => `📖 ${esc(a.titulo)}`).join(', ') + ' <i>· Wikipédia</i>';
+    case 'get_events_nearby': return r.eventos.map(e => `🎟️ ${esc(e.evento)} ${t('as')} ${esc(e.hora)}: ${esc(e.impacto)}`).join('<br>') + ` <i>· ${esc(r.fonte)}</i>`;
+    case 'get_seagull_facts': return r.artigos.map(a => `📖 ${esc(a.titulo)}`).join(', ') + ` <i>· ${t('wiki')}</i>`;
     default: return esc(JSON.stringify(r).slice(0, 200));
   }
 }
 
 function cartaoInicio(e) {
-  const m = ICONES[e.name] || { i: '🔧', cor: '#eee', nome: e.name };
+  const m = ICONES[e.name] || { i: '🔧', cor: '#eee' };
   $('invest').insertAdjacentHTML('beforeend', `
     <div class="tool card aberto" id="t-${e.id}">
       <div class="ico" style="background:${m.cor}">${m.i ?? gaivotaSVG()}</div>
       <div>
-        <span class="estado">a consultar</span>
-        <div class="nome">${esc(m.nome)}</div>
+        <span class="estado">${esc(t('consultar'))}</span>
+        <div class="nome">${esc(t('tools')[e.name] || e.name)}</div>
         <div class="args">${esc(e.name)}(${esc(Object.values(e.input || {}).join(', '))})</div>
         <div class="res">...</div>
       </div>
@@ -386,7 +509,7 @@ function cartaoInicio(e) {
 function cartaoFim(e) {
   const el = $('t-' + e.id); if (!el) return;
   el.classList.remove('aberto'); el.classList.add(e.erro ? 'err' : 'done');
-  el.querySelector('.estado').textContent = e.erro ? 'falhou' : 'feito ✓';
+  el.querySelector('.estado').textContent = e.erro ? t('falhou') : t('feito');
   el.querySelector('.res').innerHTML = resumo(e.name, e.result);
 }
 
@@ -401,11 +524,11 @@ function modoDesespero(on) {
 const AVATARES = { gaivota: null, turista: '📸', vizinha: '🙋‍♀️', avo: '👵', maquinista: '🚇', padeira: '🥐', tuna: '🎸', gato: '🐈', senhor_do_cafe: '☕', rotunda: '🔄', cao: '🐕', francesinha: '🥪', vendedora: '🧀', carro: '🚙', excursao: '🚌', supermercado: '🛒', sueca: '🃏', fas: '🤳', mapa: '🗺️', gps: '📡', motorista: '🚍', outro: '🎤' };
 
 function renderJornal(j) {
-  const hoje = new Date().toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const hoje = new Date().toLocaleDateString(t('locale'), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   return `<article class="jornal">
-    <div class="aviso">Diário do Bico, jornal oficial das gaivotas do Porto · publicação fictícia e humorística</div>
+    <div class="aviso">${esc(t('j_aviso'))}</div>
     <div class="titulo-j">Diário do Bico</div>
-    <div class="meta"><span>${esc(hoje)}</span><span>Edição de telhado</span><span>Preço: 1 batata frita</span></div>
+    <div class="meta"><span>${esc(hoje)}</span><span>${esc(t('j_edicao'))}</span><span>${esc(t('j_preco'))}</span></div>
     <div class="manchete">${esc(j.manchete)}</div>
     <p class="subt">${esc(j.subtitulo)}</p>
     <div class="grelha">
@@ -413,10 +536,10 @@ function renderJornal(j) {
       <div>
         <div class="foto">${gaivotaSVG(180)}</div>
         <div class="legenda">${esc(j.legenda_foto)}</div>
-        <div class="caixa"><b>Factos verdadeiros (Wikipédia)</b><ul>${(j.caixa_factos || []).map(f => `<li>${esc(f)}</li>`).join('')}</ul></div>
+        <div class="caixa"><b>${esc(t('j_factos'))}</b><ul>${(j.caixa_factos || []).map(f => `<li>${esc(f)}</li>`).join('')}</ul></div>
       </div>
     </div>
-    <div class="rodape">O Diário do Bico não existe. Nenhuma gaivota foi ouvida em sede própria. Os factos da caixa amarela vêm da Wikipédia em português.</div>
+    <div class="rodape">${esc(t('j_rodape'))}</div>
   </article>`;
 }
 
@@ -426,13 +549,13 @@ function renderEntrevista(e, personagem) {
     <div class="topo">
       <div class="avatar">${av ?? gaivotaSVG(84)}</div>
       <div>
-        <span class="selo">ENTREVISTA EXCLUSIVA</span>
+        <span class="selo">${esc(t('e_selo'))}</span>
         <h3>${esc(e.titulo)}</h3>
-        <div class="quem">Entrevistada: ${esc(e.entrevistada)}</div>
+        <div class="quem">${esc(t('e_quem'))}: ${esc(e.entrevistada)}</div>
       </div>
     </div>
     ${(e.perguntas || []).map(q => `<div class="p">— ${esc(q.p)}</div><p class="r">${esc(q.r)}</p>`).join('')}
-    <div class="ficcao">Entrevista fictícia e humorística. Qualquer semelhança com vizinhas, avós ou gaivotas reais é pura coincidência.</div>
+    <div class="ficcao">${esc(t('e_ficcao'))}</div>
   </article>`;
 }
 
@@ -443,19 +566,20 @@ function mostrarFinal(d) {
   mostrarCredibilidade(Math.max(0, Math.min(100, Number(d.credibilidade) || 0)));
   $('provas').innerHTML = (d.provas || []).map((p, i) => `
     <div class="prova card" style="animation-delay:${i * 0.12}s">
-      <h3>${esc(p.titulo)}</h3><p>${esc(p.detalhe)}</p><div class="fonte">Fonte: ${esc(p.fonte)}</div>
+      <h3>${esc(p.titulo)}</h3><p>${esc(p.detalhe)}</p><div class="fonte">${esc(t('fonte'))}: ${esc(p.fonte)}</div>
     </div>`).join('');
   $('msg').textContent = d.mensagem || '';
   historico.push(d.desculpa_absurda?.titulo ? `${d.desculpa_absurda.titulo}: ${d.mensagem}` : d.mensagem);
 
-  const desespero = !!d.modo_desespero;
+  const desespero = !!d.modo_desespero, a = d.desculpa_absurda;
   modoDesespero(desespero);
-  $('absurdaSlot').innerHTML = desespero && d.desculpa_absurda
-    ? (d.desculpa_absurda.ultimo_recurso || (d.desculpa_absurda.numero >= 11 && d.desculpa_absurda.numero <= 20)
-      ? `<div class="absurda ultimo">☠️ ÚLTIMO RECURSO n.º ${esc(d.desculpa_absurda.numero)}: ${esc(d.desculpa_absurda.titulo)}</div>`
-      : `<div class="absurda">🚨 Desculpa de emergência${d.desculpa_absurda.numero ? ' n.º ' + esc(d.desculpa_absurda.numero) : ''}: ${esc(d.desculpa_absurda.titulo)}</div>`) : '';
+  const num = a?.numero ? ` ${t('numero')} ${esc(a.numero)}` : '';
+  $('absurdaSlot').innerHTML = desespero && a
+    ? (a.ultimo_recurso || (a.numero >= 11 && a.numero <= 20)
+      ? `<div class="absurda ultimo">${esc(t('ultimo'))}${num}: ${esc(a.titulo)}</div>`
+      : `<div class="absurda">${esc(t('emergencia'))}${num}: ${esc(a.titulo)}</div>`) : '';
   if (desespero) {
-    const personagem = d.desculpa_absurda?.personagem || (d.diario_do_bico ? 'gaivota' : 'outro');
+    const personagem = a?.personagem || (d.diario_do_bico ? 'gaivota' : 'outro');
     $('jornalWrap').classList.toggle('hidden', !d.diario_do_bico);
     $('jornal').innerHTML = d.diario_do_bico ? renderJornal(d.diario_do_bico) : '';
     $('entrevista').innerHTML = d.entrevista ? renderEntrevista(d.entrevista, personagem) : '';
@@ -481,15 +605,17 @@ async function pedir(corpo, onEvento) {
 }
 
 function bloquear(on) {
-  for (const id of ['go', 'outra', 'verdadeBtn']) $(id).disabled = on;
-  $('go').textContent = on ? 'A investigar... 🕵️' : 'Gerar desculpa 🔎';
+  for (const id of ['go', 'outra', 'verdadeBtn', 'lingua']) $(id).disabled = on;
+  $('go').textContent = on ? t('go_busy') : t('go');
 }
+
+const cartaoErro = msg => `<div class="tool card err"><div class="ico" style="background:#ef233c">❌</div><div>${esc(msg)}</div></div>`;
 
 async function investigar(corpo) {
   bloquear(true);
   modoDesespero(false);
   $('secRes').classList.add('hidden');
-  $('invest').innerHTML = '<div class="pens" id="abrir">🗂️ A abrir o processo...</div>';
+  $('invest').innerHTML = `<div class="pens" id="abrir">${esc(t('abrir'))}</div>`;
   $('invest').scrollIntoView({ behavior: 'smooth', block: 'start' });
   estimativa = 8; $('veredito').style.color = '';
   comecarOscilar();
@@ -500,13 +626,13 @@ async function investigar(corpo) {
       if (e.type === 'pensamento') $('invest').insertAdjacentHTML('beforeend', `<div class="pens">💭 ${esc(e.text)}</div>`);
       if (e.type === 'tool_start') cartaoInicio(e);
       if (e.type === 'tool_result') { cartaoFim(e); atualizarEstimativa(e.name, e.result, corpo.minutos); }
-      if (e.type === 'final') { terminou = true; $('invest').insertAdjacentHTML('beforeend', '<div class="pens">✅ Investigação concluída. Processo arquivado.</div>'); mostrarFinal(e.data); }
-      if (e.type === 'error') $('invest').insertAdjacentHTML('beforeend', `<div class="tool card err"><div class="ico" style="background:#ef233c">❌</div><div>${esc(e.message)}</div></div>`);
+      if (e.type === 'final') { terminou = true; $('invest').insertAdjacentHTML('beforeend', `<div class="pens">${esc(t('concluida'))}</div>`); mostrarFinal(e.data); }
+      if (e.type === 'error') $('invest').insertAdjacentHTML('beforeend', cartaoErro(e.message));
     });
   } catch (err) {
-    $('invest').insertAdjacentHTML('beforeend', `<div class="tool card err"><div class="ico" style="background:#ef233c">❌</div><div>${esc(err.message)}</div></div>`);
+    $('invest').insertAdjacentHTML('beforeend', cartaoErro(err.message));
   } finally {
-    if (!terminou) { pararOscilar(); $('veredito').textContent = 'investigação interrompida'; }
+    if (!terminou) { pararOscilar(); $('veredito').textContent = t('interrompida'); }
     bloquear(false);
   }
 }
@@ -514,25 +640,35 @@ async function investigar(corpo) {
 $('f').addEventListener('submit', ev => {
   ev.preventDefault();
   const fd = new FormData($('f'));
-  pedidoAtual = { origem: fd.get('origem'), destino: fd.get('destino'), minutos: +fd.get('minutos'), destinatario: fd.get('destinatario'), forcar_desespero: fd.get('forcar_desespero') || false };
+  const sel = document.querySelector('[name=destinatario]');
+  pedidoAtual = {
+    lang, tipo,
+    origem: fd.get('origem'), destino: fd.get('destino'),
+    minutos: tipo === 'atraso' ? +fd.get('minutos') : undefined,
+    evento: tipo === 'fuga' ? fd.get('evento') : undefined,
+    quando: tipo === 'fuga' ? fd.get('quando') : undefined,
+    destinatario: sel.options[sel.selectedIndex].textContent,
+    contexto: fd.get('contexto'),
+    forcar_desespero: fd.get('forcar_desespero') || false,
+  };
   historico = [];
   investigar(pedidoAtual);
 });
 
-$('outra').onclick = () => { if (pedidoAtual) investigar({ ...pedidoAtual, evitar: historico }); };
+$('outra').onclick = () => { if (pedidoAtual) investigar({ ...pedidoAtual, lang, evitar: historico }); };
 
 async function copiar(id, btn) {
   await navigator.clipboard.writeText($(id).textContent);
-  const t = btn.textContent; btn.textContent = '✅ Copiado!'; setTimeout(() => btn.textContent = t, 1500);
+  btn.textContent = t('copiado'); setTimeout(() => btn.textContent = t(btn.dataset.t), 1500);
 }
 $('copiar').onclick = e => copiar('msg', e.currentTarget);
 $('copiarV').onclick = e => copiar('msgVerdade', e.currentTarget);
 
 $('verdadeBtn').onclick = async () => {
   if (!pedidoAtual) return;
-  const b = $('verdadeBtn'); bloquear(true); b.textContent = '😬 A ganhar coragem...';
+  const b = $('verdadeBtn'); bloquear(true); b.textContent = t('verdade_busy');
   try {
-    await pedir({ ...pedidoAtual, modo: 'verdade' }, e => {
+    await pedir({ ...pedidoAtual, lang, modo: 'verdade' }, e => {
       if (e.type === 'verdade') {
         modoDesespero(false);
         $('secVerdade').classList.remove('hidden');
@@ -541,8 +677,13 @@ $('verdadeBtn').onclick = async () => {
       }
       if (e.type === 'error') alert(e.message);
     });
-  } finally { bloquear(false); b.textContent = '😇 Ou então diz a verdade'; }
+  } finally { bloquear(false); b.textContent = t('verdade'); }
 };
+
+$('lingua').onclick = () => { lang = lang === 'pt' ? 'en' : 'pt'; localStorage.setItem('lang', lang); aplicarLingua(); };
+
+mudarTipo(params.get('tipo') === 'fuga' ? 'fuga' : 'atraso');
+aplicarLingua();
 </script>
 </body>
 </html>
