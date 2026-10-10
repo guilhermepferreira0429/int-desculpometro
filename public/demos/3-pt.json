@@ -1,0 +1,417 @@
+{
+ "pedido": {
+  "lang": "pt",
+  "tipo": "fuga",
+  "origem": "Porto",
+  "destino": "Braga",
+  "evento": "casamento do primo",
+  "quando": "há duas horas",
+  "destinatario_id": "grupo",
+  "destinatario": "Grupo do WhatsApp da família",
+  "contexto": "Era o padrinho.",
+  "forcar_desespero": "ultimo"
+ },
+ "eventos": [
+  {
+   "type": "tool_start",
+   "id": "toolu_016SDt4VVwyGHCrrrbxYZ3be",
+   "name": "geocode",
+   "input": {
+    "local": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01Kw2TZV3Gm5FCD8PCXUec6t",
+   "name": "geocode",
+   "input": {
+    "local": "Braga"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01TVba1UTybcrfJDkNbj9NbW",
+   "name": "get_traffic",
+   "input": {
+    "origem": "Porto",
+    "destino": "Braga"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01RqVcURXtENZcxwYU9mayJm",
+   "name": "get_transport_status",
+   "input": {
+    "cidade": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01Juo7jvWAvXXWKCBhCUMq8H",
+   "name": "get_events_nearby",
+   "input": {
+    "cidade": "Braga"
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01TVba1UTybcrfJDkNbj9NbW",
+   "name": "get_traffic",
+   "result": {
+    "origem": "Porto",
+    "destino": "Braga",
+    "tempo_normal_min": 14,
+    "tempo_com_transito_min": 25,
+    "atraso_transito_min": 11,
+    "incidentes": [
+     "Obras com corte de faixa (A1)"
+    ],
+    "fonte": "Dados simulados (sem TOMTOM_API_KEY)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01RqVcURXtENZcxwYU9mayJm",
+   "name": "get_transport_status",
+   "result": {
+    "cidade": "Porto",
+    "linhas": [
+     {
+      "linha": "Metro do Porto, linha A (Azul)",
+      "estado": "perturbada",
+      "detalhe": "perturbação por pessoa na via, atrasos de 6 min"
+     },
+     {
+      "linha": "Metro do Porto, linha B (Vermelha, até à Póvoa de Varzim)",
+      "estado": "normal",
+      "detalhe": "circulação normal"
+     },
+     {
+      "linha": "Metro do Porto, linha D (Amarela)",
+      "estado": "perturbada",
+      "detalhe": "intervalos alargados por falta de material, atrasos de 10 min"
+     },
+     {
+      "linha": "STCP 500",
+      "estado": "perturbada",
+      "detalhe": "perturbação por pessoa na via, atrasos de 6 min"
+     },
+     {
+      "linha": "CP Urbanos do Porto, linha de Braga",
+      "estado": "normal",
+      "detalhe": "circulação normal"
+     }
+    ],
+    "fonte": "Dados simulados (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01Juo7jvWAvXXWKCBhCUMq8H",
+   "name": "get_events_nearby",
+   "result": {
+    "cidade": "Braga",
+    "eventos": [
+     {
+      "evento": "Concerto na MEO Arena",
+      "zona": "Parque das Nações",
+      "hora": "19:00",
+      "impacto": "estacionamento esgotado e filas nos acessos"
+     }
+    ],
+    "fonte": "Dados simulados (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_016SDt4VVwyGHCrrrbxYZ3be",
+   "name": "geocode",
+   "result": {
+    "local_pedido": "Porto",
+    "encontrado": "Porto, Distrito do Porto, Portugal",
+    "lat": 41.1485,
+    "lon": -8.61097,
+    "fonte": "Open-Meteo Geocoding API"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01Kw2TZV3Gm5FCD8PCXUec6t",
+   "name": "geocode",
+   "result": {
+    "local_pedido": "Braga",
+    "encontrado": "Braga, Distrito de Braga, Portugal",
+    "lat": 41.5514,
+    "lon": -8.42311,
+    "fonte": "Open-Meteo Geocoding API"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01VpX6kMX4FW4shjBwzfD3gD",
+   "name": "get_weather",
+   "input": {
+    "lat": 41.5514,
+    "lon": -8.42311
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01VpX6kMX4FW4shjBwzfD3gD",
+   "name": "get_weather",
+   "result": {
+    "agora": {
+     "hora": "2026-10-10T17:30",
+     "estado": "parcialmente nublado",
+     "codigo": 2,
+     "temperatura_c": 22.4,
+     "sensacao_c": 22.7,
+     "precipitacao_mm": 0,
+     "vento_kmh": 6.5,
+     "rajadas_kmh": 18,
+     "visibilidade_m": 40260
+    },
+    "proximas_horas": [
+     {
+      "hora": "17:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 17.6
+     },
+     {
+      "hora": "18:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 17.3
+     },
+     {
+      "hora": "19:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 12.6
+     },
+     {
+      "hora": "20:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 10.4
+     },
+     {
+      "hora": "21:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 8.3
+     },
+     {
+      "hora": "22:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 6.1
+     }
+    ],
+    "fonte": "Open-Meteo Forecast API (dados reais)"
+   },
+   "erro": false
+  },
+  {
+   "type": "final",
+   "data": {
+    "modo": "ultimo",
+    "credibilidade": 0,
+    "provas": [
+     {
+      "titulo": "Trânsito quase normal",
+      "detalhe": "Porto–Braga: 25 minutos com trânsito, só 11 a mais. Obras na A1.",
+      "fonte": "Dados simulados (sem TOMTOM_API_KEY)"
+     },
+     {
+      "titulo": "Metro perturbado, mas só no Porto",
+      "detalhe": "Linhas A e D com atrasos de 6 e 10 minutos. A linha de Braga está normal.",
+      "fonte": "Dados simulados (demo)"
+     },
+     {
+      "titulo": "Concerto só às 19:00",
+      "detalhe": "Concerto em Braga com filas nos acessos, mas só começa depois do casamento.",
+      "fonte": "Dados simulados (demo)"
+     },
+     {
+      "titulo": "Tempo perfeito em Braga",
+      "detalhe": "Parcialmente nublado, 22,4 °C, sem chuva e rajadas de 18 km/h.",
+      "fonte": "Open-Meteo Forecast API (dados reais)"
+     }
+    ],
+    "mensagem": "Família, peço desculpa a todos, sobretudo aos noivos. Um senhor de 80 anos desafiou-me para uma partida de sueca e a honra da família estava em jogo. Ainda vamos na última vaza. Prometo compensar o primo: jantar por minha conta no fim de semana que ele escolher.",
+    "modo_desespero": true,
+    "resumo": "Fiquei preso numa sueca de honra",
+    "emoji": "🃏",
+    "desculpa_absurda": {
+     "numero": 14,
+     "titulo": "Um senhor de 80 anos desafiou-me para uma sueca e a honra da família estava em jogo",
+     "ultimo_recurso": true,
+     "irrefutavel": false,
+     "personagem": "sueca"
+    },
+    "video": {
+     "cenas": [
+      {
+       "local": "AV. DA BOAVISTA",
+       "cenario": "rua",
+       "acao": "aproxima",
+       "legenda": "Um senhor de 80 anos desafia-me",
+       "objeto": "🃏",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": false
+      },
+      {
+       "local": "CAFÉ DE BAIRRO · PORTO",
+       "cenario": "cafe",
+       "acao": "conversa",
+       "legenda": "Não posso recusar, a honra está em jogo",
+       "objeto": "🍺",
+       "ajudantes": "senhor_do_cafe",
+       "n_ajudantes": 2,
+       "noite": false
+      },
+      {
+       "local": "CAFÉ DE BAIRRO · PORTO",
+       "cenario": "cafe",
+       "acao": "preso",
+       "legenda": "Empate. Há que jogar mais uma vaza",
+       "objeto": "🃏",
+       "ajudantes": "senhor_do_cafe",
+       "n_ajudantes": 3,
+       "noite": false
+      },
+      {
+       "local": "A3 · BRAGA",
+       "cenario": "estrada",
+       "acao": "chega",
+       "legenda": "Chego tarde, mas com a honra intacta",
+       "objeto": "🏆",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": true
+      }
+     ]
+    },
+    "entrevista": {
+     "titulo": "Entrevista exclusiva com o campeão de sueca",
+     "entrevistada": "Sr. Armindo, 80 anos, mestre de sueca e terror dos cafés do Porto",
+     "grupo": 1,
+     "boneco": "senhor_do_cafe",
+     "perguntas": [
+      {
+       "p": "Porque desafiou este rapaz para a sueca?",
+       "r": "Tinha cara de quem jogava mal. Quis ensinar-lhe como se faz, é um serviço público.",
+       "quem": "Sr. Armindo"
+      },
+      {
+       "p": "Sabia que ele tinha um casamento em Braga?",
+       "r": "Disse qualquer coisa, mas eu estava a embaralhar. Quem baralha não ouve.",
+       "quem": "Sr. Armindo"
+      },
+      {
+       "p": "E o jogo, já acabou?",
+       "r": "Qual acabou! Estamos 11 a 11 e ele ainda não sabe que tem de pagar o café.",
+       "quem": "Sr. Armindo"
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "conversa": {
+  "nome_contacto": "Família Unida 👨‍👩‍👧‍👦",
+  "resposta1": [
+   {
+    "autor": "Tia Gracinda",
+    "texto": "MENINO, ESTÁS A BRINCAR?? Faltaste ao casamento por causa de uma SUECA?! 😱"
+   },
+   {
+    "autor": "Primo Rui",
+    "texto": "Eu era o noivo e fiquei sem padrinho. Isto vai para meme. 💀"
+   },
+   {
+    "autor": "Avô Joaquim",
+    "texto": "Honra da família? Quem era o velho? Joga bem?"
+   }
+  ],
+  "duvida": true,
+  "texto_link": "Não estou a inventar, está tudo aqui: diariodobico.pt/exclusivo",
+  "noticia_link": {
+   "manchete": "TERROR DOS CAFÉS DO PORTO PRENDE RAPAZ NUMA SUECA INFINITA",
+   "lead": "O Sr. Armindo, 80 anos, garante que o jogo está 11 a 11 e que o jovem ainda lhe deve o café."
+  },
+  "reacao_link": [
+   {
+    "autor": "Tia Gracinda",
+    "texto": "Reencaminhei isto a 20 pessoas. Quem baralha não ouve, já tinha dito a tua avó. 🙏"
+   },
+   {
+    "autor": "Primo Rui",
+    "texto": "11 a 11?! Isso é a sério? Quero ouvir o Sr. Armindo, senão não acredito."
+   },
+   {
+    "autor": "Avô Joaquim",
+    "texto": "Conheço esse Armindo. Não perdoa. Põe-no aqui no grupo."
+   }
+  ],
+  "desfecho": "quer_falar",
+  "culpado": {
+   "nome": "Sr. Armindo 🃏",
+   "mensagens": [
+    {
+     "texto": "Boa noite. Confirmo tudo. O rapaz não sai daqui antes do desempate."
+    },
+    {
+     "texto": "E ele ainda me deve um café. Quem baralha, manda."
+    }
+   ]
+  },
+  "reacao_final": [
+   {
+    "autor": "Avô Joaquim",
+    "texto": "Armindo, és um craque! Rapaz, ganha lá isso, é pela família. 🏆"
+   },
+   {
+    "autor": "Primo Rui",
+    "texto": "Ok, estás perdoado. Mas o jantar é num sítio caro. 😂"
+   }
+  ],
+  "reacao": "😱"
+ },
+ "tribunal": {
+  "votos": [
+   {
+    "id": "avo",
+    "voto": "chumba",
+    "nota": 3,
+    "comentario": "Ó filho, jogar à sueca enquanto os noivos esperam no altar? Quem não vai ao casamento por causa de uma vaza fica de fora da sobremesa! Ainda assim, o jantar prometido amolece-me o coração, mas lá diz o ditado: quem não vem ao casório, que traga o arroz doce no bolso."
+   },
+   {
+    "id": "gaivota",
+    "voto": "chumba",
+    "nota": 2,
+    "comentario": "Uma sueca com um velhote de 80 anos e nem uma gaivota na mesa para roubar o baralho? Aborrecidíssimo, e a Ribeira nunca perdoa quem falta a um casamento sem um golpe digno de uma gaivota-de-patas-amarelas. Dois pontos só porque a honra da família ainda vai na última vaza, o que ao menos tem algum suspense."
+   },
+   {
+    "id": "chefe",
+    "voto": "chumba",
+    "nota": 1,
+    "comentario": "Credibilidade 0/100, dados simulados e uma sueca com um octogenário a meio de um casamento: o único dado verificável é o tempo em Braga, e esse só prova que não havia chuva para o acusado se esconder. Dou um ponto pela última vaza, que ao menos tem a decência de ser cronologicamente plausível."
+   }
+  ]
+ }
+}

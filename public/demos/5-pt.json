@@ -1,0 +1,365 @@
+{
+ "pedido": {
+  "lang": "pt",
+  "tipo": "fuga",
+  "origem": "Porto",
+  "destino": "Porto",
+  "evento": "treino de pernas",
+  "quando": "daqui a uma hora",
+  "destinatario_id": "treinador",
+  "destinatario": "Treinador do ginásio",
+  "contexto": "Odeio o dia de pernas.",
+  "forcar_desespero": "maluco"
+ },
+ "eventos": [
+  {
+   "type": "tool_start",
+   "id": "toolu_01KwTeZH3EjocfKKThEYaEwL",
+   "name": "geocode",
+   "input": {
+    "local": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_0118cjyC84kaN34M2ys7abiP",
+   "name": "get_traffic",
+   "input": {
+    "origem": "Porto",
+    "destino": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01JQ1GnGXgXEmvvpCQ4vRf9z",
+   "name": "get_transport_status",
+   "input": {
+    "cidade": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01CjkpVty9FGXBNG2eryzk2k",
+   "name": "get_events_nearby",
+   "input": {
+    "cidade": "Porto"
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_0118cjyC84kaN34M2ys7abiP",
+   "name": "get_traffic",
+   "result": {
+    "origem": "Porto",
+    "destino": "Porto",
+    "tempo_normal_min": 18,
+    "tempo_com_transito_min": 27,
+    "atraso_transito_min": 9,
+    "incidentes": [
+     "Veículo avariado na via (2ª Circular)"
+    ],
+    "fonte": "Dados simulados (sem TOMTOM_API_KEY)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01JQ1GnGXgXEmvvpCQ4vRf9z",
+   "name": "get_transport_status",
+   "result": {
+    "cidade": "Porto",
+    "linhas": [
+     {
+      "linha": "Metro do Porto, linha A (Azul)",
+      "estado": "perturbada",
+      "detalhe": "perturbação por pessoa na via, atrasos de 6 min"
+     },
+     {
+      "linha": "Metro do Porto, linha B (Vermelha, até à Póvoa de Varzim)",
+      "estado": "normal",
+      "detalhe": "circulação normal"
+     },
+     {
+      "linha": "Metro do Porto, linha D (Amarela)",
+      "estado": "perturbada",
+      "detalhe": "intervalos alargados por falta de material, atrasos de 10 min"
+     },
+     {
+      "linha": "STCP 500",
+      "estado": "perturbada",
+      "detalhe": "perturbação por pessoa na via, atrasos de 6 min"
+     },
+     {
+      "linha": "CP Urbanos do Porto, linha de Braga",
+      "estado": "normal",
+      "detalhe": "circulação normal"
+     }
+    ],
+    "fonte": "Dados simulados (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01CjkpVty9FGXBNG2eryzk2k",
+   "name": "get_events_nearby",
+   "result": {
+    "cidade": "Porto",
+    "eventos": [
+     {
+      "evento": "Jogo de futebol no Estádio do Dragão",
+      "zona": "Antas",
+      "hora": "19:00",
+      "impacto": "cortes de estrada a partir de 2 horas antes"
+     }
+    ],
+    "fonte": "Dados simulados (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01KwTeZH3EjocfKKThEYaEwL",
+   "name": "geocode",
+   "result": {
+    "local_pedido": "Porto",
+    "encontrado": "Porto, Distrito do Porto, Portugal",
+    "lat": 41.1485,
+    "lon": -8.61097,
+    "fonte": "Open-Meteo Geocoding API"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01BT92W1FbWoV1dWifzJhPCr",
+   "name": "get_weather",
+   "input": {
+    "lat": 41.1485,
+    "lon": -8.61097
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01BT92W1FbWoV1dWifzJhPCr",
+   "name": "get_weather",
+   "result": {
+    "agora": {
+     "hora": "2026-10-10T17:30",
+     "estado": "parcialmente nublado",
+     "codigo": 2,
+     "temperatura_c": 18.7,
+     "sensacao_c": 18.5,
+     "precipitacao_mm": 0,
+     "vento_kmh": 7.9,
+     "rajadas_kmh": 23,
+     "visibilidade_m": 39560
+    },
+    "proximas_horas": [
+     {
+      "hora": "17:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 24.5
+     },
+     {
+      "hora": "18:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 21.2
+     },
+     {
+      "hora": "19:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 17.6
+     },
+     {
+      "hora": "20:00",
+      "estado": "muito nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 14
+     },
+     {
+      "hora": "21:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 6.8
+     },
+     {
+      "hora": "22:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 5.4
+     }
+    ],
+    "fonte": "Open-Meteo Forecast API (dados reais)"
+   },
+   "erro": false
+  },
+  {
+   "type": "final",
+   "data": {
+    "modo": "maluco",
+    "credibilidade": 72,
+    "resumo": "Levaram-me em ombros até ao Dragão",
+    "emoji": "⚽",
+    "provas": [
+     {
+      "titulo": "Jogo no Dragão às 19:00",
+      "detalhe": "Cortes de estrada em Antas a partir de 2 horas antes do jogo.",
+      "fonte": "Dados simulados (demo)"
+     },
+     {
+      "titulo": "Trânsito com atraso",
+      "detalhe": "27 minutos em vez de 18, com veículo avariado na 2ª Circular.",
+      "fonte": "Dados simulados (sem TOMTOM_API_KEY)"
+     },
+     {
+      "titulo": "Metro linha D perturbada",
+      "detalhe": "Intervalos alargados por falta de material, atrasos de 10 minutos.",
+      "fonte": "Dados simulados (demo)"
+     },
+     {
+      "titulo": "Metro linha A perturbada",
+      "detalhe": "Pessoa na via, atrasos de 6 minutos.",
+      "fonte": "Dados simulados (demo)"
+     }
+    ],
+    "mensagem": "Coach, hoje não chego ao treino de pernas. Com os cortes de estrada por causa do jogo no Dragão, fiquei no meio dos adeptos e levaram-me em ombros até ao estádio. Estou a tentar sair, mas o metro também está perturbado. Amanhã faço o dobro das pernas, prometo!",
+    "modo_desespero": false,
+    "desculpa_absurda": {
+     "numero": 33,
+     "titulo": "Levado em ombros pelos adeptos até ao estádio",
+     "ultimo_recurso": false,
+     "irrefutavel": true,
+     "personagem": "adepto"
+    },
+    "video": {
+     "cenas": [
+      {
+       "local": "AV. FERNÃO DE MAGALHÃES",
+       "cenario": "rua",
+       "acao": "aproxima",
+       "legenda": "Os adeptos aproximam-se a cantar",
+       "objeto": "🎺",
+       "ajudantes": "adepto",
+       "n_ajudantes": 3,
+       "noite": false
+      },
+      {
+       "local": "ANTAS",
+       "cenario": "rua",
+       "acao": "rapta",
+       "legenda": "Levantam-me em ombros sem pedir licença",
+       "objeto": "🧣",
+       "ajudantes": "adepto",
+       "n_ajudantes": 4,
+       "noite": false
+      },
+      {
+       "local": "2ª CIRCULAR",
+       "cenario": "estrada",
+       "acao": "preso",
+       "legenda": "Cortes de estrada, nem um passo atrás",
+       "objeto": "🚧",
+       "ajudantes": "adepto",
+       "n_ajudantes": 2,
+       "noite": false
+      },
+      {
+       "local": "ESTÁDIO DO DRAGÃO",
+       "cenario": "rua",
+       "acao": "festa",
+       "legenda": "Chego ao estádio como herói",
+       "objeto": "⚽",
+       "ajudantes": "adepto",
+       "n_ajudantes": 4,
+       "noite": true
+      },
+      {
+       "local": "PORTO · GINÁSIO",
+       "cenario": "rua",
+       "acao": "chega",
+       "legenda": "Chego tarde e sem pernas",
+       "objeto": "🏋️",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": true
+      }
+     ]
+    },
+    "entrevista": {
+     "titulo": "Adepto confessa: levei-o em ombros",
+     "entrevistada": "Zé do Cachecol, adepto fanático de Antas",
+     "grupo": 1,
+     "boneco": "adepto",
+     "perguntas": [
+      {
+       "p": "Porque o levou em ombros?",
+       "r": "Ele estava perdido no meio da multidão. Parecia ter ar de sócio, e sócio não fica para trás."
+      },
+      {
+       "p": "Sabia que ele tinha treino de pernas?",
+       "r": "Sabia. Mas levei-o eu em ombros, por isso as pernas dele já descansaram bastante."
+      },
+      {
+       "p": "Arrepende-se?",
+       "r": "Nem um bocadinho. Se o Porto ganhar, ele fica a dever-me um fino e um treino de peito."
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "conversa": {
+  "nome_contacto": "Coach Brutus 💪",
+  "resposta1": [
+   {
+    "autor": null,
+    "texto": "LEVADO EM OMBROS?! ISSO É TRABALHO DE TRAPÉZIO, NÃO ÉS TU QUE ESTÁS A TREINAR!"
+   },
+   {
+    "autor": null,
+    "texto": "OK, ESTÁS PERDOADO. AMANHÃ SÃO O DOBRO DAS PERNAS E 20 FLEXÕES PELO ATRASO!"
+   }
+  ],
+  "duvida": false,
+  "texto_link": "",
+  "noticia_link": {
+   "manchete": "Adepto confessa: levei-o em ombros até ao Dragão",
+   "lead": "Zé do Cachecol, adepto fanático de Antas, garante que não deixa nenhum sócio para trás, nem com treino de pernas marcado."
+  },
+  "reacao_link": [],
+  "desfecho": "acredita",
+  "reacao": "💪"
+ },
+ "tribunal": {
+  "votos": [
+   {
+    "id": "avo",
+    "voto": "chumba",
+    "nota": 4,
+    "comentario": "Ó filho, levado em ombros até ao estádio? Só se fosses o Pepe a marcar de cabeça! Há metro perturbado e estradas cortadas, isso eu acredito, mas a desculpa foi longe demais, e quem muito promete (o dobro das pernas!) pouco cumpre."
+   },
+   {
+    "id": "gaivota",
+    "voto": "chumba",
+    "nota": 3,
+    "comentario": "Levado em ombros por adeptos? Isso é mais teatro do que o meu cais ao pôr do sol, e nem uma gaivota para roubar o protagonismo ou os croquetes da bancada! Sem uma única penada à vista, a desculpa é aborrecida, e a única coisa que treinaste foi a imaginação."
+   },
+   {
+    "id": "chefe",
+    "voto": "chumba",
+    "nota": 3,
+    "comentario": "Os cortes de estrada e o metro perturbado até podiam ter alguma credibilidade, mas ser levado em ombros por adeptos até ao estádio não consta de nenhuma fonte verificável, e os dados são todos simulados. Prometer o dobro das pernas amanhã não compensa a ausência de provas hoje."
+   }
+  ]
+ }
+}

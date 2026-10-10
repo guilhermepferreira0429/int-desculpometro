@@ -1,0 +1,368 @@
+{
+ "pedido": {
+  "lang": "en",
+  "tipo": "fuga",
+  "origem": "Porto",
+  "destino": "Porto",
+  "evento": "leg day",
+  "quando": "in an hour",
+  "destinatario_id": "treinador",
+  "destinatario": "Gym coach",
+  "contexto": "I hate leg day.",
+  "forcar_desespero": "maluco"
+ },
+ "eventos": [
+  {
+   "type": "tool_start",
+   "id": "toolu_012NMLKoNW2vdvchsKe9r2Lj",
+   "name": "geocode",
+   "input": {
+    "local": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01KSxGujzN6ESJ1DBYKSTqcv",
+   "name": "get_traffic",
+   "input": {
+    "origem": "Porto",
+    "destino": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01Eyfnr7pGFNedpRZabC9bFd",
+   "name": "get_transport_status",
+   "input": {
+    "cidade": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01Q5yYE2ahCEQonwEzSbQsPh",
+   "name": "get_events_nearby",
+   "input": {
+    "cidade": "Porto"
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01KSxGujzN6ESJ1DBYKSTqcv",
+   "name": "get_traffic",
+   "result": {
+    "origem": "Porto",
+    "destino": "Porto",
+    "tempo_normal_min": 18,
+    "tempo_com_transito_min": 27,
+    "atraso_transito_min": 9,
+    "incidentes": [
+     "Broken-down vehicle on the road (2ª Circular)"
+    ],
+    "fonte": "Simulated data (no TOMTOM_API_KEY)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01Eyfnr7pGFNedpRZabC9bFd",
+   "name": "get_transport_status",
+   "result": {
+    "cidade": "Porto",
+    "linhas": [
+     {
+      "linha": "Porto Metro, line A (Blue)",
+      "estado": "perturbada",
+      "detalhe": "person on the tracks, delays of 19 min"
+     },
+     {
+      "linha": "Porto Metro, line B (Red, to Póvoa de Varzim)",
+      "estado": "normal",
+      "detalhe": "good service"
+     },
+     {
+      "linha": "Porto Metro, line D (Yellow)",
+      "estado": "perturbada",
+      "detalhe": "person on the tracks, delays of 9 min"
+     },
+     {
+      "linha": "STCP bus 500",
+      "estado": "perturbada",
+      "detalhe": "partial drivers' strike, delays of 21 min"
+     },
+     {
+      "linha": "CP Porto suburban trains, Braga line",
+      "estado": "normal",
+      "detalhe": "good service"
+     }
+    ],
+    "fonte": "Simulated data (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01Q5yYE2ahCEQonwEzSbQsPh",
+   "name": "get_events_nearby",
+   "result": {
+    "cidade": "Porto",
+    "eventos": [
+     {
+      "evento": "Football match at Estádio do Dragão",
+      "zona": "Antas",
+      "hora": "19:00",
+      "impacto": "road closures starting 2 hours before"
+     }
+    ],
+    "fonte": "Simulated data (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_012NMLKoNW2vdvchsKe9r2Lj",
+   "name": "geocode",
+   "result": {
+    "local_pedido": "Porto",
+    "encontrado": "Porto, Porto District, Portugal",
+    "lat": 41.1485,
+    "lon": -8.61097,
+    "fonte": "Open-Meteo Geocoding API"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01WzQ7WPs2pXdMNjuWQ8uJha",
+   "name": "get_weather",
+   "input": {
+    "lat": 41.1485,
+    "lon": -8.61097
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01WzQ7WPs2pXdMNjuWQ8uJha",
+   "name": "get_weather",
+   "result": {
+    "agora": {
+     "hora": "2026-10-10T17:30",
+     "estado": "partly cloudy",
+     "codigo": 2,
+     "temperatura_c": 18.7,
+     "sensacao_c": 18.5,
+     "precipitacao_mm": 0,
+     "vento_kmh": 7.9,
+     "rajadas_kmh": 23,
+     "visibilidade_m": 39560
+    },
+    "proximas_horas": [
+     {
+      "hora": "17:00",
+      "estado": "partly cloudy",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 24.5
+     },
+     {
+      "hora": "18:00",
+      "estado": "partly cloudy",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 21.2
+     },
+     {
+      "hora": "19:00",
+      "estado": "partly cloudy",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 17.6
+     },
+     {
+      "hora": "20:00",
+      "estado": "overcast",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 14
+     },
+     {
+      "hora": "21:00",
+      "estado": "partly cloudy",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 6.8
+     },
+     {
+      "hora": "22:00",
+      "estado": "partly cloudy",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 5.4
+     }
+    ],
+    "fonte": "Open-Meteo Forecast API (real data)"
+   },
+   "erro": false
+  },
+  {
+   "type": "final",
+   "data": {
+    "modo": "maluco",
+    "credibilidade": 66,
+    "provas": [
+     {
+      "titulo": "Bus 500 driver strike",
+      "detalhe": "Partial drivers' strike on STCP bus 500, with delays of 21 minutes.",
+      "fonte": "Simulated data (demo)"
+     },
+     {
+      "titulo": "Metro lines disrupted",
+      "detalhe": "Lines A and D have a person on the tracks, with delays of 19 and 9 minutes.",
+      "fonte": "Simulated data (demo)"
+     },
+     {
+      "titulo": "Dragão match closures",
+      "detalhe": "Football match at 19:00 in Antas, with road closures starting 2 hours before.",
+      "fonte": "Simulated data (demo)"
+     },
+     {
+      "titulo": "Traffic and breakdown",
+      "detalhe": "A broken-down vehicle on the 2ª Circular adds 9 minutes to the trip.",
+      "fonte": "Simulated data (no TOMTOM_API_KEY)"
+     }
+    ],
+    "mensagem": "Coach, bad news. With the bus strike, the metro delays and the Dragão closures, I set off on foot. A group of pilgrims adopted me and I can't leave them. I can't make leg day, but I'll double the squats on Monday. That's a promise.",
+    "resumo": "Pilgrims adopted me during the strike",
+    "emoji": "🚶",
+    "modo_desespero": false,
+    "desculpa_absurda": {
+     "numero": 39,
+     "titulo": "With the strike I walked and a group of pilgrims adopted me along the way",
+     "ultimo_recurso": false,
+     "irrefutavel": true,
+     "personagem": "excursao"
+    },
+    "video": {
+     "cenas": [
+      {
+       "local": "PORTO · PARAGEM STCP 500",
+       "cenario": "rua",
+       "acao": "preso",
+       "legenda": "Bus 500 on strike. Nobody is coming.",
+       "objeto": "🚌",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": false
+      },
+      {
+       "local": "AV. FERNÃO DE MAGALHÃES",
+       "cenario": "rua",
+       "acao": "persegue",
+       "legenda": "I walk towards the gym, brave and sporty.",
+       "objeto": "👟",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": false
+      },
+      {
+       "local": "2ª CIRCULAR",
+       "cenario": "estrada",
+       "acao": "rapta",
+       "legenda": "Pilgrims spot me and adopt me instantly.",
+       "objeto": "🎒",
+       "ajudantes": "excursao",
+       "n_ajudantes": 4,
+       "noite": false
+      },
+      {
+       "local": "ANTAS · ESTÁDIO DO DRAGÃO",
+       "cenario": "rua",
+       "acao": "festa",
+       "legenda": "We sing hymns beside the closed roads.",
+       "objeto": "🎶",
+       "ajudantes": "excursao",
+       "n_ajudantes": 4,
+       "noite": false
+      },
+      {
+       "local": "PORTO · CAMINHO DE CASA",
+       "cenario": "rua",
+       "acao": "chega",
+       "legenda": "I finally arrive. No legs left.",
+       "objeto": "🦵",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": true
+      }
+     ]
+    },
+    "entrevista": {
+     "titulo": "Pilgrims explain why they adopted a gym-goer",
+     "entrevistada": "Dona Amélia and the Porto pilgrims, a group of cheerful walkers on the way to Fátima",
+     "grupo": 3,
+     "boneco": "avo",
+     "perguntas": [
+      {
+       "p": "Why did you adopt him?",
+       "r": "He was walking alone during the strike, looked lost, and we can't leave a young man behind.",
+       "quem": "Dona Amélia"
+      },
+      {
+       "p": "Did he try to leave?",
+       "r": "He mentioned leg day, but we told him walking with us is much better training.",
+       "quem": "Senhor Armindo"
+      },
+      {
+       "p": "Will you give him back?",
+       "r": "Only after the rosary and a nice cup of cimbalino. Then we'll see.",
+       "quem": "Dona Gracinda"
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "conversa": {
+  "nome_contacto": "Coach Rocky 💪",
+  "resposta1": [
+   {
+    "autor": null,
+    "texto": "PILGRIMS?! OK, FIRST OF ALL, HOW MANY STEPS DID YOU DO? THAT'S CARDIO!"
+   },
+   {
+    "autor": null,
+    "texto": "LEG DAY MISSED IS FORGIVEN. MONDAY YOU OWE ME DOUBLE SQUATS AND 20 PRESS-UPS FOR THE PILGRIMS!"
+   }
+  ],
+  "duvida": false,
+  "texto_link": "",
+  "noticia_link": {
+   "manchete": "Cheerful pilgrims adopt lost gym-goer on the road to Fátima",
+   "lead": "Dona Amélia and the Porto pilgrims say they couldn't leave a young man behind during the strike."
+  },
+  "reacao_link": [],
+  "desfecho": "acredita",
+  "reacao": "💪"
+ },
+ "tribunal": {
+  "votos": [
+   {
+    "id": "avo",
+    "voto": "passa",
+    "nota": 6,
+    "comentario": "Ai, filho, with the bus, the metro and the Dragão all in a tangle, I believe you walked, and pilgrims adopting a lost lamb is very Porto of them. But 'double the squats on Monday' is a promise I'll be checking, because a promise made on an empty stomach is worth no more than a bag of wind. Off you go, and do say thank you to the pilgrims!"
+   },
+   {
+    "id": "gaivota",
+    "voto": "chumba",
+    "nota": 3,
+    "comentario": "Pilgrims, strikes, metro chaos, and not a single gull in sight? I've seen more drama in a discarded chip wrapper at Ribeira, and at least that had a seagull in it. Come back when a gaggle of gulls has masterminded your disappearance, and I might look up from my sardine."
+   },
+   {
+    "id": "chefe",
+    "voto": "chumba",
+    "nota": 3,
+    "comentario": "The strike, the metro delays and the Dragão closures are all labelled simulated data, which makes them about as verifiable as the pilgrims who supposedly adopted you. Walking is admirable, but I see no source for the pilgrims, and doubling the squats on Monday does not constitute evidence."
+   }
+  ]
+ }
+}

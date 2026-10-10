@@ -1,0 +1,385 @@
+{
+ "pedido": {
+  "lang": "pt",
+  "tipo": "atraso",
+  "origem": "Matosinhos",
+  "destino": "Porto",
+  "minutos": 30,
+  "destinatario_id": "namorada",
+  "destinatario": "Namorada",
+  "contexto": "Primeiro encontro, não posso estragar isto.",
+  "forcar_desespero": false
+ },
+ "eventos": [
+  {
+   "type": "tool_start",
+   "id": "toolu_014LuwgzK84CAgdFybqosr8d",
+   "name": "geocode",
+   "input": {
+    "local": "Matosinhos"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01XZSpzJqqHsWnHmvXLoiKPu",
+   "name": "geocode",
+   "input": {
+    "local": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01GqFwnEN4JiUPqM9hS66nLF",
+   "name": "get_traffic",
+   "input": {
+    "origem": "Matosinhos",
+    "destino": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_017c2vjh1yKc517PnaxsfDzD",
+   "name": "get_transport_status",
+   "input": {
+    "cidade": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01MxB68RLprtmAKPuZiHZDiL",
+   "name": "get_events_nearby",
+   "input": {
+    "cidade": "Porto"
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01GqFwnEN4JiUPqM9hS66nLF",
+   "name": "get_traffic",
+   "result": {
+    "origem": "Matosinhos",
+    "destino": "Porto",
+    "tempo_normal_min": 28,
+    "tempo_com_transito_min": 38,
+    "atraso_transito_min": 10,
+    "incidentes": [
+     "Obras com corte de faixa (A1)"
+    ],
+    "fonte": "Dados simulados (sem TOMTOM_API_KEY)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_017c2vjh1yKc517PnaxsfDzD",
+   "name": "get_transport_status",
+   "result": {
+    "cidade": "Porto",
+    "linhas": [
+     {
+      "linha": "Metro do Porto, linha A (Azul)",
+      "estado": "perturbada",
+      "detalhe": "perturbação por pessoa na via, atrasos de 6 min"
+     },
+     {
+      "linha": "Metro do Porto, linha B (Vermelha, até à Póvoa de Varzim)",
+      "estado": "normal",
+      "detalhe": "circulação normal"
+     },
+     {
+      "linha": "Metro do Porto, linha D (Amarela)",
+      "estado": "perturbada",
+      "detalhe": "intervalos alargados por falta de material, atrasos de 10 min"
+     },
+     {
+      "linha": "STCP 500",
+      "estado": "perturbada",
+      "detalhe": "perturbação por pessoa na via, atrasos de 6 min"
+     },
+     {
+      "linha": "CP Urbanos do Porto, linha de Braga",
+      "estado": "normal",
+      "detalhe": "circulação normal"
+     }
+    ],
+    "fonte": "Dados simulados (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01MxB68RLprtmAKPuZiHZDiL",
+   "name": "get_events_nearby",
+   "result": {
+    "cidade": "Porto",
+    "eventos": [
+     {
+      "evento": "Jogo de futebol no Estádio do Dragão",
+      "zona": "Antas",
+      "hora": "19:00",
+      "impacto": "cortes de estrada a partir de 2 horas antes"
+     }
+    ],
+    "fonte": "Dados simulados (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01XZSpzJqqHsWnHmvXLoiKPu",
+   "name": "geocode",
+   "result": {
+    "local_pedido": "Porto",
+    "encontrado": "Porto, Distrito do Porto, Portugal",
+    "lat": 41.1485,
+    "lon": -8.61097,
+    "fonte": "Open-Meteo Geocoding API"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_014LuwgzK84CAgdFybqosr8d",
+   "name": "geocode",
+   "result": {
+    "local_pedido": "Matosinhos",
+    "encontrado": "Matosinhos, Distrito do Porto, Portugal",
+    "lat": 41.18207,
+    "lon": -8.68908,
+    "fonte": "Open-Meteo Geocoding API"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01S7ELJfFNtJUdeKnTuWuDQs",
+   "name": "get_weather",
+   "input": {
+    "lat": 41.18207,
+    "lon": -8.68908
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01S7ELJfFNtJUdeKnTuWuDQs",
+   "name": "get_weather",
+   "result": {
+    "agora": {
+     "hora": "2026-10-10T17:30",
+     "estado": "parcialmente nublado",
+     "codigo": 2,
+     "temperatura_c": 17.9,
+     "sensacao_c": 17.6,
+     "precipitacao_mm": 0,
+     "vento_kmh": 11.8,
+     "rajadas_kmh": 24.8,
+     "visibilidade_m": 27500
+    },
+    "proximas_horas": [
+     {
+      "hora": "17:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 24.8
+     },
+     {
+      "hora": "18:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 24.1
+     },
+     {
+      "hora": "19:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 20.9
+     },
+     {
+      "hora": "20:00",
+      "estado": "muito nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 18.7
+     },
+     {
+      "hora": "21:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 13.7
+     },
+     {
+      "hora": "22:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 11.5
+     }
+    ],
+    "fonte": "Open-Meteo Forecast API (dados reais)"
+   },
+   "erro": false
+  },
+  {
+   "type": "final",
+   "data": {
+    "modo": "maluco",
+    "credibilidade": 68,
+    "resumo": "Fiz amizade no trânsito e já há jantar",
+    "emoji": "🚗",
+    "provas": [
+     {
+      "titulo": "Obras na A1",
+      "detalhe": "Corte de faixa na A1, com 10 minutos de atraso por trânsito.",
+      "fonte": "Dados simulados (sem TOMTOM_API_KEY)"
+     },
+     {
+      "titulo": "Metro linha A perturbada",
+      "detalhe": "Pessoa na via, atrasos de 6 minutos; a linha D tem atrasos de 10.",
+      "fonte": "Dados simulados (demo)"
+     },
+     {
+      "titulo": "Jogo no Dragão",
+      "detalhe": "Jogo às 19:00 nas Antas, com cortes de estrada a partir de 2 horas antes.",
+      "fonte": "Dados simulados (demo)"
+     },
+     {
+      "titulo": "Viagem de 38 minutos",
+      "detalhe": "Trajeto normal de 28 minutos, agora 38 por causa do trânsito.",
+      "fonte": "Dados simulados (sem TOMTOM_API_KEY)"
+     }
+    ],
+    "mensagem": "Amor, vou chegar uns 30 minutos atrasado e peço mesmo desculpa. Fiquei parado nas obras da A1 com o jogo a aproximar-se, e o condutor do lado e eu acabámos a conversar. Já é praticamente amigo. Mas hoje o jantar é só contigo, estou a caminho!",
+    "modo_desespero": false,
+    "desculpa_absurda": {
+     "numero": 35,
+     "titulo": "Fiz amizade com o condutor do lado no trânsito",
+     "ultimo_recurso": false,
+     "irrefutavel": true,
+     "personagem": "carro"
+    },
+    "video": {
+     "cenas": [
+      {
+       "local": "MATOSINHOS",
+       "cenario": "rua",
+       "acao": "viagem",
+       "legenda": "Saio de Matosinhos a horas, juro",
+       "objeto": "🚗",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": false
+      },
+      {
+       "local": "A1 · OBRAS",
+       "cenario": "estrada",
+       "acao": "preso",
+       "legenda": "Corte de faixa e 10 minutos perdidos",
+       "objeto": "🚧",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": false
+      },
+      {
+       "local": "A1 · FAIXA DA ESQUERDA",
+       "cenario": "estrada",
+       "acao": "conversa",
+       "legenda": "O condutor do lado baixa a janela",
+       "objeto": "🗣️",
+       "ajudantes": "carro",
+       "n_ajudantes": 1,
+       "noite": false
+      },
+      {
+       "local": "ANTAS · DRAGÃO",
+       "cenario": "estrada",
+       "acao": "festa",
+       "legenda": "Já combinámos jantar. Ele escolhe o sítio.",
+       "objeto": "🍽️",
+       "ajudantes": "carro",
+       "n_ajudantes": 1,
+       "noite": false
+      },
+      {
+       "local": "PORTO",
+       "cenario": "restaurante",
+       "acao": "chega",
+       "legenda": "Chego por fim, 30 minutos depois",
+       "objeto": "🌹",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": true
+      }
+     ]
+    },
+    "entrevista": {
+     "titulo": "O condutor do lado fala",
+     "entrevistada": "Um Renault Clio cinzento, o carro ao lado, parado nas obras da A1",
+     "grupo": 1,
+     "boneco": "carro",
+     "perguntas": [
+      {
+       "p": "Como começou a conversa?",
+       "r": "Estávamos parados há dez minutos. Ele baixou a janela, eu baixei a minha. Foi inevitável."
+      },
+      {
+       "p": "Sabia que ele tinha um primeiro encontro?",
+       "r": "Soube tarde. Já tínhamos combinado jantar, mas desejo-lhe sorte e aceito ser padrinho."
+      },
+      {
+       "p": "Alguma palavra para a namorada?",
+       "r": "Ele ia a pensar nela o tempo todo. Eu só buzinei duas vezes, em solidariedade."
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "conversa": {
+  "nome_contacto": "Amor 💕",
+  "resposta1": [
+   {
+    "autor": null,
+    "texto": "Ai amor, 30 minutos... ok, vai com calma e não te despaches no trânsito. 😘"
+   },
+   {
+    "autor": null,
+    "texto": "Mas esse condutor do lado... é homem ou mulher? Só para saber. 👀"
+   }
+  ],
+  "duvida": false,
+  "texto_link": "",
+  "noticia_link": {
+   "manchete": "Clio cinzento rouba a cena nas obras da A1: 'Foi inevitável'",
+   "lead": "Um Renault Clio parado há dez minutos baixou a janela e fez uma amizade que ameaça um jantar romântico."
+  },
+  "reacao_link": [],
+  "desfecho": "acredita",
+  "reacao": "🥰"
+ },
+ "tribunal": {
+  "votos": [
+   {
+    "id": "avo",
+    "voto": "passa",
+    "nota": 7,
+    "comentario": "Ó filho, fazer amigos na A1 é coisa de gente de bom coração, e as obras e o jogo no Dragão até batem certo. Mas olha que 38 minutos de viagem não dão 30 de atraso, e quem chega tarde ao jantar leva a sopa fria, por isso vai lá depressa e leva flores!"
+   },
+   {
+    "id": "gaivota",
+    "voto": "chumba",
+    "nota": 3,
+    "comentario": "Nem uma gaivota nesta desculpa! Fazer amizade com um condutor parado na A1 é aborrecido como uma tarde sem batatas fritas roubadas. Ao menos tivesses sido assaltado por uma gaivota genial no meio do trânsito, que aí até te dava nota de jeito."
+   },
+   {
+    "id": "chefe",
+    "voto": "chumba",
+    "nota": 4,
+    "comentario": "Os dados simulados já me tiram o sono, e o atraso de 30 minutos não bate certo com os 10 que as obras da A1 justificam. Quanto ao novo melhor amigo da faixa do lado, não consta de nenhuma fonte verificável, e o jantar fica a arrefecer à espera de provas."
+   }
+  ]
+ }
+}

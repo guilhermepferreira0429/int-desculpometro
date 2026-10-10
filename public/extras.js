@@ -163,7 +163,7 @@ export async function abrirTribunal({ onde, lang, resultado, onVerdade }) {
   onde.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   const [resp] = await Promise.all([
-    fetch('/tribunal', {
+    resultado._tribunal ? Promise.resolve(resultado._tribunal) : fetch('/tribunal', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         lang, mensagem: resultado.mensagem, credibilidade: resultado.credibilidade, modo_desespero: resultado.modo_desespero,

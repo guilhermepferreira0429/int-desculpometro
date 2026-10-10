@@ -1,0 +1,330 @@
+{
+ "pedido": {
+  "lang": "en",
+  "tipo": "fuga",
+  "origem": "Porto",
+  "destino": "Braga",
+  "evento": "my cousin's wedding",
+  "quando": "two hours ago",
+  "destinatario_id": "grupo",
+  "destinatario": "Family group chat",
+  "contexto": "I was the best man.",
+  "forcar_desespero": "ultimo"
+ },
+ "eventos": [
+  {
+   "type": "tool_start",
+   "id": "toolu_01F7FA6tgnre7wuj22oV7oyo",
+   "name": "geocode",
+   "input": {
+    "local": "Braga"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01WvAckdKQ3WNQogNnNsauvH",
+   "name": "get_traffic",
+   "input": {
+    "origem": "Porto",
+    "destino": "Braga"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01RnPYtZH7NyMU8fhMeJSGBS",
+   "name": "get_transport_status",
+   "input": {
+    "cidade": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01PfBxaGLbjUKcTCG5cb7m6u",
+   "name": "get_events_nearby",
+   "input": {
+    "cidade": "Braga"
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01WvAckdKQ3WNQogNnNsauvH",
+   "name": "get_traffic",
+   "result": {
+    "origem": "Porto",
+    "destino": "Braga",
+    "tempo_normal_min": 14,
+    "tempo_com_transito_min": 25,
+    "atraso_transito_min": 11,
+    "incidentes": [
+     "Roadworks with a lane closure (A1)"
+    ],
+    "fonte": "Simulated data (no TOMTOM_API_KEY)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01RnPYtZH7NyMU8fhMeJSGBS",
+   "name": "get_transport_status",
+   "result": {
+    "cidade": "Porto",
+    "linhas": [
+     {
+      "linha": "Porto Metro, line A (Blue)",
+      "estado": "perturbada",
+      "detalhe": "person on the tracks, delays of 19 min"
+     },
+     {
+      "linha": "Porto Metro, line B (Red, to Póvoa de Varzim)",
+      "estado": "normal",
+      "detalhe": "good service"
+     },
+     {
+      "linha": "Porto Metro, line D (Yellow)",
+      "estado": "perturbada",
+      "detalhe": "person on the tracks, delays of 9 min"
+     },
+     {
+      "linha": "STCP bus 500",
+      "estado": "perturbada",
+      "detalhe": "partial drivers' strike, delays of 21 min"
+     },
+     {
+      "linha": "CP Porto suburban trains, Braga line",
+      "estado": "normal",
+      "detalhe": "good service"
+     }
+    ],
+    "fonte": "Simulated data (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01PfBxaGLbjUKcTCG5cb7m6u",
+   "name": "get_events_nearby",
+   "result": {
+    "cidade": "Braga",
+    "eventos": [
+     {
+      "evento": "Concert at MEO Arena",
+      "zona": "Parque das Nações",
+      "hora": "19:00",
+      "impacto": "parking full and queues on the access roads"
+     }
+    ],
+    "fonte": "Simulated data (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01F7FA6tgnre7wuj22oV7oyo",
+   "name": "geocode",
+   "result": {
+    "local_pedido": "Braga",
+    "encontrado": "Braga, Braga District, Portugal",
+    "lat": 41.5514,
+    "lon": -8.42311,
+    "fonte": "Open-Meteo Geocoding API"
+   },
+   "erro": false
+  },
+  {
+   "type": "final",
+   "data": {
+    "modo": "ultimo",
+    "credibilidade": 0,
+    "provas": [
+     {
+      "titulo": "Trânsito Porto–Braga quase normal",
+      "detalhe": "Only 11 minutes of delay, with roadworks on the A1. Nowhere near two hours.",
+      "fonte": "Simulated data (no TOMTOM_API_KEY)"
+     },
+     {
+      "titulo": "Comboio de Braga a funcionar",
+      "detalhe": "CP suburban trains on the Braga line: good service. No excuse there.",
+      "fonte": "Simulated data (demo)"
+     },
+     {
+      "titulo": "Metro e autocarro perturbados",
+      "detalhe": "Metro lines A and D and STCP bus 500 are delayed, but none of them go to Braga.",
+      "fonte": "Simulated data (demo)"
+     },
+     {
+      "titulo": "Concerto em Braga às 19:00",
+      "detalhe": "Concert at MEO Arena, Parque das Nações: full parking, but it starts after the wedding.",
+      "fonte": "Simulated data (demo)"
+     }
+    ],
+    "mensagem": "I'm so sorry, family. On the way to the wedding I was mistaken for an influencer and had to take photos with 40 people. I couldn't escape, and I'm devastated to have missed my own cousin's big day. Please give the couple a huge hug from me. Dinner is on me, any date they like!",
+    "modo_desespero": true,
+    "resumo": "Mistaken for an influencer: 40 selfies",
+    "emoji": "🤳",
+    "desculpa_absurda": {
+     "numero": 16,
+     "titulo": "I was mistaken for an influencer and had to take photos with 40 people",
+     "ultimo_recurso": true,
+     "irrefutavel": false,
+     "personagem": "fas"
+    },
+    "video": {
+     "cenas": [
+      {
+       "local": "AV. DA BOAVISTA",
+       "cenario": "rua",
+       "acao": "aproxima",
+       "legenda": "Someone shouts: 'It's him, the influencer!'",
+       "objeto": "📱",
+       "ajudantes": "fas",
+       "n_ajudantes": 2,
+       "noite": false
+      },
+      {
+       "local": "RUA DE SANTA CATARINA",
+       "cenario": "rua",
+       "acao": "rapta",
+       "legenda": "Fans surround the best man in his suit",
+       "objeto": "🤳",
+       "ajudantes": "fas",
+       "n_ajudantes": 4,
+       "noite": false
+      },
+      {
+       "local": "PRAÇA DA LIBERDADE",
+       "cenario": "rua",
+       "acao": "festa",
+       "legenda": "Photo number 23, still smiling politely",
+       "objeto": "📸",
+       "ajudantes": "fas",
+       "n_ajudantes": 4,
+       "noite": false
+      },
+      {
+       "local": "ESTAÇÃO DE SÃO BENTO",
+       "cenario": "metro",
+       "acao": "preso",
+       "legenda": "The train to Braga leaves without me",
+       "objeto": "🚆",
+       "ajudantes": "fas",
+       "n_ajudantes": 3,
+       "noite": false
+      },
+      {
+       "local": "PORTO · FIM DE TARDE",
+       "cenario": "rua",
+       "acao": "chega",
+       "legenda": "Photo 40 done, wedding long over",
+       "objeto": "💍",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": true
+      }
+     ]
+    },
+    "entrevista": {
+     "titulo": "Fans confess: 'He had such a star quality'",
+     "entrevistada": "Marta, 24, a fan with a ring light and 40 photos on her phone",
+     "grupo": 1,
+     "boneco": "fas",
+     "perguntas": [
+      {
+       "p": "Why did you think he was an influencer?",
+       "r": "He was wearing a suit, looking lost and posing naturally. Obviously a celebrity. Nobody could convince me otherwise."
+      },
+      {
+       "p": "How many photos did you take?",
+       "r": "Forty. We needed variety: profile, three-quarter, and one with a cimbalino for the stories."
+      },
+      {
+       "p": "Do you regret making him miss the wedding?",
+       "r": "A little. But the photos came out great, and the lighting in Santa Catarina was perfect."
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "conversa": {
+  "nome_contacto": "Família Toda 👨‍👩‍👧‍👦",
+  "resposta1": [
+   {
+    "autor": "Aunt",
+    "texto": "Sorry WHAT?? An influencer?? Forward this to 10 people or the bride will have bad luck for seven years 🙏"
+   },
+   {
+    "autor": "Cousin",
+    "texto": "[meme: man in suit sweating in front of a crowd with the caption 'me pretending I didn't miss the wedding'] 😂😂"
+   },
+   {
+    "autor": "Grandad",
+    "texto": "Who is this influencer? Is he the one who owes me €20? Where were you, rapaz?"
+   }
+  ],
+  "duvida": true,
+  "texto_link": "I swear it's true! Here's the proof, Diário do Bico interviewed the fan: diariodobico.pt/exclusivo",
+  "noticia_link": {
+   "manchete": "Fans confess: 'He had such a star quality'",
+   "lead": "Marta, 24, armed with a ring light and 40 photos, admits she took a man in a suit for a celebrity and made him miss the wedding."
+  },
+  "reacao_link": [
+   {
+    "autor": "Aunt",
+    "texto": "A ring light?? At a wedding?? Now I'm worried about the bride AND about the youth of today."
+   },
+   {
+    "autor": "Cousin",
+    "texto": "'One with a cimbalino for the stories' 💀 I'm screaming. The lighting in Santa Catarina was perfect, apparently."
+   },
+   {
+    "autor": "Grandad",
+    "texto": "Forty photos and not one of them with the bride. I want to speak to this Marta."
+   }
+  ],
+  "desfecho": "quer_falar",
+  "culpado": {
+   "nome": "Marta 📸",
+   "mensagens": [
+    {
+     "texto": "Hi everyone! Yes, it's all true, he was SO photogenic. Sorry about the wedding, but have you seen the three-quarter shot? Iconic."
+    },
+    {
+     "texto": "Honestly, he'd have made a great influencer. Tell him to tag me in the stories! ✨"
+    }
+   ]
+  },
+  "reacao_final": [
+   {
+    "autor": "Aunt",
+    "texto": "Right. I'm sending this to the whole family as a chain message. Nobody is safe from Marta."
+   },
+   {
+    "autor": "Grandad",
+    "texto": "Fine, I believe you. But dinner is on you, and bring the photos. I want to see the profile one."
+   }
+  ],
+  "reacao": "😂"
+ },
+ "tribunal": {
+  "votos": [
+   {
+    "id": "avo",
+    "voto": "chumba",
+    "nota": 2,
+    "comentario": "Oh filho, forty photos and not one minute to ring your poor family? The trains were running, the A1 was nearly clear, and the only concert was in Lisbon, so this tale has more holes than a Minho sieve. I'll give you two points for the dinner offer, because a good meal softens this old heart, but 'mistaken for an influencer' is no way to speak to your grandmother!"
+   },
+   {
+    "id": "gaivota",
+    "voto": "chumba",
+    "nota": 1,
+    "comentario": "Forty photos and not a single gull in the frame? Even the pigeons at Ribeira would've had a better alibi, and at least they'd have stolen someone's chips. Case dismissed, and I'm taking the nearest bifana as a fine."
+   },
+   {
+    "id": "chefe",
+    "voto": "chumba",
+    "nota": 0,
+    "comentario": "Forty photos, zero evidence: the traffic was nearly normal, the Braga trains were running, and the only concert was in Parque das Nações, nowhere near Braga. Even the data is simulated, which is the only thing here more fictional than your fan club. Dinner on you won't fix a credibility score of 0/100."
+   }
+  ]
+ }
+}

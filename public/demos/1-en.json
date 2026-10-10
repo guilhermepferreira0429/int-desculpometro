@@ -1,0 +1,398 @@
+{
+ "pedido": {
+  "lang": "en",
+  "tipo": "fuga",
+  "origem": "Porto",
+  "destino": "Vila Nova de Gaia",
+  "evento": "dinner with the in-laws",
+  "quando": "tonight at 8pm",
+  "destinatario_id": "sogra",
+  "destinatario": "Mother-in-law",
+  "contexto": "I skipped the last dinner. My father-in-law only talks about fishing.",
+  "forcar_desespero": "maluco"
+ },
+ "eventos": [
+  {
+   "type": "tool_start",
+   "id": "toolu_01Y66YE4jt36ZmLaS3GRDRZo",
+   "name": "geocode",
+   "input": {
+    "local": "Vila Nova de Gaia"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_015jSsGiZ2qGBodoTZx3vDQ7",
+   "name": "geocode",
+   "input": {
+    "local": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_012u8PkR8FsxWRmkrFsoHMnu",
+   "name": "get_traffic",
+   "input": {
+    "origem": "Porto",
+    "destino": "Vila Nova de Gaia"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01Cm1doyZHJaLf7V9CobKyLA",
+   "name": "get_transport_status",
+   "input": {
+    "cidade": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01RBTqitPyEFML6eKYinAEqx",
+   "name": "get_events_nearby",
+   "input": {
+    "cidade": "Vila Nova de Gaia"
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_012u8PkR8FsxWRmkrFsoHMnu",
+   "name": "get_traffic",
+   "result": {
+    "origem": "Porto",
+    "destino": "Vila Nova de Gaia",
+    "tempo_normal_min": 18,
+    "tempo_com_transito_min": 42,
+    "atraso_transito_min": 24,
+    "incidentes": [
+     "Broken-down vehicle on the road (IC19)"
+    ],
+    "fonte": "Simulated data (no TOMTOM_API_KEY)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01Cm1doyZHJaLf7V9CobKyLA",
+   "name": "get_transport_status",
+   "result": {
+    "cidade": "Porto",
+    "linhas": [
+     {
+      "linha": "Porto Metro, line A (Blue)",
+      "estado": "perturbada",
+      "detalhe": "person on the tracks, delays of 19 min"
+     },
+     {
+      "linha": "Porto Metro, line B (Red, to Póvoa de Varzim)",
+      "estado": "normal",
+      "detalhe": "good service"
+     },
+     {
+      "linha": "Porto Metro, line D (Yellow)",
+      "estado": "perturbada",
+      "detalhe": "person on the tracks, delays of 9 min"
+     },
+     {
+      "linha": "STCP bus 500",
+      "estado": "perturbada",
+      "detalhe": "partial drivers' strike, delays of 21 min"
+     },
+     {
+      "linha": "CP Porto suburban trains, Braga line",
+      "estado": "normal",
+      "detalhe": "good service"
+     }
+    ],
+    "fonte": "Simulated data (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01RBTqitPyEFML6eKYinAEqx",
+   "name": "get_events_nearby",
+   "result": {
+    "cidade": "Vila Nova de Gaia",
+    "eventos": [
+     {
+      "evento": "Festival at Parque da Cidade",
+      "zona": "Foz",
+      "hora": "21:30",
+      "impacto": "road closures starting 2 hours before"
+     },
+     {
+      "evento": "Concert at Coliseu do Porto",
+      "zona": "Baixa",
+      "hora": "20:30",
+      "impacto": "road closures starting 2 hours before"
+     }
+    ],
+    "fonte": "Simulated data (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01Y66YE4jt36ZmLaS3GRDRZo",
+   "name": "geocode",
+   "result": {
+    "local_pedido": "Vila Nova de Gaia",
+    "encontrado": "Vila Nova de Gaia, Porto District, Portugal",
+    "lat": 41.12401,
+    "lon": -8.61241,
+    "fonte": "Open-Meteo Geocoding API"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_015jSsGiZ2qGBodoTZx3vDQ7",
+   "name": "geocode",
+   "result": {
+    "local_pedido": "Porto",
+    "encontrado": "Porto, Porto District, Portugal",
+    "lat": 41.1485,
+    "lon": -8.61097,
+    "fonte": "Open-Meteo Geocoding API"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01MsqqzAckSNETDfsywqhHDf",
+   "name": "get_weather",
+   "input": {
+    "lat": 41.12401,
+    "lon": -8.61241
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01MsqqzAckSNETDfsywqhHDf",
+   "name": "get_weather",
+   "result": {
+    "agora": {
+     "hora": "2026-10-10T17:30",
+     "estado": "partly cloudy",
+     "codigo": 2,
+     "temperatura_c": 18.5,
+     "sensacao_c": 18.2,
+     "precipitacao_mm": 0,
+     "vento_kmh": 7.9,
+     "rajadas_kmh": 23,
+     "visibilidade_m": 39560
+    },
+    "proximas_horas": [
+     {
+      "hora": "17:00",
+      "estado": "partly cloudy",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 24.5
+     },
+     {
+      "hora": "18:00",
+      "estado": "partly cloudy",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 21.2
+     },
+     {
+      "hora": "19:00",
+      "estado": "partly cloudy",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 17.6
+     },
+     {
+      "hora": "20:00",
+      "estado": "overcast",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 14
+     },
+     {
+      "hora": "21:00",
+      "estado": "partly cloudy",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 6.8
+     },
+     {
+      "hora": "22:00",
+      "estado": "partly cloudy",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 5.4
+     }
+    ],
+    "fonte": "Open-Meteo Forecast API (real data)"
+   },
+   "erro": false
+  },
+  {
+   "type": "final",
+   "data": {
+    "modo": "maluco",
+    "credibilidade": 46,
+    "resumo": "Passengers elected me metro spokesperson",
+    "emoji": "🚇",
+    "provas": [
+     {
+      "titulo": "Metro line A disrupted",
+      "detalhe": "Person on the tracks, delays of 19 min; line D delayed 9 min",
+      "fonte": "Simulated data (demo)"
+     },
+     {
+      "titulo": "Partial bus strike",
+      "detalhe": "STCP bus 500 partial drivers' strike, delays of 21 min",
+      "fonte": "Simulated data (demo)"
+     },
+     {
+      "titulo": "Traffic towards Gaia",
+      "detalhe": "42 min instead of 18; broken-down vehicle on the IC19",
+      "fonte": "Simulated data (no TOMTOM_API_KEY)"
+     },
+     {
+      "titulo": "Concert closing roads",
+      "detalhe": "Coliseu concert at 20:30, road closures starting two hours before",
+      "fonte": "Simulated data (demo)"
+     }
+    ],
+    "mensagem": "Dear Maria, I'm so sorry, but I can't make it tonight. The metro broke down and the stranded passengers elected me spokesperson to negotiate with the control room. With the strike and the road closures, I wouldn't arrive before dessert. May we please arrange another evening soon? Dinner is on me.",
+    "modo_desespero": false,
+    "desculpa_absurda": {
+     "numero": 34,
+     "titulo": "The metro broke down and the passengers elected me spokesperson",
+     "ultimo_recurso": false,
+     "irrefutavel": true,
+     "personagem": "maquinista"
+    },
+    "video": {
+     "cenas": [
+      {
+       "local": "PORTO METRO · LINE A",
+       "cenario": "metro",
+       "acao": "preso",
+       "legenda": "Metro stops. Person on the tracks.",
+       "objeto": "🚇",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": false
+      },
+      {
+       "local": "PORTO METRO · CARRIAGE",
+       "cenario": "metro",
+       "acao": "conversa",
+       "legenda": "Passengers elect me spokesperson. Unanimously.",
+       "objeto": "🗳️",
+       "ajudantes": "maquinista",
+       "n_ajudantes": 3,
+       "noite": false
+      },
+      {
+       "local": "IC19 · GAIA",
+       "cenario": "estrada",
+       "acao": "viagem",
+       "legenda": "Strike, closures, and a broken-down vehicle.",
+       "objeto": "🚧",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": false
+      },
+      {
+       "local": "CENTRAL DE CONTROLO",
+       "cenario": "rua",
+       "acao": "chega",
+       "legenda": "Negotiations still ongoing. Dinner missed.",
+       "objeto": "📞",
+       "ajudantes": "maquinista",
+       "n_ajudantes": 2,
+       "noite": true
+      }
+     ]
+    },
+    "entrevista": {
+     "titulo": "Metro Spokesperson Scandal",
+     "entrevistada": "Sr. Armindo, a weary metro driver who has seen everything",
+     "grupo": 1,
+     "boneco": "maquinista",
+     "perguntas": [
+      {
+       "p": "Did the passengers really elect him?",
+       "r": "Unanimous vote. Nobody else wanted the microphone, and he spoke so well about delays.",
+       "quem": "Sr. Armindo"
+      },
+      {
+       "p": "Did the negotiations go well?",
+       "r": "Control room promised an update in 'a few minutes'. That was hours ago, we are still talking.",
+       "quem": "Sr. Armindo"
+      },
+      {
+       "p": "Will he make it to dinner?",
+       "r": "Impossible. A spokesperson never abandons his people mid-negotiation. It would be irresponsible.",
+       "quem": "Sr. Armindo"
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "conversa": {
+  "nome_contacto": "Mother-in-law 🌸",
+  "resposta1": [
+   {
+    "autor": null,
+    "texto": "Oh, how lovely of you to let me know, dear. I did wonder when it got to half past eight."
+   },
+   {
+    "autor": null,
+    "texto": "Spokesperson, you say? Goodness. Just like the time the car 'wouldn't start' on Christmas Eve."
+   },
+   {
+    "autor": null,
+    "texto": "I'm sure it's all perfectly true, of course. I'm only asking because I've already put the lamb back in the oven."
+   }
+  ],
+  "duvida": true,
+  "texto_link": "Mum, I promise it's real. Here, read the interview with the driver: diariodobico.pt/exclusivo",
+  "noticia_link": {
+   "manchete": "Metro Spokesperson Scandal: Passengers Elect Son-in-Law to Negotiate With Control Room",
+   "lead": "Sr. Armindo, a weary metro driver who has seen everything, confirms the unanimous vote and says the negotiations are still ongoing."
+  },
+  "reacao_link": [
+   {
+    "autor": null,
+    "texto": "Well. I've read it, dear, and it is very detailed. Though 'a few minutes' is also what you said about the washing-up in 2019."
+   },
+   {
+    "autor": null,
+    "texto": "I suppose a man called Sr. Armindo is unlikely to have made all that up. I'll keep your plate warm, shall I? Not that anyone is counting."
+   }
+  ],
+  "desfecho": "acredita",
+  "reacao": "🤨"
+ },
+ "tribunal": {
+  "votos": [
+   {
+    "id": "avo",
+    "voto": "passa",
+    "nota": 6,
+    "comentario": "Oh filho, elected spokesperson by the whole carriage? Quem muito promete, muito mente, but you were polite, you offered dinner and the strike and the roadworks at least sound real. Passa, but only because you asked for another evening and didn't lie to your mother; bring a bit of bacalhau next time."
+   },
+   {
+    "id": "gaivota",
+    "voto": "chumba",
+    "nota": 3,
+    "comentario": "Not a single gull in this entire excuse, and you expect me to rule on it? Elected spokesperson for a broken-down metro, a strike and a Coliseu concert, and not one gull in the crowd to pinch the dessert. Dull as a wet Tuesday on the Ribeira."
+   },
+   {
+    "id": "chefe",
+    "voto": "chumba",
+    "nota": 3,
+    "comentario": "Every shred of evidence is marked 'simulated data', and the only thing verifiably elected here is a spokesperson nobody can name, by passengers nobody can find. Credibility of 46/100 is generous; the dinner offer is the only claim I can actually verify as a bribe."
+   }
+  ]
+ }
+}

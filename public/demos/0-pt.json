@@ -1,0 +1,210 @@
+{
+ "pedido": {
+  "lang": "pt",
+  "tipo": "atraso",
+  "origem": "Porto",
+  "destino": "Matosinhos",
+  "minutos": 15,
+  "destinatario_id": "chefe",
+  "destinatario": "Chefe",
+  "contexto": "Reunião às 9h30, quero só uma desculpa sóbria.",
+  "forcar_desespero": "aborrecido"
+ },
+ "eventos": [
+  {
+   "type": "tool_start",
+   "id": "toolu_01FAN3P2Ebu22qqq8tB1tt7k",
+   "name": "geocode",
+   "input": {
+    "local": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01NcPfJGE5ydRYfBkZ2Ntg4Y",
+   "name": "get_traffic",
+   "input": {
+    "origem": "Porto",
+    "destino": "Matosinhos"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01Q2eudmTiyEbwYC1xfAdSsp",
+   "name": "get_transport_status",
+   "input": {
+    "cidade": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01TxdTnCMRmqCjRxgLdQqXfK",
+   "name": "get_events_nearby",
+   "input": {
+    "cidade": "Porto"
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01NcPfJGE5ydRYfBkZ2Ntg4Y",
+   "name": "get_traffic",
+   "result": {
+    "origem": "Porto",
+    "destino": "Matosinhos",
+    "tempo_normal_min": 23,
+    "tempo_com_transito_min": 40,
+    "atraso_transito_min": 17,
+    "incidentes": [
+     "Semáforos avariados num cruzamento (Circunvalação)"
+    ],
+    "fonte": "Dados simulados (sem TOMTOM_API_KEY)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01Q2eudmTiyEbwYC1xfAdSsp",
+   "name": "get_transport_status",
+   "result": {
+    "cidade": "Porto",
+    "linhas": [
+     {
+      "linha": "Metro do Porto, linha A (Azul)",
+      "estado": "perturbada",
+      "detalhe": "perturbação por pessoa na via, atrasos de 6 min"
+     },
+     {
+      "linha": "Metro do Porto, linha B (Vermelha, até à Póvoa de Varzim)",
+      "estado": "normal",
+      "detalhe": "circulação normal"
+     },
+     {
+      "linha": "Metro do Porto, linha D (Amarela)",
+      "estado": "perturbada",
+      "detalhe": "intervalos alargados por falta de material, atrasos de 10 min"
+     },
+     {
+      "linha": "STCP 500",
+      "estado": "perturbada",
+      "detalhe": "perturbação por pessoa na via, atrasos de 6 min"
+     },
+     {
+      "linha": "CP Urbanos do Porto, linha de Braga",
+      "estado": "normal",
+      "detalhe": "circulação normal"
+     }
+    ],
+    "fonte": "Dados simulados (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01TxdTnCMRmqCjRxgLdQqXfK",
+   "name": "get_events_nearby",
+   "result": {
+    "cidade": "Porto",
+    "eventos": [
+     {
+      "evento": "Jogo de futebol no Estádio do Dragão",
+      "zona": "Antas",
+      "hora": "19:00",
+      "impacto": "cortes de estrada a partir de 2 horas antes"
+     }
+    ],
+    "fonte": "Dados simulados (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01FAN3P2Ebu22qqq8tB1tt7k",
+   "name": "geocode",
+   "result": {
+    "local_pedido": "Porto",
+    "encontrado": "Porto, Distrito do Porto, Portugal",
+    "lat": 41.1485,
+    "lon": -8.61097,
+    "fonte": "Open-Meteo Geocoding API"
+   },
+   "erro": false
+  },
+  {
+   "type": "final",
+   "data": {
+    "modo": "aborrecido",
+    "credibilidade": 78,
+    "provas": [
+     {
+      "titulo": "Trânsito Porto–Matosinhos",
+      "detalhe": "Trajeto de 40 min em vez de 23, ou seja, 17 min de atraso.",
+      "fonte": "Dados simulados (sem TOMTOM_API_KEY)"
+     },
+     {
+      "titulo": "Semáforos avariados",
+      "detalhe": "Semáforos avariados num cruzamento da Circunvalação.",
+      "fonte": "Dados simulados (sem TOMTOM_API_KEY)"
+     },
+     {
+      "titulo": "Jogo no Estádio do Dragão",
+      "detalhe": "Jogo às 19:00 nas Antas, com cortes de estrada desde as 17:00.",
+      "fonte": "Dados simulados (demo)"
+     },
+     {
+      "titulo": "Linha A do metro perturbada",
+      "detalhe": "Pessoa na via, com atrasos de 6 minutos.",
+      "fonte": "Dados simulados (demo)"
+     }
+    ],
+    "mensagem": "Bom dia. Vou chegar cerca de 15 minutos atrasado. Há trânsito intenso entre o Porto e Matosinhos, com semáforos avariados na Circunvalação e cortes de estrada por causa do jogo no Dragão. Peço desculpa pelo incómodo.",
+    "modo_desespero": false,
+    "resumo": "Trânsito e semáforos avariados na Circunvalação",
+    "emoji": "🚦"
+   }
+  }
+ ],
+ "conversa": {
+  "nome_contacto": "Chefe 💼",
+  "resposta1": [
+   {
+    "autor": null,
+    "texto": "Ok. 15 minutos."
+   },
+   {
+    "autor": null,
+    "texto": "Não passe disso."
+   }
+  ],
+  "duvida": false,
+  "texto_link": "",
+  "noticia_link": {
+   "manchete": "Caos na Circunvalação: semáforos avariados e jogo no Dragão param o Porto",
+   "lead": "Condutores entre o Porto e Matosinhos enfrentam filas intermináveis, e as gaivotas assistem do alto, impávidas."
+  },
+  "reacao_link": [],
+  "desfecho": "acredita",
+  "reacao": "🤨"
+ },
+ "tribunal": {
+  "votos": [
+   {
+    "id": "avo",
+    "voto": "passa",
+    "nota": 8,
+    "comentario": "Ai, filho, chegas com educação, peço desculpa e tudo, e com tanta prova que até o semáforo avariado dá testemunho! Quem avisa e pede desculpa de boa maneira merece um caldo verde e um perdão da avó."
+   },
+   {
+    "id": "gaivota",
+    "voto": "chumba",
+    "nota": 3,
+    "comentario": "Trânsito, semáforos e futebol, e nem uma gaivota à vista? Isto é um processo tão aborrecido que quase adormeci em cima da chaminé, e olha que o meu território é a Ribeira! Ao menos tivesses dito que uma gaivota roubou o pastel de nata do semáforo, aí sim, havia talento."
+   },
+   {
+    "id": "chefe",
+    "voto": "chumba",
+    "nota": 4,
+    "comentario": "Todas as provas vêm marcadas como «dados simulados», e uma desculpa assente em dados simulados é uma desculpa simulada. Ainda por cima, o jogo é às 19:00 e o senhor diz «bom dia»: o Dragão não ia cortar estradas de manhã para um jogo da noite."
+   }
+  ]
+ }
+}

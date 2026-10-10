@@ -231,7 +231,7 @@ async function correr(id, dados, T) {
 
   // 1. a mensagem vai e é lida; ao mesmo tempo, pede à IA a resposta do destinatário
   const r = dados.resultado;
-  const pedidoConversa = fetch('/conversa', {
+  const pedidoConversa = r._conversa ? Promise.resolve(r._conversa) : fetch('/conversa', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       lang: dados.lang, destinatario: dados.destinatario, destinatario_id: dados.destinatario_id,

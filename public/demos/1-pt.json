@@ -1,0 +1,373 @@
+{
+ "pedido": {
+  "lang": "pt",
+  "tipo": "fuga",
+  "origem": "Porto",
+  "destino": "Vila Nova de Gaia",
+  "evento": "jantar com os sogros",
+  "quando": "hoje às 20h",
+  "destinatario_id": "sogra",
+  "destinatario": "Sogra",
+  "contexto": "Já faltei ao último jantar. O sogro só fala de pesca.",
+  "forcar_desespero": "maluco"
+ },
+ "eventos": [
+  {
+   "type": "tool_start",
+   "id": "toolu_01R8wSsTYAywmx8x7GRaeXnQ",
+   "name": "geocode",
+   "input": {
+    "local": "Vila Nova de Gaia"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01L1vBrxtUrv5ovzTEzvHv1C",
+   "name": "get_traffic",
+   "input": {
+    "origem": "Porto",
+    "destino": "Vila Nova de Gaia"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01LMdTmixiU7nXQ9bt9d2efd",
+   "name": "get_transport_status",
+   "input": {
+    "cidade": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01Dn3Zdgf2PwAcA8pmPWEUjm",
+   "name": "get_events_nearby",
+   "input": {
+    "cidade": "Vila Nova de Gaia"
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01L1vBrxtUrv5ovzTEzvHv1C",
+   "name": "get_traffic",
+   "result": {
+    "origem": "Porto",
+    "destino": "Vila Nova de Gaia",
+    "tempo_normal_min": 18,
+    "tempo_com_transito_min": 42,
+    "atraso_transito_min": 24,
+    "incidentes": [
+     "Veículo avariado na via (IC19)"
+    ],
+    "fonte": "Dados simulados (sem TOMTOM_API_KEY)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01LMdTmixiU7nXQ9bt9d2efd",
+   "name": "get_transport_status",
+   "result": {
+    "cidade": "Porto",
+    "linhas": [
+     {
+      "linha": "Metro do Porto, linha A (Azul)",
+      "estado": "perturbada",
+      "detalhe": "perturbação por pessoa na via, atrasos de 6 min"
+     },
+     {
+      "linha": "Metro do Porto, linha B (Vermelha, até à Póvoa de Varzim)",
+      "estado": "normal",
+      "detalhe": "circulação normal"
+     },
+     {
+      "linha": "Metro do Porto, linha D (Amarela)",
+      "estado": "perturbada",
+      "detalhe": "intervalos alargados por falta de material, atrasos de 10 min"
+     },
+     {
+      "linha": "STCP 500",
+      "estado": "perturbada",
+      "detalhe": "perturbação por pessoa na via, atrasos de 6 min"
+     },
+     {
+      "linha": "CP Urbanos do Porto, linha de Braga",
+      "estado": "normal",
+      "detalhe": "circulação normal"
+     }
+    ],
+    "fonte": "Dados simulados (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01Dn3Zdgf2PwAcA8pmPWEUjm",
+   "name": "get_events_nearby",
+   "result": {
+    "cidade": "Vila Nova de Gaia",
+    "eventos": [
+     {
+      "evento": "Festival no Parque da Cidade",
+      "zona": "Foz",
+      "hora": "21:30",
+      "impacto": "cortes de estrada a partir de 2 horas antes"
+     },
+     {
+      "evento": "Concerto no Coliseu do Porto",
+      "zona": "Baixa",
+      "hora": "20:30",
+      "impacto": "cortes de estrada a partir de 2 horas antes"
+     }
+    ],
+    "fonte": "Dados simulados (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01R8wSsTYAywmx8x7GRaeXnQ",
+   "name": "geocode",
+   "result": {
+    "local_pedido": "Vila Nova de Gaia",
+    "encontrado": "Vila Nova de Gaia, Distrito do Porto, Portugal",
+    "lat": 41.12401,
+    "lon": -8.61241,
+    "fonte": "Open-Meteo Geocoding API"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01FBys55XrcCpXnGJmcMoMh9",
+   "name": "get_weather",
+   "input": {
+    "lat": 41.12401,
+    "lon": -8.61241
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01FBys55XrcCpXnGJmcMoMh9",
+   "name": "get_weather",
+   "result": {
+    "agora": {
+     "hora": "2026-10-10T17:30",
+     "estado": "parcialmente nublado",
+     "codigo": 2,
+     "temperatura_c": 18.5,
+     "sensacao_c": 18.2,
+     "precipitacao_mm": 0,
+     "vento_kmh": 7.9,
+     "rajadas_kmh": 23,
+     "visibilidade_m": 39560
+    },
+    "proximas_horas": [
+     {
+      "hora": "17:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 24.5
+     },
+     {
+      "hora": "18:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 21.2
+     },
+     {
+      "hora": "19:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 17.6
+     },
+     {
+      "hora": "20:00",
+      "estado": "muito nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 14
+     },
+     {
+      "hora": "21:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 6.8
+     },
+     {
+      "hora": "22:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 5.4
+     }
+    ],
+    "fonte": "Open-Meteo Forecast API (dados reais)"
+   },
+   "erro": false
+  },
+  {
+   "type": "final",
+   "data": {
+    "modo": "maluco",
+    "credibilidade": 45,
+    "resumo": "Fiz amizade no trânsito e jantei com ele",
+    "emoji": "🚗",
+    "provas": [
+     {
+      "titulo": "Trânsito Porto–Gaia",
+      "detalhe": "18 min normais passam a 42, com 24 min de atraso.",
+      "fonte": "Dados simulados (sem TOMTOM_API_KEY)"
+     },
+     {
+      "titulo": "Veículo avariado na IC19",
+      "detalhe": "Incidente na via que liga o Porto a Gaia.",
+      "fonte": "Dados simulados (sem TOMTOM_API_KEY)"
+     },
+     {
+      "titulo": "Metro e STCP perturbados",
+      "detalhe": "Linhas A e D e STCP 500 com atrasos de 6 a 10 min.",
+      "fonte": "Dados simulados (demo)"
+     },
+     {
+      "titulo": "Concerto e festival com cortes",
+      "detalhe": "Coliseu às 20:30 e festival às 21:30, com cortes de estrada duas horas antes.",
+      "fonte": "Dados simulados (demo)"
+     }
+    ],
+    "mensagem": "Peço imensa desculpa, mas não vou conseguir ir hoje. Há um veículo avariado na IC19 e cortes de estrada por causa dos concertos, e estou há tanto tempo parado que o condutor ao lado e eu já combinámos jantar. Posso compensar no próximo fim de semana?",
+    "modo_desespero": false,
+    "desculpa_absurda": {
+     "numero": 35,
+     "titulo": "Fiz amizade com o condutor do lado e já combinámos jantar",
+     "ultimo_recurso": false,
+     "irrefutavel": true,
+     "personagem": "carro"
+    },
+    "video": {
+     "cenas": [
+      {
+       "local": "IC19 · PORTO",
+       "cenario": "estrada",
+       "acao": "preso",
+       "legenda": "Veículo avariado e trânsito parado na IC19",
+       "objeto": "🚗",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": false
+      },
+      {
+       "local": "IC19 · PORTO",
+       "cenario": "estrada",
+       "acao": "conversa",
+       "legenda": "O condutor do lado baixa o vidro",
+       "objeto": "🗣️",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": false
+      },
+      {
+       "local": "IC19 · GAIA",
+       "cenario": "estrada",
+       "acao": "festa",
+       "legenda": "Trocámos contactos e partilhámos tremoços",
+       "objeto": "🤝",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": false
+      },
+      {
+       "local": "RESTAURANTE · GAIA",
+       "cenario": "restaurante",
+       "acao": "come",
+       "legenda": "Jantar combinado com o meu novo amigo",
+       "objeto": "🍽️",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": true
+      }
+     ]
+    },
+    "entrevista": {
+     "titulo": "O carro do lado fala",
+     "entrevistada": "Carro cinzento do condutor ao lado, parado há 40 minutos na IC19",
+     "grupo": 1,
+     "boneco": "carro",
+     "perguntas": [
+      {
+       "p": "O que se passou na IC19?",
+       "r": "Havia um veículo avariado, ninguém andava, e o meu condutor precisava de conversa.",
+       "quem": "Carro cinzento"
+      },
+      {
+       "p": "Foi planeado?",
+       "r": "Nunca. Mas quarenta minutos parados dão para saber a vida toda um do outro.",
+       "quem": "Carro cinzento"
+      },
+      {
+       "p": "E o jantar?",
+       "r": "Já está marcado. Ele paga a primeira ronda, eu fico à porta a ver.",
+       "quem": "Carro cinzento"
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "conversa": {
+  "nome_contacto": "Sogra 🌸",
+  "resposta1": [
+   {
+    "autor": null,
+    "texto": "Claro, querido, não faz mal nenhum. Já estou habituada."
+   },
+   {
+    "autor": null,
+    "texto": "Só acho curioso que da última vez tenha sido o \"pneu furado\". Mas deve ser coincidência, não é?"
+   }
+  ],
+  "duvida": true,
+  "texto_link": "Sogra, juro que é verdade! Está aqui a entrevista ao carro do lado 👇 diariodobico.pt/exclusivo",
+  "noticia_link": {
+   "manchete": "O CARRO DO LADO FALA: \"QUARENTA MINUTOS PARADOS DÃO PARA SABER A VIDA TODA\"",
+   "lead": "Carro cinzento parado há 40 minutos na IC19 confirma que o jantar com o condutor do outro lado já está marcado e que ele fica à porta a ver."
+  },
+  "reacao_link": [
+   {
+    "autor": null,
+    "texto": "Li com muita atenção, querido. Um carro a dar entrevistas... Que tempos modernos."
+   },
+   {
+    "autor": null,
+    "texto": "Enfim, se até o carro diz que o jantar está marcado, quem sou eu para duvidar. Só lembro que da última vez também havia \"testemunhas\"."
+   }
+  ],
+  "desfecho": "acredita",
+  "reacao": "🤨"
+ },
+ "tribunal": {
+  "votos": [
+   {
+    "id": "avo",
+    "voto": "passa",
+    "nota": 6,
+    "comentario": "Ai, filho, o trânsito até parece verdadeiro, e quem faz amigos na IC19 ao menos não está sozinho! Passa por pedires desculpa com educação, mas olha que quem janta com estranhos nunca mais janta com a avó."
+   },
+   {
+    "id": "gaivota",
+    "voto": "chumba",
+    "nota": 3,
+    "comentario": "Nem uma gaivota nesta desculpa, e eu a ter de ler sobre a IC19 e jantares com desconhecidos! Credibilidade de 45/100 e zero penas no processo: se ao menos o condutor do lado tivesse sido assaltado por uma gaivota esperta, ainda falávamos."
+   },
+   {
+    "id": "chefe",
+    "voto": "chumba",
+    "nota": 3,
+    "comentario": "Os dados são simulados, o veículo avariado é anónimo e o 'condutor do lado' tem menos credibilidade do que uma testemunha sem rosto. Se o jantar já está combinado, o senhor não está retido no trânsito, está é ocupado com a vida social."
+   }
+  ]
+ }
+}

@@ -1,0 +1,376 @@
+{
+ "pedido": {
+  "lang": "pt",
+  "tipo": "atraso",
+  "origem": "Porto",
+  "destino": "Póvoa de Varzim",
+  "minutos": 120,
+  "destinatario_id": "mae",
+  "destinatario": "Mãe",
+  "contexto": "É o almoço de domingo e ela fez cabrito.",
+  "forcar_desespero": "desespero"
+ },
+ "eventos": [
+  {
+   "type": "tool_start",
+   "id": "toolu_01M89PjP3kDSgvzmNApPHqoR",
+   "name": "geocode",
+   "input": {
+    "local": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01Y6qBdya5DngqUz8qbrKk2W",
+   "name": "get_traffic",
+   "input": {
+    "origem": "Porto",
+    "destino": "Póvoa de Varzim"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01XqX1oNmgTXUMFiDK6bxH6C",
+   "name": "get_transport_status",
+   "input": {
+    "cidade": "Porto"
+   }
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_01QDGomUrongvwcQFro6V5At",
+   "name": "get_events_nearby",
+   "input": {
+    "cidade": "Porto"
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01Y6qBdya5DngqUz8qbrKk2W",
+   "name": "get_traffic",
+   "result": {
+    "origem": "Porto",
+    "destino": "Póvoa de Varzim",
+    "tempo_normal_min": 29,
+    "tempo_com_transito_min": 42,
+    "atraso_transito_min": 13,
+    "incidentes": [
+     "Obras com corte de faixa (A1)"
+    ],
+    "fonte": "Dados simulados (sem TOMTOM_API_KEY)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01XqX1oNmgTXUMFiDK6bxH6C",
+   "name": "get_transport_status",
+   "result": {
+    "cidade": "Porto",
+    "linhas": [
+     {
+      "linha": "Metro do Porto, linha A (Azul)",
+      "estado": "perturbada",
+      "detalhe": "perturbação por pessoa na via, atrasos de 6 min"
+     },
+     {
+      "linha": "Metro do Porto, linha B (Vermelha, até à Póvoa de Varzim)",
+      "estado": "normal",
+      "detalhe": "circulação normal"
+     },
+     {
+      "linha": "Metro do Porto, linha D (Amarela)",
+      "estado": "perturbada",
+      "detalhe": "intervalos alargados por falta de material, atrasos de 10 min"
+     },
+     {
+      "linha": "STCP 500",
+      "estado": "perturbada",
+      "detalhe": "perturbação por pessoa na via, atrasos de 6 min"
+     },
+     {
+      "linha": "CP Urbanos do Porto, linha de Braga",
+      "estado": "normal",
+      "detalhe": "circulação normal"
+     }
+    ],
+    "fonte": "Dados simulados (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01QDGomUrongvwcQFro6V5At",
+   "name": "get_events_nearby",
+   "result": {
+    "cidade": "Porto",
+    "eventos": [
+     {
+      "evento": "Jogo de futebol no Estádio do Dragão",
+      "zona": "Antas",
+      "hora": "19:00",
+      "impacto": "cortes de estrada a partir de 2 horas antes"
+     }
+    ],
+    "fonte": "Dados simulados (demo)"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_01M89PjP3kDSgvzmNApPHqoR",
+   "name": "geocode",
+   "result": {
+    "local_pedido": "Porto",
+    "encontrado": "Porto, Distrito do Porto, Portugal",
+    "lat": 41.1485,
+    "lon": -8.61097,
+    "fonte": "Open-Meteo Geocoding API"
+   },
+   "erro": false
+  },
+  {
+   "type": "tool_start",
+   "id": "toolu_011s7AD3Jy2nzZZ99AicsCyA",
+   "name": "get_weather",
+   "input": {
+    "lat": 41.1485,
+    "lon": -8.61097
+   }
+  },
+  {
+   "type": "tool_result",
+   "id": "toolu_011s7AD3Jy2nzZZ99AicsCyA",
+   "name": "get_weather",
+   "result": {
+    "agora": {
+     "hora": "2026-10-10T17:30",
+     "estado": "parcialmente nublado",
+     "codigo": 2,
+     "temperatura_c": 18.7,
+     "sensacao_c": 18.5,
+     "precipitacao_mm": 0,
+     "vento_kmh": 7.9,
+     "rajadas_kmh": 23,
+     "visibilidade_m": 39560
+    },
+    "proximas_horas": [
+     {
+      "hora": "17:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 24.5
+     },
+     {
+      "hora": "18:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 21.2
+     },
+     {
+      "hora": "19:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 17.6
+     },
+     {
+      "hora": "20:00",
+      "estado": "muito nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 14
+     },
+     {
+      "hora": "21:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 6.8
+     },
+     {
+      "hora": "22:00",
+      "estado": "parcialmente nublado",
+      "prob_chuva_pct": 0,
+      "precipitacao_mm": 0,
+      "rajadas_kmh": 5.4
+     }
+    ],
+    "fonte": "Open-Meteo Forecast API (dados reais)"
+   },
+   "erro": false
+  },
+  {
+   "type": "final",
+   "data": {
+    "modo": "desespero",
+    "credibilidade": 12,
+    "resumo": "Fiquei preso no elevador com a vizinha",
+    "emoji": "🛗",
+    "provas": [
+     {
+      "titulo": "Trânsito com obras",
+      "detalhe": "13 minutos de atraso no caminho para a Póvoa; obras com corte de faixa (A1).",
+      "fonte": "Dados simulados (sem TOMTOM_API_KEY)"
+     },
+     {
+      "titulo": "Pessoa na via",
+      "detalhe": "Linha A do Metro e STCP 500 perturbadas, atrasos de 6 minutos.",
+      "fonte": "Dados simulados (demo)"
+     },
+     {
+      "titulo": "Jogo no Dragão",
+      "detalhe": "Jogo às 19:00 nas Antas, com cortes de estrada a partir de 2 horas antes.",
+      "fonte": "Dados simulados (demo)"
+     },
+     {
+      "titulo": "Tempo sem desculpa",
+      "detalhe": "Parcialmente nublado, sem chuva e rajadas de 23 km/h. Nada que explique duas horas.",
+      "fonte": "Open-Meteo Forecast API (dados reais)"
+     }
+    ],
+    "mensagem": "Mãe, o elevador parou entre andares com a vizinha do terceiro esquerdo lá dentro e ela contou-me a vida toda desde 1974. Ainda por cima há obras na A1 e trânsito. Guarda-me o cabrito, que vou a correr e com a alma em pedaços.",
+    "modo_desespero": true,
+    "desculpa_absurda": {
+     "numero": 26,
+     "titulo": "Elevador parado com a vizinha a contar a vida desde 1974",
+     "ultimo_recurso": false,
+     "irrefutavel": false,
+     "personagem": "vizinha"
+    },
+    "video": {
+     "cenas": [
+      {
+       "local": "PORTO · PRÉDIO",
+       "cenario": "casa",
+       "acao": "aproxima",
+       "legenda": "A vizinha entra no elevador comigo",
+       "objeto": "🛗",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": false
+      },
+      {
+       "local": "ELEVADOR · 3.º ESQUERDO",
+       "cenario": "casa",
+       "acao": "preso",
+       "legenda": "O elevador pára entre andares",
+       "objeto": "⏸️",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": false
+      },
+      {
+       "local": "ELEVADOR · ANO DE 1974",
+       "cenario": "casa",
+       "acao": "conversa",
+       "legenda": "Ela conta a vida toda desde 1974",
+       "objeto": "🗣️",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": false
+      },
+      {
+       "local": "A1 · OBRAS",
+       "cenario": "estrada",
+       "acao": "viagem",
+       "legenda": "Corte de faixa e trânsito até à Póvoa",
+       "objeto": "🚧",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": false
+      },
+      {
+       "local": "PÓVOA DE VARZIM",
+       "cenario": "restaurante",
+       "acao": "chega",
+       "legenda": "Chego por fim, a tempo do cabrito",
+       "objeto": "🐐",
+       "ajudantes": null,
+       "n_ajudantes": 0,
+       "noite": false
+      }
+     ]
+    },
+    "entrevista": {
+     "titulo": "Entrevista exclusiva à vizinha do terceiro esquerdo",
+     "entrevistada": "D. Gracinda, vizinha do terceiro esquerdo, 82 anos, especialista em histórias desde 1974",
+     "grupo": 1,
+     "boneco": "vizinha",
+     "perguntas": [
+      {
+       "p": "Porque é que não o deixou sair do elevador?",
+       "r": "Ele não perguntou as horas. Eu só ia começar pelo meu casamento em 1974, o resto vinha depois.",
+       "quem": "D. Gracinda"
+      },
+      {
+       "p": "Quanto tempo durou a conversa?",
+       "r": "Pouco, uns minutinhos. Cheguei ao primeiro neto, ainda faltavam os vizinhos do quarto andar e a história do cão.",
+       "quem": "D. Gracinda"
+      },
+      {
+       "p": "Tem algum arrependimento?",
+       "r": "Só um: não ter levado o lanche. O rapaz tinha pressa, mas educação é educação.",
+       "quem": "D. Gracinda"
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "conversa": {
+  "nome_contacto": "Mãe 😍",
+  "resposta1": [
+   {
+    "autor": null,
+    "texto": "Meu Deus, ficaste preso no elevador?! 😱😱 Já comeste alguma coisa, filho??"
+   },
+   {
+    "autor": null,
+    "texto": "E a D. Gracinda desde 1974?! 😭 Isso não é desculpa, isso é uma novela! Quero o contacto dela, deve saber coisas do prédio todo! 👀"
+   }
+  ],
+  "duvida": true,
+  "texto_link": "Mãe, não acreditas? Está aqui a entrevista exclusiva à D. Gracinda 📰",
+  "noticia_link": {
+   "manchete": "EXCLUSIVO: Vizinha de 82 anos prende rapaz no elevador com a história do casamento de 1974",
+   "lead": "D. Gracinda, do terceiro esquerdo, confessa que só ia começar e que o seu único arrependimento é não ter levado o lanche."
+  },
+  "reacao_link": [
+   {
+    "autor": null,
+    "texto": "Ai, filho, \"só uns minutinhos\" e ainda faltava o cão?! 😱😭 Coitadinho, deves estar sem comer!"
+   },
+   {
+    "autor": null,
+    "texto": "Pronto, acredito. A D. Gracinda é mesmo assim, já me apanhou na caixa do correio em 2019. 🙄💕 Vem depressa que o cabrito arrefece!"
+   }
+  ],
+  "desfecho": "acredita",
+  "reacao": "😱"
+ },
+ "tribunal": {
+  "votos": [
+   {
+    "id": "avo",
+    "voto": "chumba",
+    "nota": 3,
+    "comentario": "Ó filho, o elevador parado e a vizinha a contar a vida desde 1974 até tem graça, mas o Open-Meteo diz que o tempo estava ótimo e a A1 nem fica no caminho da Póvoa! Mentir à mãe é feio, mas como pediste o cabrito com educação, vai lá a correr que eu guardo-te um bocadinho: quem tem fome não tem vergonha."
+   },
+   {
+    "id": "gaivota",
+    "voto": "chumba",
+    "nota": 2,
+    "comentario": "Nem uma gaivota na desculpa toda, e eu a ter de ouvir a vizinha do terceiro esquerdo desde 1974? Isto é mais aborrecido do que um muro sem restos de sardinha. Com 12 de credibilidade, o cabrito vai para quem sabe pousar no telhado a horas."
+   },
+   {
+    "id": "chefe",
+    "voto": "chumba",
+    "nota": 2,
+    "comentario": "Uma vizinha que conta a vida desde 1974 é uma narrativa com mais buracos do que a A1 em obras, e as provas são simuladas, o que para mim equivale a não existirem. O único dado real, o tempo, diz que não choveu, pelo que a única coisa que ficou parada foi a sua credibilidade."
+   }
+  ]
+ }
+}

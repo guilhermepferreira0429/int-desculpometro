@@ -732,7 +732,19 @@ function bloquear(on) {
 
 const cartaoErro = msg => `<div class="tool card err"><div class="ico" style="background:#ef233c">❌</div><div>${esc(msg)}</div></div>`;
 
-async function investigar(corpo) {
+// Reproduz uma demo gravada com o mesmo ritmo visual de uma investigação real (mas mais depressa)
+async function reproduzir(demo, onEvento) {
+  for (const e of demo.eventos) {
+    if (e.type === 'pensamento') { await espera(500); onEvento(e); }
+    else if (e.type === 'tool_start') { await espera(350); onEvento(e); }
+    else if (e.type === 'tool_result') { await espera(650); onEvento(e); }
+    else if (e.type === 'final') { await espera(700); onEvento({ ...e, data: { ...e.data, _conversa: demo.conversa, _tribunal: demo.tribunal } }); }
+    else onEvento(e);
+  }
+}
+const espera = ms => new Promise(r => setTimeout(r, ms));
+
+async function investigar(corpo, fonte = pedir) {
   bloquear(true);
   pararCronometro(true);
   modoDesespero(false);
@@ -743,7 +755,7 @@ async function investigar(corpo) {
   comecarOscilar();
   let terminou = false;
   try {
-    await pedir(corpo, e => {
+    await fonte(corpo, e => {
       $('abrir')?.remove();
       if (e.type === 'pensamento') $('invest').insertAdjacentHTML('beforeend', `<div class="pens">💭 ${esc(e.text)}</div>`);
       if (e.type === 'tool_start') cartaoInicio(e);
@@ -813,8 +825,11 @@ $('exemplosLista').onclick = ev => {
   $('destSel').value = e.destinatario; $('outroWrap').classList.add('hidden');
   campo('contexto').value = e['contexto_' + lang] || '';
   campo('forcar_desespero').value = e.modo;
-  $('go').classList.remove('pronto'); void $('go').offsetWidth; $('go').classList.add('pronto');
-  $('go').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  fetch(`demos/${b.dataset.ex}-${lang}.json`).then(r => r.ok ? r.json() : null).catch(() => null).then(demo => {
+    if (!demo) { $('go').classList.remove('pronto'); void $('go').offsetWidth; $('go').classList.add('pronto'); $('go').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+    pedidoAtual = demo.pedido; historico = [];
+    investigar(demo.pedido, (_corpo, onEvento) => reproduzir(demo, onEvento));
+  });
 };
 
 $('destSel').onchange = () => $('outroWrap').classList.toggle('hidden', $('destSel').value !== 'outro');
