@@ -10,6 +10,24 @@ const MODEL = 'claude-sonnet-5-5';
 const client = new Anthropic(); // lê ANTHROPIC_API_KEY
 const app = express();
 app.use(express.json());
+// Limite simples por pessoa nos endpoints que gastam a IA (o link é público via ngrok)
+const LIMITES = { '/desculpa': 8, '/conversa': 20, '/tribunal': 12 }; // pedidos por 10 minutos
+const contagens = new Map();
+app.use((req, res, next) => {
+  const max = req.method === 'POST' && LIMITES[req.path];
+  if (!max) return next();
+  const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+  const chave = `${ip} ${req.path}`, agora = Date.now();
+  const lista = (contagens.get(chave) || []).filter(t => agora - t < 10 * 60 * 1000);
+  if (lista.length >= max) {
+    const msg = 'Demasiados pedidos. Espera uns minutos ou usa os exemplos, que não gastam nada.';
+    if (req.path === '/desculpa') { res.setHeader('Content-Type', 'application/x-ndjson; charset=utf-8'); return res.end(JSON.stringify({ type: 'error', message: msg }) + '\n'); }
+    return res.status(429).json({ erro: msg });
+  }
+  lista.push(agora); contagens.set(chave, lista);
+  next();
+});
+
 app.use(express.static('public', { etag: false, lastModified: false, setHeaders: res => res.set('Cache-Control', 'no-store') }));
 
 const SYSTEM = `És o Desculpómetro, especialista em desculpas para atrasos. Investiga com as ferramentas o que se passa no caminho do utilizador. Usa só factos que as ferramentas devolverem, nunca inventes. Escolhe a combinação de provas mais forte, dá uma nota de credibilidade de 0 a 100 e escreve a mensagem no tom certo para o destinatário (ver TONS). Se a credibilidade ficar abaixo de 20, ativa o MODO DESESPERO: escolhe uma desculpa absurda do catálogo abaixo e constrói-a com total seriedade, apoiada em factos reais. No fim devolve JSON com: credibilidade, provas (lista com titulo, detalhe e fonte), mensagem, modo_desespero.
