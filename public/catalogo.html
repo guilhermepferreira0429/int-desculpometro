@@ -79,7 +79,9 @@
   .desc-item .n { width:46px; height:46px; border: var(--borda); border-radius:50%; background: var(--rosa); color:#fff; font-weight:800;
                   display:flex; align-items:center; justify-content:center; font-size:1.05rem; }
   .desc-item .t { font-size:1rem; line-height:1.35; }
-  .desc-item .t .pe { font-size:1.4rem; margin-right:4px; vertical-align:-3px; }
+  .desc-item .t .pe { font-size:1.4rem; margin-right:6px; vertical-align:-12px; display:inline-block; }
+  .desc-item .t .pe svg { width:34px; height:40px; }
+  .pers .emo.bon svg { width:120px; height:130px; }
   .desc-item.ultimo { padding-right: 30px; background:#111; color: var(--amarelo); border-color:#111; box-shadow: 5px 5px 0 var(--vermelho); position:relative; }
   .desc-item.ultimo .n { background: var(--amarelo); color:#111; border-color: var(--amarelo); }
   .desc-item.ultimo::after { content:'☠️'; position:absolute; top:-14px; right:-10px; font-size:1.3rem; background: var(--vermelho); border:3px solid #111;
@@ -173,6 +175,7 @@
 
 <script type="module">
 import { DESTINATARIOS, PERSONAGENS, DESCULPAS, INCIDENTES } from './catalogo.js';
+import { boneco } from './bonecos.js';
 
 const T = {
   pt: {
@@ -276,7 +279,7 @@ function personagens() {
   $('personagens').innerHTML = Object.entries(PERSONAGENS).map(([id, p]) => {
     const n = contagem[id] || 0;
     return `<div class="card pers">
-      <span class="emo" aria-hidden="true">${esc(p.emoji)}</span>
+      <span class="emo bon" aria-hidden="true">${boneco(id, p.emoji)}</span>
       <div class="nome">${esc(p[lang])}</div>
       <div class="desc">${esc(lang === 'en' ? p.desc_en : p.desc_pt)}</div>
       <div class="conta${n ? '' : ' zero'}"><span>${esc(t.conta(n))}</span></div>
@@ -309,7 +312,7 @@ function desculpas() {
       const p = PERSONAGENS[d.p] || {};
       return `<div class="card desc-item ${tier === 'ultimo' ? 'ultimo' : ''}">
         <div class="n">${esc(d.n)}</div>
-        <div class="t"><span class="pe" title="${esc(p[lang])}">${esc(p.emoji)}</span>${esc(d[lang])}</div>
+        <div class="t"><span class="pe" title="${esc(p[lang])}">${boneco(d.p, p.emoji)}</span>${esc(d[lang])}</div>
       </div>`;
     }).join('') : `<div class="vazio">${esc(t.nada)}</div>`;
   }

@@ -69,7 +69,7 @@ const CSS = `
   .bm-pag .man { font-family: Impact, "Arial Black", sans-serif; font-size: 1.5rem; line-height:1.05; margin: 6px 0; text-transform:uppercase; }
   .bm-pag .lead { font-style: italic; font-size:.9rem; }
   .bm-pag .foto { background:#d8d1bd; border: 2px solid #111; height: 120px; display:flex; align-items:center; justify-content:center; font-size: 4rem; margin: 10px 0; }
-  .bm-pag .foto svg { width: 150px; }
+  .bm-pag .foto svg { width: 150px; height: 112px; }
   .bm-pag h4 { font-family: system-ui, sans-serif; margin: 12px 0 4px; font-size:.85rem; text-transform: uppercase; }
   .bm-pag .p { font-weight:700; font-size:.85rem; margin: 8px 0 2px; }
   .bm-pag .r { font-size:.85rem; margin:0; padding-left: 8px; border-left: 3px solid #d10f1f; }
@@ -86,7 +86,7 @@ const hora = () => new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', min
 
 let corrida = 0; // cada abertura tem um id; se o utilizador fechar, a sequência antiga pára
 
-// dados: { lang, resultado (JSON do agente), pedido (o que foi enviado ao agente), destinatario (rótulo), destinatario_id, emoji, gaivotaSVG, emojiPersonagem }
+// dados: { lang, resultado (JSON do agente), pedido (o que foi enviado ao agente), destinatario (rótulo), destinatario_id, emoji, gaivotaSVG, fotoHTML }
 export function abrirMessenger(dados) {
   if (!document.getElementById('bm-css')) {
     const st = document.createElement('style'); st.id = 'bm-css'; st.textContent = CSS; document.head.appendChild(st);
@@ -212,7 +212,7 @@ async function correr(id, dados, T) {
 async function abrirPagina(dados, conversa, T, vivo) {
   const r = dados.resultado, j = r.diario_do_bico, e = r.entrevista;
   const nav = document.getElementById('bm-nav');
-  const foto = dados.emojiPersonagem ? esc(dados.emojiPersonagem) : dados.gaivotaSVG(150);
+  const foto = dados.fotoHTML || dados.gaivotaSVG(150);
   nav.innerHTML = `
     <div class="bm-urlbar"><span class="x">✕</span><span class="u">diariodobico.pt/exclusivo</span></div>
     <div class="bm-pag" id="bm-pag">

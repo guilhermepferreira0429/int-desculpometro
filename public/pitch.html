@@ -1,0 +1,757 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Desculpómetro · Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Mesma linguagem visual do site (index.html / ferramentas.html): creme com pontos, tinta azul-noite, bordas de 3px e sombras duras.
+     Apresentação de slides em ecrã inteiro; uma secção .slide por página, animações só no slide ativo. Visual único (claro), cores explícitas. */
+  :root {
+    --bg:#fff6e0; --ink:#1d1b4b; --card:#ffffff; --mut:#6b6893;
+    --amarelo:#ffd23f; --rosa:#ff4f8b; --azul:#3a86ff; --verde:#06d6a0; --laranja:#ff8c42; --vermelho:#ef233c; --roxo:#8338ec;
+    --borda: 3px solid var(--ink); --sombra: 5px 5px 0 var(--ink);
+    --f: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+    --mono: ui-monospace, Consolas, "Courier New", monospace;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: clamp(15px, 0.9vw + 6px, 25px); height: 100%; }
+  body { margin: 0; height: 100%; overflow: hidden; font-family: var(--f); background: var(--bg); color: var(--ink);
+         background-image: radial-gradient(#1d1b4b14 1.5px, transparent 1.5px); background-size: 22px 22px; }
+  button { font: inherit; font-weight: 800; color: #fff; background: var(--rosa); border: var(--borda); border-radius: 14px;
+           padding: .4rem 1rem; box-shadow: 4px 4px 0 var(--ink); cursor: pointer; transition: transform .1s, box-shadow .1s; }
+  button:hover { transform: translate(-1px,-1px); box-shadow: 6px 6px 0 var(--ink); }
+  button:active { transform: translate(3px,3px); box-shadow: 1px 1px 0 var(--ink); }
+  button:focus-visible, a:focus-visible { outline: 3px solid var(--rosa); outline-offset: 3px; }
+  .card { background: var(--card); border: var(--borda); border-radius: 18px; box-shadow: var(--sombra); }
+  code { font-family: var(--mono); font-size: .88em; background: #1d1b4b12; border-radius: 6px; padding: 0 5px; }
+
+  /* ---------- palco de slides ---------- */
+  .deck { position: fixed; inset: 0; }
+  .slide { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; padding: 3.2rem max(16px, 4vw) 5.5rem;
+           display: flex; flex-direction: column; justify-content: center; opacity: 0; visibility: hidden; transform: translateX(40px);
+           transition: opacity .35s, transform .45s cubic-bezier(.2,1.3,.4,1), visibility 0s .35s; }
+  .slide.ativo { opacity: 1; visibility: visible; transform: none; transition: opacity .35s, transform .45s cubic-bezier(.2,1.3,.4,1); }
+  .slide.antes { transform: translateX(-40px); }
+  .in { width: 100%; max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.2rem; }
+
+  .marca { position: fixed; top: max(12px, env(safe-area-inset-top, 0px)); left: max(16px, 2vw); z-index: 40; font-weight: 800; font-size: 1.15rem; letter-spacing: -.5px;
+           background: #fff; border: var(--borda); border-radius: 99px; padding: 0 .8rem; box-shadow: 3px 3px 0 var(--ink); transition: opacity .3s; }
+  .marca .o, .logo .o { color: var(--rosa); display: inline-block; animation: abana 2.5s ease-in-out infinite; }
+  @keyframes abana { 50% { transform: rotate(-12deg) translateY(-4px); } }
+  body[data-slide="1"] .marca { opacity: 0; }
+
+  .eyebrow { align-self: flex-start; font-weight: 800; font-size: .95rem; background: var(--amarelo); border: var(--borda); border-radius: 99px; padding: 0 .9rem; box-shadow: 3px 3px 0 var(--ink); }
+  .eyebrow.ink { background: var(--ink); color: var(--amarelo); }
+  h1, h2 { margin: 0; font-weight: 800; line-height: 1.05; letter-spacing: -1px; text-wrap: balance; }
+  h2 { font-size: 2.9rem; }
+  .lead { margin: 0; font-size: 1.3rem; line-height: 1.45; color: var(--mut); max-width: 62ch; }
+  .lead b { color: var(--ink); }
+  .grelha { display: grid; gap: 1rem; }
+  .g2 { grid-template-columns: repeat(2, minmax(0,1fr)); } .g3 { grid-template-columns: repeat(3, minmax(0,1fr)); } .g4 { grid-template-columns: repeat(4, minmax(0,1fr)); } .g5 { grid-template-columns: repeat(5, minmax(0,1fr)); }
+
+  /* entradas animadas (só no slide ativo; estado final visível) */
+  .slide.ativo .salta { animation: salta .55s cubic-bezier(.2,1.6,.4,1) both; animation-delay: calc(var(--i, 0) * .12s + .15s); }
+  @keyframes salta { from { opacity: 0; transform: translateY(24px) scale(.92); } }
+
+  /* ---------- barra de navegação ---------- */
+  .nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; display: flex; align-items: center; gap: .7rem; justify-content: center;
+         padding: .6rem 16px calc(.7rem + env(safe-area-inset-bottom, 0px)); pointer-events: none; }
+  .nav > * { pointer-events: auto; }
+  .nav button { padding: .2rem .9rem; font-size: 1rem; background: #fff; color: var(--ink); }
+  .nav button.prox { background: var(--rosa); color: #fff; }
+  .pontos { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; background: #fff; border: var(--borda); border-radius: 99px; padding: 6px 10px; box-shadow: 3px 3px 0 var(--ink); }
+  .pontos button { width: 14px; height: 14px; padding: 0; border-radius: 50%; border: 2px solid var(--ink); box-shadow: none; background: #fff; }
+  .pontos button[aria-current="true"] { background: var(--rosa); transform: scale(1.25); }
+  .contador { font-weight: 800; font-variant-numeric: tabular-nums; background: var(--ink); color: var(--amarelo); border-radius: 99px; padding: 0 .7rem; font-size: .9rem; }
+  .progresso { position: fixed; top: 0; left: 0; height: 6px; background: var(--rosa); z-index: 60; transition: width .4s; border-right: 3px solid var(--ink); }
+  .notas { position: fixed; left: 50%; bottom: 4.2rem; transform: translateX(-50%); width: min(900px, calc(100% - 32px)); z-index: 45;
+           background: var(--ink); color: #fff; border-radius: 16px; padding: .8rem 1.1rem; font-size: 1rem; line-height: 1.45; box-shadow: 5px 5px 0 var(--rosa); }
+  .notas b { color: var(--amarelo); }
+
+  /* ---------- 1. capa ---------- */
+  .capa .logo { font-size: clamp(3.4rem, 9vw, 8rem); line-height: .95; letter-spacing: -3px; }
+  .capa .lead { font-size: 1.55rem; color: var(--ink); }
+  .pills { display: flex; gap: .7rem; flex-wrap: wrap; }
+  .pill { font-weight: 800; background: #fff; border: var(--borda); border-radius: 99px; padding: .1rem 1rem; box-shadow: 3px 3px 0 var(--ink); }
+  .pill.ink { background: var(--ink); color: var(--amarelo); }
+  .voadora { position: absolute; top: 14%; left: -260px; width: clamp(160px, 18vw, 300px); pointer-events: none; filter: drop-shadow(4px 6px 0 #0003); }
+  .slide.ativo .voadora { animation: voa 8s linear infinite; }
+  @keyframes voa { 0% { left: -300px; transform: translateY(0) rotate(-4deg); } 25% { transform: translateY(60px) rotate(5deg); } 50% { transform: translateY(-10px) rotate(-4deg); } 75% { transform: translateY(70px) rotate(5deg); } 100% { left: 110vw; transform: translateY(0) rotate(-4deg); } }
+  .asa { transform-box: fill-box; transform-origin: bottom center; animation: bate .32s ease-in-out infinite alternate; }
+  @keyframes bate { to { transform: scaleY(-.5); } }
+
+  /* ---------- 2. problema ---------- */
+  .desculpa-ma { position: relative; padding: 1.3rem 1.4rem 1.6rem; min-height: 9rem; overflow: hidden; }
+  .desculpa-ma .q { font-size: 1.9rem; font-weight: 800; line-height: 1.1; }
+  .desculpa-ma .p { color: var(--mut); font-size: 1.1rem; margin-top: .4rem; }
+  .carimbo { position: absolute; right: .8rem; bottom: .6rem; transform: rotate(-12deg); border: 5px double var(--vermelho); color: var(--vermelho);
+             font-weight: 800; font-size: 1.05rem; letter-spacing: 2px; padding: 0 .6rem; border-radius: 10px; background: #fff8; mix-blend-mode: multiply; }
+  .slide.ativo .carimbo { animation: carimba .45s cubic-bezier(.2,1.8,.4,1) both; animation-delay: calc(var(--i, 0) * .35s + .8s); }
+  @keyframes carimba { from { transform: rotate(-12deg) scale(3); opacity: 0; } }
+
+  /* ---------- 3. o que faz ---------- */
+  .fluxo { display: grid; grid-template-columns: minmax(0, 1.25fr) auto minmax(0, 1fr); gap: 1.2rem; align-items: center; }
+  .seta { font-size: 2.6rem; font-weight: 800; color: var(--rosa); text-align: center; }
+  .slide.ativo .seta { animation: empurra 1.2s ease-in-out infinite; }
+  @keyframes empurra { 50% { transform: translateX(8px); } }
+  form.mock { background: var(--amarelo); padding: 1rem; display: flex; flex-wrap: wrap; gap: .7rem; }
+  .mock .tipos { flex: 1 1 100%; display: flex; gap: .5rem; flex-wrap: wrap; }
+  .mock .tipos span { font-weight: 800; background: #fff; border: var(--borda); border-radius: 12px; padding: .1rem .7rem; box-shadow: 3px 3px 0 var(--ink); font-size: .95rem; }
+  .mock .tipos span.on { background: var(--ink); color: var(--amarelo); }
+  .mock label { flex: 1 1 9rem; display: flex; flex-direction: column; gap: 2px; font-weight: 700; font-size: .85rem; min-width: 0; }
+  .mock .campo { background: #fff; border: var(--borda); border-radius: 12px; padding: .25rem .6rem; font-weight: 500; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mock .go { flex: 1 1 100%; display: flex; justify-content: flex-end; }
+  .mock .go span { font-weight: 800; color: #fff; background: var(--rosa); border: var(--borda); border-radius: 14px; padding: .25rem 1.2rem; box-shadow: 4px 4px 0 var(--ink); font-size: 1.15rem; }
+  .slide.ativo .mock .go span { animation: clica 2.4s ease-in-out infinite 1s; }
+  @keyframes clica { 0%, 70%, 100% { transform: none; box-shadow: 4px 4px 0 var(--ink); } 78% { transform: translate(3px,3px); box-shadow: 1px 1px 0 var(--ink); } }
+  .recebes { padding: 1.1rem 1.3rem; display: flex; flex-direction: column; gap: .55rem; }
+  .recebes h3 { margin: 0; font-size: 1.35rem; }
+  .linha-r { display: flex; gap: .6rem; align-items: center; font-size: 1.1rem; font-weight: 700; }
+  .linha-r .e { flex: none; width: 2.4rem; height: 2.4rem; border: var(--borda); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+
+  /* ---------- 4. para quem ---------- */
+  .dest { padding: .8rem .9rem; display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
+  .dest .e { font-size: 2rem; line-height: 1.1; }
+  .dest b { font-size: 1.1rem; line-height: 1.15; }
+  .dest span { font-size: .88rem; color: var(--mut); line-height: 1.3; }
+  .dest:nth-child(5n+1) { border-top: 10px solid var(--azul); } .dest:nth-child(5n+2) { border-top: 10px solid var(--rosa); } .dest:nth-child(5n+3) { border-top: 10px solid var(--verde); }
+  .dest:nth-child(5n+4) { border-top: 10px solid var(--roxo); } .dest:nth-child(5n+5) { border-top: 10px solid var(--laranja); }
+
+  /* ---------- 5. diagrama do ciclo (igual a ferramentas.html) ---------- */
+  .diagrama { padding: 1.1rem; }
+  .linha { display: flex; align-items: stretch; gap: 10px; }
+  .diagrama .seta { flex: none; display: flex; align-items: center; justify-content: center; font-size: 2rem; width: 34px; animation: none !important; }
+  .passo { flex: 1 1 0; min-width: 0; background: #fff; border: var(--borda); border-radius: 16px; padding: .6rem .7rem; box-shadow: 3px 3px 0 var(--ink); }
+  .slide.ativo .passo { animation: acende 12s ease-in-out infinite; }
+  .passo .e { font-size: 1.8rem; line-height: 1; }
+  .passo .t { font-weight: 800; font-size: 1.02rem; line-height: 1.2; margin-top: 6px; }
+  .passo .d { font-size: .82rem; line-height: 1.35; color: var(--mut); margin-top: 4px; }
+  .passo.pedido { flex: 0 0 11rem; }
+  @keyframes acende { 0%, 14%, 100% { background: #fff; transform: none; } 4%, 10% { background: var(--amarelo); transform: translateY(-4px); } }
+  .slide.ativo .p1 { animation-delay: 0s; } .slide.ativo .p2 { animation-delay: 1.5s; } .slide.ativo .p3 { animation-delay: 3s; } .slide.ativo .p4 { animation-delay: 4.5s; }
+  .slide.ativo .p5 { animation-delay: 7.5s; } .slide.ativo .p6 { animation-delay: 9s; } .slide.ativo .p7 { animation-delay: 10.5s; }
+  .ciclo { flex: 1 1 auto; position: relative; border: 3px dashed var(--ink); border-radius: 22px; padding: 40px 14px 58px; background: #ffeef4; min-width: 0; }
+  .ciclo .rotulo { position: absolute; top: -16px; left: 18px; background: var(--rosa); color: #fff; border: var(--borda); border-radius: 99px; padding: 0 14px; font-weight: 800; font-size: .9rem; }
+  .ciclo .volta { position: absolute; left: 30px; right: 30px; bottom: 12px; height: 30px; border: 3px solid var(--ink); border-top: none; border-radius: 0 0 16px 16px; display: flex; align-items: flex-end; justify-content: center; }
+  .ciclo .volta span { position: relative; z-index: 4; background: #fff; border: 2px solid var(--ink); border-radius: 99px; padding: 0 12px; font-weight: 800; font-size: .9rem; transform: translateY(14px); white-space: nowrap; }
+  .ciclo .volta::before { content: '▲'; position: absolute; left: -11px; top: -12px; font-size: 1rem; }
+  .pacote { position: absolute; top: 6px; left: 2%; font-size: 1.6rem; line-height: 1; z-index: 3; filter: drop-shadow(2px 2px 0 #1d1b4b55); }
+  .slide.ativo .pacote { animation: viaja 6s linear infinite; }
+  @keyframes viaja { 0% { left: 2%; top: 6px; } 45% { left: 92%; top: 6px; } 55% { left: 92%; top: calc(100% - 34px); } 95% { left: 2%; top: calc(100% - 34px); } 100% { left: 2%; top: 6px; } }
+  .ciclo .linha { gap: 8px; }
+  .desce { display: flex; justify-content: flex-end; padding-right: 14%; margin: 6px 0; font-weight: 800; font-size: .95rem; align-items: center; gap: 8px; }
+  .desce b { font-size: 1.8rem; color: var(--rosa); }
+  .niveis { display: grid; gap: 5px; margin-top: 8px; }
+  .nivel { font-size: .78rem; line-height: 1.25; border: 2px solid var(--ink); border-radius: 10px; padding: 3px 8px; font-weight: 700; }
+  .nivel.n1 { background: #d7fbef; } .nivel.n2 { background: #ffd9de; } .nivel.n3 { background: #111; color: var(--amarelo); }
+
+  /* ---------- 6. ferramentas ---------- */
+  .tool { display: grid; grid-template-columns: 3.4rem minmax(0,1fr); gap: .8rem; align-items: center; padding: .7rem .9rem; }
+  .ico { width: 3.4rem; height: 3.4rem; border: var(--borda); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
+  .tool:nth-child(6n+1) .ico { background: #dbe8ff; } .tool:nth-child(6n+2) .ico { background: #d7fbef; } .tool:nth-child(6n+3) .ico { background: #ffe3cc; }
+  .tool:nth-child(6n+4) .ico { background: #ece0ff; } .tool:nth-child(6n+5) .ico { background: #ffd9e6; } .tool:nth-child(6n+6) .ico { background: #fff2bf; }
+  .slide.ativo .tool .ico { animation: pulsa 1s ease-in-out 3; animation-delay: calc(var(--i, 0) * .45s + .2s); }
+  @keyframes pulsa { 50% { transform: scale(1.1) rotate(-6deg); } }
+  .tool .nome { font-family: var(--mono); font-weight: 700; font-size: 1rem; word-break: break-all; }
+  .tool .res { font-size: .92rem; line-height: 1.35; color: var(--mut); }
+  .selo { display: inline-block; font-size: .78rem; font-weight: 800; border: 2px solid var(--ink); border-radius: 99px; padding: 0 9px; margin-top: 4px; }
+  .selo.real { background: #c9f7e6; } .selo.sint { background: #fff0a8; } .selo.des { background: #ffd9de; }
+  .estado { float: right; font-size: .72rem; font-weight: 800; border: 2px solid var(--ink); border-radius: 99px; padding: 0 8px; background: var(--verde); margin-left: 6px; }
+  .slide.ativo .estado { animation: feito .01s steps(1) both; animation-delay: calc(var(--i, 0) * .45s + 1.6s); }
+  @keyframes feito { from { background: var(--amarelo); } }
+  .slide.ativo .tool { animation: entra .5s cubic-bezier(.2,1.6,.4,1) both; animation-delay: calc(var(--i, 0) * .45s); }
+  @keyframes entra { from { opacity: 0; transform: translateX(-30px) scale(.9); } }
+
+  /* ---------- 7. credibilidade ---------- */
+  .cred { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 1.4rem; align-items: center; }
+  .medidor { padding: 1rem 1rem 1.2rem; text-align: center; position: relative; overflow: hidden; }
+  .medidor svg { width: 100%; display: block; }
+  #ponteiro { transform-box: view-box; transform-origin: 170px 170px; transform: rotate(-90deg); transition: transform 2.6s cubic-bezier(.2,1.3,.4,1); }
+  .medidor .num { font-size: 3.6rem; font-weight: 800; line-height: 1; margin-top: -6px; font-variant-numeric: tabular-nums; }
+  .medidor .veredito { font-size: 1.35rem; font-weight: 800; }
+  .medidor .carimbo-g { position: absolute; top: 40%; left: 50%; transform: translate(-50%,-50%) rotate(-14deg); border: 6px double var(--vermelho); color: var(--vermelho);
+             font-weight: 800; font-size: 2.3rem; letter-spacing: 3px; padding: 0 16px; border-radius: 10px; background: #fff8; mix-blend-mode: multiply; opacity: 0; }
+  .medidor.carimbado .carimbo-g { opacity: 1; animation: carimbaG .45s cubic-bezier(.2,1.8,.4,1) both; }
+  @keyframes carimbaG { from { transform: translate(-50%,-50%) rotate(-14deg) scale(3); opacity: 0; } }
+  .regra { padding: .8rem 1rem; font-size: 1rem; line-height: 1.4; }
+  .regra .e { font-size: 1.6rem; }
+  .regra b { display: block; font-size: 1.12rem; margin: 2px 0 2px; }
+  .regra:nth-child(1) { border-left: 12px solid var(--azul); } .regra:nth-child(2) { border-left: 12px solid var(--verde); } .regra:nth-child(3) { border-left: 12px solid var(--roxo); }
+
+  /* ---------- 8. modo desespero ---------- */
+  .slide.desespero { background: #fff6e0; }
+  .flash { position: absolute; inset: 0; background: var(--vermelho); opacity: 0; pointer-events: none; }
+  .slide.ativo .flash { animation: alarme 1.1s ease-in-out infinite; }
+  @keyframes alarme { 50% { opacity: .55; } }
+  .desespero .in { position: relative; z-index: 2; }
+  .sirene { position: absolute; top: 1rem; right: max(16px, 3vw); z-index: 3; width: 110px; text-align: center; }
+  .sirene .luz { position: relative; width: 80px; height: 56px; margin: 0 auto; background: var(--vermelho); border: var(--borda); border-radius: 40px 40px 6px 6px; overflow: hidden; box-shadow: 0 0 40px 12px #ef233caa; }
+  .slide.ativo .sirene .luz { animation: brilho .5s steps(2) infinite; }
+  .sirene .luz::after { content: ''; position: absolute; inset: -60px; background: conic-gradient(transparent 0 300deg, #fff 330deg, transparent 360deg); }
+  .slide.ativo .sirene .luz::after { animation: roda .6s linear infinite; }
+  .sirene .base { width: 100px; height: 16px; margin: -2px auto 0; background: var(--ink); border-radius: 4px; }
+  .sirene .txt { margin-top: 6px; background: var(--ink); color: var(--amarelo); font-weight: 800; font-size: .7rem; border-radius: 8px; padding: 2px 6px; letter-spacing: 1px; }
+  @keyframes brilho { 50% { box-shadow: 0 0 10px 2px #ef233c66; } }
+  @keyframes roda { to { transform: rotate(360deg); } }
+  .desfile { position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+  .desfile span { position: absolute; left: -140px; font-size: 3rem; line-height: 1; filter: drop-shadow(3px 4px 0 #0003); }
+  .slide.ativo .desfile span { animation: passa linear infinite; }
+  @keyframes passa { 0% { transform: translate(0,0) rotate(-8deg); } 25% { transform: translate(28vw,-22px) rotate(8deg); } 50% { transform: translate(56vw,0) rotate(-8deg); } 75% { transform: translate(84vw,-22px) rotate(8deg); } 100% { transform: translate(calc(100vw + 280px),0) rotate(-8deg); } }
+  .painel-d { padding: 1.2rem 1.4rem; display: flex; flex-direction: column; gap: .8rem; }
+  .absurda { align-self: flex-start; background: var(--vermelho); color: #fff; border: var(--borda); border-radius: 12px; padding: .1rem .8rem; font-weight: 800; box-shadow: 3px 3px 0 var(--ink); }
+  .absurda.ultimo { background: #111; color: var(--amarelo); }
+  .slide.ativo .absurda.ultimo { animation: treme .25s linear infinite; }
+  @keyframes treme { 25% { transform: translate(-1px,1px) rotate(-.5deg); } 75% { transform: translate(1px,-1px) rotate(.5deg); } }
+  .exemplos { display: flex; flex-direction: column; gap: .5rem; margin: 0; padding: 0; list-style: none; }
+  .exemplos li { display: flex; gap: .6rem; align-items: baseline; font-size: 1.08rem; line-height: 1.35; }
+  .exemplos .n { flex: none; font-weight: 800; font-size: .8rem; border: 2px solid var(--ink); border-radius: 8px; padding: 0 6px; background: var(--bg); font-variant-numeric: tabular-nums; }
+  .numeros { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .8rem; }
+  .numero { padding: .6rem .8rem; text-align: center; }
+  .numero b { display: block; font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; }
+  .numero span { font-weight: 700; color: var(--mut); font-size: .95rem; }
+
+  /* ---------- 9. Diário do Bico (igual ao site) ---------- */
+  .par { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 1.4rem; align-items: start; }
+  .jornal { background: #f4efe1; color: #111; font-family: Georgia, "Times New Roman", serif; padding: 1rem 1.2rem 1.2rem; border: 3px solid #111; box-shadow: 8px 8px 0 #111; transform: rotate(-.7deg); }
+  .jornal .aviso { font-family: system-ui, sans-serif; font-size: .62rem; text-transform: uppercase; letter-spacing: 2px; text-align: center; border-bottom: 1px solid #111; padding-bottom: 6px; }
+  .jornal .titulo-j { font-family: Impact, "Arial Black", sans-serif; font-size: 2.8rem; color: #d10f1f; text-transform: uppercase; text-align: center; border-bottom: 6px double #111; line-height: 1.15; padding: 4px 0; }
+  .jornal .meta { display: flex; justify-content: space-between; font-family: system-ui, sans-serif; font-size: .66rem; padding: 4px 0; border-bottom: 1px solid #111; }
+  .jornal .manchete { font-family: Impact, "Arial Black", sans-serif; font-size: 1.95rem; line-height: 1.02; margin: .6rem 0 .3rem; text-transform: uppercase; }
+  .jornal .subt { font-size: .95rem; font-style: italic; margin: 0 0 .6rem; }
+  .jornal .gr { display: grid; grid-template-columns: 1.3fr 1fr; gap: .9rem; }
+  .jornal .corpo p { margin: 0 0 .5rem; text-align: justify; font-size: .8rem; line-height: 1.45; }
+  .jornal .foto { background: #d8d1bd; border: 2px solid #111; height: 7rem; display: flex; align-items: center; justify-content: center; }
+  .jornal .foto svg { width: 8rem; }
+  .jornal .caixa { background: #ffe14d; border: 3px solid #111; padding: .4rem .6rem; font-family: system-ui, sans-serif; font-size: .7rem; margin-top: .5rem; }
+  .jornal .caixa b { display: block; font-family: Impact, sans-serif; font-size: .9rem; text-transform: uppercase; }
+  .jornal .caixa ul { margin: .2rem 0 0; padding-left: 1rem; }
+  .slide.ativo .jornal { animation: imprime .7s cubic-bezier(.2,1.4,.4,1) both .2s; }
+  @keyframes imprime { from { transform: rotate(-14deg) scale(.4); opacity: 0; } }
+  .entrevista { padding: 1rem 1.2rem; display: flex; flex-direction: column; gap: .3rem; }
+  .entrevista .topo { display: flex; gap: .8rem; align-items: center; }
+  .avatar { width: 4rem; height: 4rem; flex: none; border: var(--borda); border-radius: 50%; background: var(--amarelo); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .avatar svg { width: 3.6rem; }
+  .entrevista .sel { display: inline-block; background: var(--vermelho); color: #fff; font-size: .68rem; font-weight: 800; letter-spacing: 2px; padding: 0 8px; border-radius: 6px; }
+  .entrevista h3 { margin: 2px 0 0; font-size: 1.2rem; line-height: 1.15; }
+  .entrevista .p { font-weight: 800; margin: .5rem 0 2px; font-size: .95rem; }
+  .entrevista .r { margin: 0; padding: .3rem .7rem; background: var(--bg); border-left: 6px solid var(--rosa); border-radius: 0 12px 12px 0; font-size: .95rem; line-height: 1.4; }
+  .limite { background: var(--ink); color: #fff; padding: .8rem 1rem; font-size: .98rem; line-height: 1.4; box-shadow: 5px 5px 0 var(--rosa); }
+  .limite b { color: var(--amarelo); }
+  .ficcao { font-size: .78rem; color: var(--mut); }
+
+  /* ---------- 10. Bico Messenger ---------- */
+  .msgr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2rem; align-items: center; }
+  .tel { position: relative; width: min(330px, 80vw); height: min(560px, 68vh); background: #111; border-radius: 42px; padding: 10px; box-shadow: 0 24px 60px #0006, inset 0 0 0 3px #333; justify-self: center; }
+  .slide.ativo .tel { animation: sobe .6s cubic-bezier(.2,1.3,.4,1) both; }
+  @keyframes sobe { from { transform: translateY(60px) scale(.9); opacity: 0; } }
+  .ecra { position: relative; height: 100%; border-radius: 33px; overflow: hidden; background: #f1ede4; display: flex; flex-direction: column; font-family: system-ui, "Segoe UI", sans-serif; }
+  .notch { position: absolute; top: 7px; left: 50%; transform: translateX(-50%); width: 96px; height: 22px; background: #111; border-radius: 20px; z-index: 5; }
+  .bm-topo { display: flex; align-items: center; gap: 9px; padding: 34px 12px 9px; background: #5b4b8a; color: #fff; }
+  .bm-av { width: 36px; height: 36px; border-radius: 50%; background: #ffd23f; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex: none; }
+  .bm-nome { font-weight: 700; font-size: .9rem; line-height: 1.1; }
+  .bm-sub { font-size: .7rem; opacity: .85; }
+  .bm-marca { margin-left: auto; font-size: .58rem; font-weight: 800; letter-spacing: 1px; background: #fff3; padding: 2px 7px; border-radius: 99px; }
+  .bm-chat { flex: 1; overflow: hidden; padding: 10px 9px; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; background-image: radial-gradient(#5b4b8a1a 1.5px, transparent 1.5px); background-size: 18px 18px; }
+  .bm-b { max-width: 84%; padding: 6px 9px; border-radius: 14px; font-size: .74rem; line-height: 1.35; box-shadow: 0 1px 1px #0002; color: #1d1b4b; }
+  .slide.ativo .bm-b { animation: pop .35s cubic-bezier(.2,1.5,.4,1) both; animation-delay: var(--d); }
+  @keyframes pop { from { transform: scale(.6); opacity: 0; } }
+  .bm-eu { align-self: flex-end; background: #ffe680; border-bottom-right-radius: 4px; transform-origin: bottom right; }
+  .bm-ele { align-self: flex-start; background: #fff; border-bottom-left-radius: 4px; transform-origin: bottom left; }
+  .bm-link { display: block; margin-top: 4px; background: #f4efe1; border: 2px solid #111; border-radius: 8px; padding: 4px 6px; font-family: Georgia, serif; }
+  .bm-link b { font-family: Impact, "Arial Black", sans-serif; color: #d10f1f; font-weight: 400; display: block; font-size: .8rem; }
+  .bm-esc { align-self: flex-start; background: #fff; border-radius: 14px; padding: 5px 10px; font-size: .74rem; color: #666; font-style: italic; }
+  .slide.ativo .bm-esc { animation: escreve 1.4s both; animation-delay: var(--d); }
+  @keyframes escreve { 0% { opacity: 0; } 10%, 85% { opacity: 1; } 100% { opacity: 0; height: 0; padding: 0; } }
+  .desfecho { align-self: center; font-weight: 800; font-size: .85rem; background: var(--verde); border: 2px solid #111; border-radius: 99px; padding: 2px 12px; font-family: var(--f); color: #111; }
+  .slide.ativo .desfecho { animation: pop .45s cubic-bezier(.2,1.8,.4,1) both; animation-delay: var(--d); }
+  .passos { display: flex; flex-direction: column; gap: .7rem; }
+  .passo-m { display: flex; gap: .8rem; align-items: flex-start; padding: .7rem .9rem; font-size: 1.05rem; line-height: 1.4; }
+  .passo-m .e { flex: none; font-size: 1.6rem; line-height: 1.1; }
+
+  /* ---------- 11. verdade ---------- */
+  .verdade-card { padding: 1.4rem 1.6rem; background: #e6f7ff; position: relative; font-size: 1.25rem; line-height: 1.6; max-width: 46rem; }
+  .verdade-card::before { content: '😇'; position: absolute; top: -26px; left: 18px; font-size: 2.3rem; }
+  .botoes { display: flex; gap: .8rem; flex-wrap: wrap; }
+  .botoes span { font-weight: 800; border: var(--borda); border-radius: 14px; padding: .25rem 1rem; box-shadow: 4px 4px 0 var(--ink); }
+  .b-roxo { background: var(--roxo); color: #fff; } .b-verde { background: var(--verde); } .b-azul { background: var(--azul); color: #fff; } .b-branco { background: #fff; }
+  .slide.ativo .b-branco { animation: chama 1.6s ease-in-out infinite .8s; }
+  @keyframes chama { 50% { transform: translate(-2px,-3px) rotate(-2deg); box-shadow: 7px 7px 0 var(--ink); background: var(--amarelo); } }
+
+  /* ---------- 12. por dentro ---------- */
+  .stack .card { padding: .9rem 1rem; display: flex; flex-direction: column; gap: .3rem; }
+  .stack h3 { margin: 0; font-size: 1.2rem; display: flex; gap: .5rem; align-items: center; }
+  .stack ul { margin: 0; padding-left: 1.1rem; font-size: .95rem; line-height: 1.45; }
+  .codigo { position: relative; background: #17152f; color: #e9e6ff; border: var(--borda); border-radius: 14px; box-shadow: 4px 4px 0 var(--ink); overflow-x: auto; }
+  .codigo pre { margin: 0; padding: .8rem 1rem; font-family: var(--mono); font-size: .85rem; line-height: 1.5; white-space: pre; }
+  .codigo .k { color: #ffd23f; } .codigo .s { color: #7ef0c8; } .codigo .c { color: #ff8fb6; }
+
+  /* ---------- 13. challenge ---------- */
+  .criterio { padding: .9rem 1rem; display: flex; flex-direction: column; gap: .3rem; }
+  .criterio .e { font-size: 1.8rem; line-height: 1; }
+  .criterio b { font-size: 1.12rem; line-height: 1.2; }
+  .criterio span { font-size: .92rem; line-height: 1.4; color: var(--mut); }
+  .criterio .ok { align-self: flex-start; margin-top: auto; font-size: .78rem; font-weight: 800; border: 2px solid var(--ink); border-radius: 99px; padding: 0 9px; background: #c9f7e6; }
+  .perguntas { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: .8rem; }
+  .pergunta { padding: .6rem .8rem; background: var(--amarelo); }
+  .pergunta b { display: block; font-size: 1rem; line-height: 1.2; }
+  .pergunta span { font-size: .85rem; line-height: 1.35; }
+
+  /* ---------- 14. fecho ---------- */
+  .fecho h2 { font-size: clamp(2.6rem, 6vw, 5.2rem); letter-spacing: -2px; }
+  .fecho .rosa { color: var(--rosa); }
+
+  @media (max-width: 900px) {
+    h2 { font-size: 2.1rem; }
+    .g3, .g4, .g5, .perguntas { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .g2, .fluxo, .cred, .par, .msgr, .numeros { grid-template-columns: minmax(0,1fr); }
+    .fluxo .seta { transform: rotate(90deg); }
+    .linha { flex-direction: column; }
+    .diagrama .seta { width: auto; transform: rotate(90deg); height: 30px; }
+    .passo.pedido { flex: 1 1 auto; }
+    .pacote { display: none; }
+    .desce { justify-content: center; padding: 0; }
+    .jornal .gr { grid-template-columns: 1fr; }
+    .slide { justify-content: flex-start; }
+    .sirene { display: none; }
+  }
+  @media (max-width: 520px) { .g3, .g4, .g5, .perguntas { grid-template-columns: minmax(0,1fr); } .pontos { display: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .slide.ativo .flash { opacity: .25; }
+  }
+</style>
+
+<!-- Gaivota com as chaves no bico (a mesma arte do site) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="gaivota" viewBox="0 0 210 140">
+    <path class="asa" d="M95 64 Q62 8 8 22 Q52 40 80 70 Z" fill="#cfd6dd" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M60 74 L28 64 L34 86 Z" fill="#8d99a6" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="105" cy="76" rx="50" ry="21" fill="#fff" stroke="#1d1b4b" stroke-width="3"/>
+    <circle cx="152" cy="60" r="17" fill="#fff" stroke="#1d1b4b" stroke-width="3"/>
+    <circle cx="157" cy="55" r="3.5" fill="#1d1b4b"/>
+    <path d="M150 50 L164 48" stroke="#1d1b4b" stroke-width="3" stroke-linecap="round"/>
+    <path d="M166 60 L196 64 L166 69 Z" fill="#ffd23f" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="189" cy="65.5" r="2.5" fill="#ef233c"/>
+    <path class="asa" d="M98 64 Q122 14 168 14 Q132 36 114 68 Z" fill="#b9c2ca" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M100 96 L95 114 M114 96 L119 114" stroke="#ffd23f" stroke-width="4" stroke-linecap="round"/>
+    <g transform="translate(182,68)">
+      <line x1="0" y1="0" x2="0" y2="12" stroke="#555" stroke-width="2.5"/>
+      <circle cx="0" cy="19" r="7" fill="none" stroke="#e0a800" stroke-width="3.5"/>
+      <rect x="-2.5" y="25" width="5" height="20" rx="1" fill="#e0a800"/>
+      <rect x="2.5" y="36" width="6" height="3.5" fill="#e0a800"/>
+      <rect x="2.5" y="41" width="4" height="3" fill="#e0a800"/>
+    </g>
+  </symbol>
+</svg>
+
+<div class="progresso" id="progresso"></div>
+<div class="marca">Desculp<span class="o">ó</span>metro</div>
+
+<main class="deck" id="deck">
+
+  <!-- 1. Capa -->
+  <section class="slide capa" data-notas="<b>10 s.</b> “Levantem a mão quem já chegou atrasado esta semana.” Pausa. “Pois. Nós fizemos o Desculpómetro.”">
+    <svg class="voadora" viewBox="0 0 210 140" aria-hidden="true"><use href="#gaivota"/></svg>
+    <div class="in">
+      <span class="eyebrow ink salta">Agentic AI Challenge · Pitch</span>
+      <h1 class="logo salta" style="--i:1">Desculp<span class="o">ó</span>metro</h1>
+      <p class="lead salta" style="--i:2">Vais chegar atrasado? Um <b>agente de IA</b> investiga o que se passa mesmo no teu caminho e monta a desculpa mais credível possível. <b>Só com factos verdadeiros.</b></p>
+      <div class="pills salta" style="--i:3">
+        <span class="pill">🔎 6 ferramentas</span><span class="pill">🧠 Claude Sonnet 5.5</span><span class="pill">🐦 1 gaivota</span><span class="pill ink">[Nome da equipa]</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Problema -->
+  <section class="slide" data-notas="<b>15 s.</b> O problema nunca é o atraso, é a desculpa. Vaga, sem provas, e quem a ouve sabe. As provas existem (tempo, trânsito, metro), mas ninguém as procura a correr.">
+    <div class="in">
+      <span class="eyebrow salta">O problema</span>
+      <h2 class="salta" style="--i:1">Todos chegamos atrasados.<br>O problema é a desculpa.</h2>
+      <div class="grelha g3">
+        <div class="card desculpa-ma salta" style="--i:2"><div class="q">“Havia trânsito.”</div><div class="p">Onde? Quanto?</div><span class="carimbo" style="--i:0">NINGUÉM ACREDITA</span></div>
+        <div class="card desculpa-ma salta" style="--i:3"><div class="q">“O metro atrasou.”</div><div class="p">Que linha? A que horas?</div><span class="carimbo" style="--i:1">NINGUÉM ACREDITA</span></div>
+        <div class="card desculpa-ma salta" style="--i:4"><div class="q">“Estava a chover.”</div><div class="p">Estava mesmo?</div><span class="carimbo" style="--i:2">NINGUÉM ACREDITA</span></div>
+      </div>
+      <p class="lead salta" style="--i:5">Uma desculpa só convence com <b>provas</b>. E ninguém tem tempo de as procurar enquanto corre para o metro.</p>
+    </div>
+  </section>
+
+  <!-- 3. O que faz -->
+  <section class="slide" data-notas="<b>20 s.</b> Dizes onde estás, para onde vais, quantos minutos e a quem tens de explicar. Ou então: queres fugir de um compromisso. O agente investiga e devolve nota, provas com fonte e a mensagem pronta.">
+    <div class="in">
+      <span class="eyebrow salta">O que faz</span>
+      <h2 class="salta" style="--i:1">Quatro respostas tuas. Uma investigação do agente.</h2>
+      <div class="fluxo">
+        <form class="card mock salta" style="--i:2" onsubmit="return false" aria-label="Exemplo do formulário da app">
+          <div class="tipos"><span class="on">⏰ Vou chegar atrasado</span><span>🏃 Quero fugir de um compromisso</span></div>
+          <label>📍 Onde estás<span class="campo">Porto</span></label>
+          <label>🏁 Para onde vais<span class="campo">Matosinhos</span></label>
+          <label>⏰ Atraso (min)<span class="campo">25</span></label>
+          <label>👤 A quem<span class="campo">👔 Chefe</span></label>
+          <div class="go"><span>🔎 Investigar</span></div>
+        </form>
+        <div class="seta" aria-hidden="true">→</div>
+        <div class="card recebes salta" style="--i:3">
+          <h3>Recebes</h3>
+          <div class="linha-r"><span class="e" style="background:#fff2bf">🎯</span>Nota de credibilidade, de 0 a 100</div>
+          <div class="linha-r"><span class="e" style="background:#dbe8ff">🧾</span>Provas, cada uma com a sua fonte</div>
+          <div class="linha-r"><span class="e" style="background:#ffd9e6">💬</span>Mensagem no tom certo, pronta a copiar</div>
+          <div class="linha-r"><span class="e" style="background:#ece0ff">📱</span>Simulação do envio no Bico Messenger</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Para quem -->
+  <section class="slide" data-notas="<b>15 s.</b> Para quem se desloca e tem alguém à espera. As mesmas provas, mas o tom muda: formal para o chefe, dramático para a mãe, passivo-agressivo para a sogra. Dez destinatários, ou escreves outra pessoa.">
+    <div class="in">
+      <span class="eyebrow salta">Para quem</span>
+      <h2 class="salta" style="--i:1">Para quem chega atrasado e tem de explicar a alguém.</h2>
+      <p class="lead salta" style="--i:2">As provas são as mesmas. O tom muda conforme quem está do outro lado.</p>
+      <div class="grelha g5" id="destinos"></div>
+    </div>
+  </section>
+
+  <!-- 5. Como decide -->
+  <section class="slide" data-notas="<b>25 s.</b> Isto não é um gerador de texto, é um agente. O Claude escolhe que ferramentas chamar, o servidor executa-as em paralelo, os resultados voltam e ele decide se precisa de mais. Até 12 voltas. Depois dá a nota e escolhe o tipo de desculpa.">
+    <div class="in">
+      <span class="eyebrow salta">Como decide</span>
+      <h2 class="salta" style="--i:1">Um agente em ciclo. Ele decide o que investigar.</h2>
+      <div class="card diagrama salta" style="--i:2">
+        <div class="linha">
+          <div class="passo pedido p1"><div class="e">👤</div><div class="t">Pedido do utilizador</div><div class="d">De onde, para onde, quantos minutos e a quem.</div></div>
+          <div class="seta">→</div>
+          <div class="ciclo">
+            <div class="rotulo">Ciclo do agente · até 12 voltas</div>
+            <div class="pacote" aria-hidden="true">📦</div>
+            <div class="linha">
+              <div class="passo p2"><div class="e">🧠</div><div class="t">O modelo escolhe as ferramentas</div><div class="d">Claude decide quais chamar e com que parâmetros.</div></div>
+              <div class="seta">→</div>
+              <div class="passo p3"><div class="e">⚙️</div><div class="t">O servidor executa-as</div><div class="d">Várias ao mesmo tempo, em paralelo.</div></div>
+              <div class="seta">→</div>
+              <div class="passo p4"><div class="e">📥</div><div class="t">Os resultados voltam</div><div class="d">Claude lê as provas e decide se precisa de mais.</div></div>
+            </div>
+            <div class="volta"><span>🔁 repete até ter provas suficientes</span></div>
+          </div>
+        </div>
+        <div class="desce"><span>provas suficientes</span><b>↓</b></div>
+        <div class="linha">
+          <div class="passo p5"><div class="e">🎯</div><div class="t">Credibilidade de 0 a 100</div><div class="d">Os factos explicam mesmo os minutos de atraso?</div></div>
+          <div class="seta">→</div>
+          <div class="passo p6"><div class="e">🎭</div><div class="t">Escolhe a desculpa</div>
+            <div class="niveis"><div class="nivel n1">20 a 100: desculpa normal, só com factos</div><div class="nivel n2">1 a 19: MODO DESESPERO</div><div class="nivel n3">0: ÚLTIMO RECURSO</div></div>
+          </div>
+          <div class="seta">→</div>
+          <div class="passo p7"><div class="e">💬</div><div class="t">Mensagem no tom certo</div><div class="d">Formal, dramático, carinhoso, respeitoso…</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Ferramentas -->
+  <section class="slide" data-notas="<b>20 s.</b> Seis ferramentas. Tempo, coordenadas e gaivotas são dados reais e grátis. Trânsito é real com chave TomTom. Metro e eventos são sintéticos porque as APIs são pagas, e o agente recebe-os marcados como simulados. Trocar por uma API real é mudar uma função.">
+    <div class="in">
+      <span class="eyebrow salta">As ferramentas</span>
+      <h2 class="salta" style="--i:1">O agente está a investigar…</h2>
+      <div class="grelha g2">
+        <div class="card tool" style="--i:0"><div class="ico">📍</div><div><span class="estado">✓ feito</span><div class="nome">geocode</div><div class="res">Local → coordenadas. Open-Meteo Geocoding.</div><span class="selo real">🟢 Dados reais</span></div></div>
+        <div class="card tool" style="--i:1"><div class="ico">🌦️</div><div><span class="estado">✓ feito</span><div class="nome">get_weather</div><div class="res">Céu, chuva, rajadas e visibilidade, agora e nas próximas 6 h. Open-Meteo.</div><span class="selo real">🟢 Dados reais</span></div></div>
+        <div class="card tool" style="--i:2"><div class="ico">🚗</div><div><span class="estado">✓ feito</span><div class="nome">get_traffic</div><div class="res">Tempo de viagem e atraso por trânsito. TomTom Routing.</div><span class="selo real">🟢 Real com chave</span> <span class="selo sint">🟡 Sintético sem chave</span></div></div>
+        <div class="card tool" style="--i:3"><div class="ico">🚇</div><div><span class="estado">✓ feito</span><div class="nome">get_transport_status</div><div class="res">Metro (A, B, D), STCP e CP no Porto; linhas de Lisboa no resto.</div><span class="selo sint">🟡 Dados sintéticos</span></div></div>
+        <div class="card tool" style="--i:4"><div class="ico">🎟️</div><div><span class="estado">✓ feito</span><div class="nome">get_events_nearby</div><div class="res">Jogos e concertos que causam trânsito, com zona e hora.</div><span class="selo sint">🟡 Dados sintéticos</span></div></div>
+        <div class="card tool" style="--i:5"><div class="ico">🐦</div><div><span class="estado">✓ feito</span><div class="nome">get_seagull_facts</div><div class="res">Factos reais sobre a gaivota-de-patas-amarelas. Wikipédia.</div><span class="selo des">🚨 Só no modo desespero</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Credibilidade -->
+  <section class="slide" data-anim="medidor" data-notas="<b>20 s.</b> A regra de ouro: só factos que as ferramentas devolveram, cada um com a fonte. O que o utilizador escreve serve para o tom, nunca conta como prova. A nota aparece neste velocímetro.">
+    <div class="in">
+      <span class="eyebrow salta">A regra de ouro</span>
+      <h2 class="salta" style="--i:1">Nunca inventa. Só usa o que as ferramentas devolveram.</h2>
+      <div class="cred">
+        <div class="medidor card salta" style="--i:2" id="medidor">
+          <svg viewBox="-50 -12 440 204" aria-label="Velocímetro de credibilidade">
+            <g id="arcos"></g>
+            <g id="etiquetas" font-family="Baloo 2, sans-serif" font-weight="800" font-size="13" fill="#1d1b4b" text-anchor="middle"></g>
+            <g id="ponteiro"><polygon points="164,170 176,170 170,58" fill="#1d1b4b"/></g>
+            <circle cx="170" cy="170" r="14" fill="#ff4f8b" stroke="#1d1b4b" stroke-width="3"/>
+          </svg>
+          <div class="num" id="num">?</div>
+          <div class="veredito" id="veredito">À espera de provas…</div>
+          <div class="carimbo-g">IRREFUTÁVEL</div>
+        </div>
+        <div class="grelha">
+          <div class="card regra salta" style="--i:3"><div class="e">🧭</div><b>Nada está fixo no código</b>O modelo decide sozinho a ordem e quais ferramentas usar. O servidor só executa o que ele pede.</div>
+          <div class="card regra salta" style="--i:4"><div class="e">🔒</div><b>Só factos das ferramentas</b>Cada prova leva a fonte, tal como veio. Dados simulados aparecem marcados como simulados.</div>
+          <div class="card regra salta" style="--i:5"><div class="e">✍️</div><b>O teu texto não é prova</b>O contexto que escreves serve para o tom e para escolher a desculpa. Nunca conta como fonte.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Modo desespero -->
+  <section class="slide desespero" data-notas="<b>20 s.</b> E se não houver provas? Céu limpo, estradas livres. Abaixo de 20, MODO DESESPERO: o ecrã pisca, a sirene liga, as personagens desfilam. Catálogo de 30 desculpas absurdas e 22 personagens. Com 0, último recurso, as mais absurdas.">
+    <div class="flash" aria-hidden="true"></div>
+    <div class="desfile" aria-hidden="true" id="desfile"></div>
+    <div class="sirene" aria-hidden="true"><div class="luz"></div><div class="base"></div><div class="txt">MODO DESESPERO</div></div>
+    <div class="in">
+      <span class="eyebrow ink salta">Credibilidade abaixo de 20</span>
+      <h2 class="salta" style="--i:1">Modo desespero: a culpa é da gaivota.</h2>
+      <div class="grelha g2">
+        <div class="card painel-d salta" style="--i:2">
+          <span class="absurda">🚨 Desculpa absurda ativada</span>
+          <ul class="exemplos">
+            <li><span class="n">#1</span>Uma gaivota roubou-me as chaves na Ribeira e tive de negociar com ela</li>
+            <li><span class="n">#22</span>Fiquei preso numa rotunda em Gaia, dei 37 voltas e não havia saída</li>
+            <li><span class="n">#5</span>A minha avó ligou “só um minutinho”</li>
+          </ul>
+          <span class="absurda ultimo">☠️ ÚLTIMO RECURSO · credibilidade 0</span>
+          <ul class="exemplos">
+            <li><span class="n">#18</span>O GPS mandou-me virar à direita no Douro</li>
+          </ul>
+        </div>
+        <div class="grelha">
+          <div class="numeros">
+            <div class="card numero salta" style="--i:3"><b>30</b><span>desculpas absurdas</span></div>
+            <div class="card numero salta" style="--i:4"><b>22</b><span>personagens</span></div>
+            <div class="card numero salta" style="--i:5"><b>10</b><span>destinatários</span></div>
+          </div>
+          <div class="card painel-d salta" style="--i:6">
+            <p class="lead" style="color:var(--ink);font-size:1.15rem">O agente vai à Wikipédia buscar <b>factos reais</b> sobre a gaivota-de-patas-amarelas e defende a história com toda a seriedade.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Diário do Bico + entrevista -->
+  <section class="slide" data-notas="<b>15 s.</b> Provas à altura: uma página do Diário do Bico, o jornal oficial das gaivotas do Porto, e uma entrevista exclusiva à culpada. Tudo claramente paródia. Limite posto de propósito: nunca gera nada que possa passar por real.">
+    <div class="in">
+      <span class="eyebrow salta">Provas de paródia</span>
+      <h2 class="salta" style="--i:1">O Diário do Bico tem a exclusiva.</h2>
+      <div class="par">
+        <div class="jornal" aria-label="Exemplo de página do Diário do Bico">
+          <div class="aviso">Diário do Bico, jornal oficial das gaivotas do Porto · publicação fictícia</div>
+          <div class="titulo-j">Diário do Bico</div>
+          <div class="meta"><span>Ribeira, Porto</span><span>Edição de hoje</span><span>Preço: 1 batata frita</span></div>
+          <div class="manchete">Gaivota rouba chaves e exige resgate em francesinhas</div>
+          <p class="subt">“Brilhavam. Eram minhas.”, declarou a acusada, sem remorsos.</p>
+          <div class="gr">
+            <div class="corpo">
+              <p><b>Uma gaivota-de-patas-amarelas</b> foi vista esta manhã a sobrevoar a Ribeira com um molho de chaves no bico, deixando um cidadão impossibilitado de sair de casa a horas.</p>
+              <p>Fontes do telhado garantem que não é a primeira vez. A visada recusou devolver o material até receber compensação adequada.</p>
+            </div>
+            <div>
+              <div class="foto"><svg viewBox="0 0 210 140" aria-hidden="true"><use href="#gaivota"/></svg></div>
+              <div class="caixa"><b>Factos reais</b><ul><li>Nome científico: <i>Larus michahellis</i></li><li>Tem patas amarelas, daí o nome</li></ul></div>
+            </div>
+          </div>
+        </div>
+        <div class="grelha">
+          <div class="card entrevista salta" style="--i:2">
+            <div class="topo"><div class="avatar"><svg viewBox="0 0 210 140" aria-hidden="true"><use href="#gaivota"/></svg></div>
+              <div><span class="sel">EXCLUSIVO</span><h3>Entrevista à gaivota culpada</h3></div></div>
+            <div class="p">Porque levou as chaves?</div>
+            <p class="r">Brilhavam. Sou uma gaivota do Porto. Não devo explicações a humanos.</p>
+            <div class="p">Arrepende-se?</div>
+            <p class="r">Arrependo-me de não ter levado também a carteira.</p>
+            <p class="ficcao">Exemplo ilustrativo. Na app, o texto é gerado pelo agente.</p>
+          </div>
+          <div class="card limite salta" style="--i:3"><b>Limite que não passamos.</b> Nunca gera atestados, autos de polícia, declarações oficiais ou notícias de meios reais. As pessoas das entrevistas são inventadas.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. Bico Messenger -->
+  <section class="slide" data-notas="<b>15 s.</b> E para fechar a história: simulamos o envio. Um telemóvel com o Bico Messenger, uma app inventada. O destinatário responde com IA, no estilo dele, abre o link do Diário do Bico, e há um desfecho: acreditou, desistiu, ou quer falar com a gaivota.">
+    <div class="in">
+      <span class="eyebrow salta">A simulação final</span>
+      <h2 class="salta" style="--i:1">Enviar pelo Bico Messenger. E ver a reação.</h2>
+      <div class="msgr">
+        <div class="passos">
+          <div class="card passo-m salta" style="--i:2"><span class="e">📱</span><span>Um telemóvel com uma app de mensagens <b>inventada</b>, sem marcas reais.</span></div>
+          <div class="card passo-m salta" style="--i:3"><span class="e">🤖</span><span>O destinatário responde com <b>IA</b>, no estilo dele: a mãe pergunta se comeste, o chefe é seco, a sogra lembra a última vez.</span></div>
+          <div class="card passo-m salta" style="--i:4"><span class="e">📰</span><span>O link do <b>Diário do Bico</b> abre dentro da app.</span></div>
+          <div class="card passo-m salta" style="--i:5"><span class="e">🏁</span><span>Desfecho animado em cerca de 30 segundos: <b>acreditou</b>, <b>desistiu de discutir</b> ou <b>quer falar com a gaivota</b>.</span></div>
+        </div>
+        <div class="tel" aria-label="Exemplo de conversa no Bico Messenger">
+          <div class="ecra">
+            <div class="notch"></div>
+            <div class="bm-topo"><div class="bm-av">👩‍👦</div><div><div class="bm-nome">Mãe</div><div class="bm-sub">online</div></div><span class="bm-marca">BICO MESSENGER</span></div>
+            <div class="bm-chat">
+              <div class="bm-b bm-eu" style="--d:.6s">Mãe, desculpa o atraso 🙏 Uma gaivota roubou-me as chaves na Ribeira. Está tudo documentado.</div>
+              <div class="bm-esc" style="--d:1.3s">a escrever...</div>
+              <div class="bm-b bm-ele" style="--d:2.7s">FILHO 😱😱 Estás bem?? Já comeste??</div>
+              <div class="bm-b bm-eu" style="--d:3.6s">Saiu no jornal 👇<span class="bm-link"><b>DIÁRIO DO BICO</b>diariodobico.pt/exclusivo</span></div>
+              <div class="bm-esc" style="--d:4.3s">a escrever...</div>
+              <div class="bm-b bm-ele" style="--d:5.7s">Ai está no jornal?! Então é verdade 🙏 Vem com cuidado ❤️</div>
+              <div class="desfecho" style="--d:6.5s">✅ Acreditou!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. Diz a verdade -->
+  <section class="slide" data-notas="<b>10 s.</b> E o botão mais corajoso: “Ou então diz a verdade”. O mesmo agente escreve um pedido de desculpas honesto e humilde. Às vezes a melhor desculpa é não ter desculpa.">
+    <div class="in">
+      <span class="eyebrow salta">O botão mais corajoso</span>
+      <h2 class="salta" style="--i:1">Ou então… diz a verdade.</h2>
+      <div class="botoes salta" style="--i:2"><span class="b-roxo">📱 Enviar</span><span class="b-verde">📋 Copiar</span><span class="b-azul">🎲 Outra desculpa</span><span class="b-branco">😇 Ou então diz a verdade</span></div>
+      <div class="card verdade-card salta" style="--i:3">Peço desculpa pelo atraso. Não houve gaivota nenhuma: saí tarde de casa e devia ter avisado mais cedo. Não volta a acontecer.</div>
+      <p class="lead salta" style="--i:4">Um clique e o mesmo agente escreve um pedido de desculpas <b>honesto e humilde</b>. Sem provas, sem gaivotas.</p>
+    </div>
+  </section>
+
+  <!-- 12. Por dentro -->
+  <section class="slide" data-notas="<b>15 s.</b> Por dentro: uma página, Node com Express, Claude Sonnet 5.5 com tool use e esforço médio. Dados sintéticos estáveis e marcados. As mesmas 6 ferramentas também como servidor MCP, para qualquer outro agente. App em português e inglês.">
+    <div class="in">
+      <span class="eyebrow salta">O que construímos</span>
+      <h2 class="salta" style="--i:1">Simples por fora. Um agente a sério por dentro.</h2>
+      <div class="grelha g4 stack">
+        <div class="card salta" style="--i:2"><h3>🖥️ Interface</h3><ul><li>HTML, JS e CSS, sem framework</li><li>Investigação ao vivo e velocímetro</li><li>Catálogo e Como funciona</li><li>Português e inglês</li></ul></div>
+        <div class="card salta" style="--i:3"><h3>⚙️ Backend</h3><ul><li>Node e Express</li><li><code>POST /desculpa</code></li><li><code>POST /conversa</code> para o Messenger</li><li>Ferramentas em paralelo</li></ul></div>
+        <div class="card salta" style="--i:4"><h3>🧠 IA</h3><ul><li><code>claude-sonnet-5-5</code></li><li>Tool use, até 12 voltas</li><li>Esforço médio na investigação</li><li>Resposta em JSON estruturado</li></ul></div>
+        <div class="card salta" style="--i:5"><h3>🛟 Dados</h3><ul><li>Reais: Open-Meteo, Wikipédia</li><li>TomTom com chave</li><li>Sintéticos estáveis e marcados</li><li>Trocar por API real: 1 função</li></ul></div>
+      </div>
+      <div class="salta" style="--i:6">
+        <p class="lead" style="margin-bottom:.5rem">As mesmas 6 ferramentas também como servidor <b>MCP</b>. Qualquer agente as pode usar:</p>
+        <div class="codigo"><pre><span class="c">$</span> claude mcp add desculpometro -- node <span class="s">mcp-server.js</span></pre></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13. Challenge -->
+  <section class="slide" data-notas="<b>15 s.</b> Os cinco critérios e as quatro perguntas do pitch, um a um. Utilidade, criatividade, experiência, uso inteligente de IA e uma demo que conta uma história.">
+    <div class="in">
+      <span class="eyebrow salta">Como encaixa no desafio</span>
+      <h2 class="salta" style="--i:1">Os cinco critérios, um a um.</h2>
+      <div class="grelha g5">
+        <div class="card criterio salta" style="--i:2"><span class="e">🧰</span><b>Utilidade real</b><span>Toda a gente se atrasa. Provas reais em segundos, no tom certo.</span><span class="ok">✓ cumprido</span></div>
+        <div class="card criterio salta" style="--i:3"><span class="e">🐦</span><b>Criatividade</b><span>Modo desespero, Diário do Bico, Bico Messenger.</span><span class="ok">✓ cumprido</span></div>
+        <div class="card criterio salta" style="--i:4"><span class="e">✨</span><b>Experiência</b><span>Vês o agente a trabalhar. Velocímetro, cartões, copiar num clique.</span><span class="ok">✓ cumprido</span></div>
+        <div class="card criterio salta" style="--i:5"><span class="e">🧠</span><b>Uso inteligente de GenAI</b><span>Agente com ferramentas que decide sozinho e não inventa. Também em MCP.</span><span class="ok">✓ cumprido</span></div>
+        <div class="card criterio salta" style="--i:6"><span class="e">🎬</span><b>Demo e storytelling</b><span>Um atraso com provas e outro que acaba na gaivota.</span><span class="ok">✓ cumprido</span></div>
+      </div>
+      <div class="perguntas">
+        <div class="card pergunta salta" style="--i:7"><b>O que faz?</b><span>Investiga o caminho e monta a desculpa com provas.</span></div>
+        <div class="card pergunta salta" style="--i:8"><b>Para quem?</b><span>Quem chega atrasado e tem de explicar a alguém.</span></div>
+        <div class="card pergunta salta" style="--i:9"><b>Como decide?</b><span>Ciclo de tool use; credibilidade de 0 a 100.</span></div>
+        <div class="card pergunta salta" style="--i:10"><b>O que tem de especial?</b><span>Só factos reais, e quando não há, a gaivota.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14. Fecho -->
+  <section class="slide fecho" data-notas="<b>10 s.</b> “Da próxima vez que chegarem atrasados, a culpa não é vossa. É da gaivota. Obrigado.” Passar para a demo ao vivo.">
+    <svg class="voadora" viewBox="0 0 210 140" aria-hidden="true"><use href="#gaivota"/></svg>
+    <div class="in">
+      <span class="eyebrow ink salta">Desculpómetro</span>
+      <h2 class="salta" style="--i:1">Da próxima vez, a culpa não é tua.<br><span class="rosa">É da gaivota.</span></h2>
+      <div class="pills salta" style="--i:2"><span class="pill">🙏 Obrigado</span><span class="pill">🔎 Demo ao vivo a seguir</span><span class="pill ink">[Nome da equipa]</span></div>
+    </div>
+  </section>
+</main>
+
+<div class="notas" id="notas" hidden></div>
+<nav class="nav" aria-label="Navegação dos slides">
+  <button type="button" id="ant" aria-label="Slide anterior">←</button>
+  <div class="pontos" id="pontos"></div>
+  <span class="contador" id="contador">1 / 14</span>
+  <button type="button" id="notasBtn" aria-pressed="false" title="Notas do orador (N)">📝</button>
+  <button type="button" id="ecraBtn" title="Ecrã inteiro (F)">⛶</button>
+  <button type="button" class="prox" id="prox" aria-label="Slide seguinte">→</button>
+</nav>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  // Destinatários e personagens, tal como em catalogo.js
+  const DEST = [
+    ['👔','Chefe','formal e profissional'], ['👩‍👦','Mãe','dramático e afetuoso'], ['💘','Namorada','carinhoso'], ['🎓','Professor','respeitoso'],
+    ['👵','Sogra','a medir cada palavra'], ['🍻','Melhor amigo','descontraído, com piadas'], ['💼','Cliente','profissional e tranquilizador'],
+    ['🏠','Senhorio','cordial e firme'], ['🏋️','Treinador do ginásio','motivado e enérgico'], ['👥','Grupo da família','para várias pessoas ao mesmo tempo'],
+  ];
+  $('destinos').innerHTML = DEST.map(([e, n, t], i) =>
+    `<div class="card dest salta" style="--i:${i + 3}"><span class="e">${e}</span><b>${n}</b><span>${t}</span></div>`).join('');
+
+  const PERS = ['🐦','📸','🙋‍♀️','👵','🚇','🥐','🎸','🐈','☕','🔄','🐕','🥪','🧀','🚙','🚌','🛒','🃏','🤳','🗺️','📡','🚍','🕊️'];
+  $('desfile').innerHTML = PERS.map((e, i) =>
+    `<span style="top:${8 + (i * 37) % 80}%;animation-duration:${5 + (i % 5)}s;animation-delay:${-(i * 0.9).toFixed(1)}s">${e}</span>`).join('');
+
+  // Velocímetro (mesmas zonas do site)
+  const ZONAS = [{ de: 0, ate: 20, cor: '#ef233c' }, { de: 20, ate: 50, cor: '#ff8c42' }, { de: 50, ate: 80, cor: '#ffd23f' }, { de: 80, ate: 100, cor: '#06d6a0' }];
+  const VERED = ['Ninguém acredita', 'Talvez cole', 'Convincente', 'Irrefutável'];
+  const pt = (v, r) => { const a = Math.PI * (1 - v / 100); return [170 + r * Math.cos(a), 170 - r * Math.sin(a)]; };
+  $('arcos').innerHTML = ZONAS.map(z => {
+    const [x1, y1] = pt(z.de, 132), [x2, y2] = pt(z.ate, 132);
+    return `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)} A132 132 0 0 1 ${x2.toFixed(1)} ${y2.toFixed(1)}" fill="none" stroke="${z.cor}" stroke-width="34"/>`;
+  }).join('') + `<path d="M${pt(0,151).join(' ')} A151 151 0 0 1 ${pt(100,151).join(' ')}" fill="none" stroke="#1d1b4b" stroke-width="3"/>`;
+  $('etiquetas').innerHTML = [0, 20, 50, 80, 100].map(v => { const [x, y] = pt(v, 170); return `<text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}">${v}</text>`; }).join('');
+  let timers = [];
+  function medidor(on) {
+    timers.forEach(clearTimeout); timers = [];
+    const m = $('medidor'), p = $('ponteiro');
+    m.classList.remove('carimbado'); p.style.transition = 'none'; p.style.transform = 'rotate(-90deg)';
+    $('num').textContent = '?'; $('veredito').textContent = 'À espera de provas…'; $('veredito').style.color = '';
+    if (!on) return;
+    const alvo = 87;
+    timers.push(setTimeout(() => {
+      p.style.transition = ''; p.style.transform = `rotate(${-90 + alvo * 1.8}deg)`;
+      let n = 0; const passo = setInterval(() => { n = Math.min(alvo, n + 3); $('num').textContent = n; if (n >= alvo) clearInterval(passo); }, 45);
+      timers.push(passo);
+    }, 700));
+    timers.push(setTimeout(() => { $('veredito').textContent = VERED[3]; $('veredito').style.color = '#06a57b'; m.classList.add('carimbado'); }, 3000));
+  }
+
+  // Navegação
+  const slides = [...document.querySelectorAll('.slide')];
+  const total = slides.length;
+  $('pontos').innerHTML = slides.map((_, i) => `<button type="button" aria-label="Ir para o slide ${i + 1}"></button>`).join('');
+  const pontos = [...$('pontos').children];
+  let atual = -1;
+  function ir(n) {
+    n = Math.max(0, Math.min(total - 1, n));
+    if (n === atual) return;
+    slides.forEach((s, i) => { s.classList.toggle('ativo', i === n); s.classList.toggle('antes', i < n); s.setAttribute('aria-hidden', i !== n); s.scrollTop = 0; });
+    pontos.forEach((p, i) => p.setAttribute('aria-current', i === n));
+    atual = n;
+    document.body.dataset.slide = n + 1;
+    $('contador').textContent = `${n + 1} / ${total}`;
+    $('progresso').style.width = `${((n + 1) / total) * 100}%`;
+    $('notas').innerHTML = slides[n].dataset.notas || '';
+    medidor(slides[n].dataset.anim === 'medidor');
+    try { history.replaceState(null, '', `#s${n + 1}`); } catch (e) {}
+  }
+  pontos.forEach((p, i) => p.onclick = () => ir(i));
+  $('ant').onclick = () => ir(atual - 1);
+  $('prox').onclick = () => ir(atual + 1);
+  const alternarNotas = () => { const n = $('notas'); n.hidden = !n.hidden; $('notasBtn').setAttribute('aria-pressed', !n.hidden); };
+  $('notasBtn').onclick = alternarNotas;
+  const ecra = async () => { try { document.fullscreenElement ? await document.exitFullscreen() : await document.documentElement.requestFullscreen(); } catch (e) {} };
+  $('ecraBtn').onclick = ecra;
+  document.addEventListener('keydown', e => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); ir(atual + 1); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); ir(atual - 1); }
+    else if (e.key === 'Home') ir(0);
+    else if (e.key === 'End') ir(total - 1);
+    else if (e.key === 'n' || e.key === 'N') alternarNotas();
+    else if (e.key === 'f' || e.key === 'F') ecra();
+  });
+  let x0 = null;
+  document.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if (Math.abs(dx) > 60) ir(atual + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  const m = /^#s(\d+)$/.exec(location.hash);
+  ir(m ? Number(m[1]) - 1 : 0);
+})();
+</script>

@@ -142,7 +142,7 @@
   .entrevista { padding: 22px 26px; background:#fff; }
   .entrevista .topo { display:flex; gap:16px; align-items:center; margin-bottom: 8px; }
   .avatar { width: 92px; height: 92px; flex: none; border: var(--borda); border-radius: 50%; background: var(--amarelo); display:flex; align-items:center; justify-content:center; font-size: 3rem; overflow:hidden; }
-  .avatar svg { width: 84px; }
+  .avatar svg { width: 84px; height: 84px; }
   .entrevista .selo { display:inline-block; background: var(--vermelho); color:#fff; font-size:.7rem; font-weight:800; letter-spacing:2px; padding: 1px 10px; border-radius: 6px; }
   .entrevista h3 { margin: 4px 0 0; font-size: 1.5rem; line-height:1.15; }
   .entrevista .quem { color: var(--mut); font-size:.9rem; }
@@ -183,6 +183,9 @@
   #desfile span { position:absolute; left:-140px; font-size:3rem; line-height:1; animation: passa linear infinite; filter: drop-shadow(3px 4px 0 #0003); }
   #desfile span.rtl { left:auto; right:-140px; animation-name: passa-rtl; }
   #desfile span.culpado { font-size:4.6rem; }
+  #desfile span svg { width:96px; height:112px; display:block; }
+  #desfile span.culpado svg { width:150px; height:175px; }
+  #desfile span.rtl svg { transform: scaleX(-1); }
   @keyframes passa { 0% { transform: translate(0,0) rotate(-8deg); } 25% { transform: translate(28vw,-22px) rotate(8deg); } 50% { transform: translate(56vw,0) rotate(-8deg); } 75% { transform: translate(84vw,-22px) rotate(8deg); } 100% { transform: translate(calc(100vw + 280px),0) rotate(-8deg); } }
   @keyframes passa-rtl { 0% { transform: translate(0,0) rotate(8deg); } 25% { transform: translate(-28vw,-22px) rotate(-8deg); } 50% { transform: translate(-56vw,0) rotate(8deg); } 75% { transform: translate(-84vw,-22px) rotate(-8deg); } 100% { transform: translate(calc(-100vw - 280px),0) rotate(8deg); } }
   @media (prefers-reduced-motion: reduce) { #desfile { display:none; } }
@@ -336,6 +339,7 @@
 import { DESTINATARIOS, PERSONAGENS } from './catalogo.js';
 import { abrirMessenger, fecharMessenger } from './messenger.js';
 import { iniciarCronometro, pararCronometro, abrirTribunal } from './extras.js';
+import { boneco } from './bonecos.js';
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
@@ -557,7 +561,7 @@ function desfile(on, culpado, ultimo) {
   const elenco = [culpado, culpado, ...outros.sort(() => Math.random() - 0.5).slice(0, ultimo ? 12 : 7)].filter(k => PERSONAGENS[k]);
   el.innerHTML = elenco.map((k, i) => {
     const rtl = i % 2 ? ' rtl' : '', dur = (ultimo ? 5 : 8) + Math.random() * 7, atraso = -Math.random() * dur;
-    return `<span class="${i < 2 ? 'culpado' : ''}${rtl}" style="top:${8 + Math.random() * 80}vh; animation-duration:${dur.toFixed(1)}s; animation-delay:${atraso.toFixed(1)}s">${PERSONAGENS[k].emoji}</span>`;
+    return `<span class="${i < 2 ? 'culpado' : ''}${rtl}" style="top:${[4, 16, 66, 78][i % 4] + Math.random() * 4}vh; animation-duration:${dur.toFixed(1)}s; animation-delay:${atraso.toFixed(1)}s">${boneco(k, PERSONAGENS[k].emoji)}</span>`;
   }).join('');
 }
 
@@ -591,10 +595,10 @@ function renderJornal(j) {
 }
 
 function renderEntrevista(e, personagem) {
-  const av = personagem === 'gaivota' ? null : (PERSONAGENS[personagem]?.emoji || '🎤');
+  const av = boneco(personagem, PERSONAGENS[personagem]?.emoji || '🎤');
   return `<article class="entrevista card">
     <div class="topo">
-      <div class="avatar">${av ?? gaivotaSVG(84)}</div>
+      <div class="avatar">${av}</div>
       <div>
         <span class="selo">${esc(t('e_selo'))}</span>
         <h3>${esc(e.titulo)}</h3>
@@ -742,7 +746,7 @@ $('enviarBtn').onclick = () => {
   abrirMessenger({
     lang, resultado: ultimoResultado,
     destinatario: pedidoAtual.destinatario, destinatario_id: pedidoAtual.destinatario_id, emoji: d?.emoji || '🙂',
-    gaivotaSVG, emojiPersonagem: p && p !== 'gaivota' ? PERSONAGENS[p]?.emoji : null,
+    gaivotaSVG, fotoHTML: p ? boneco(p, PERSONAGENS[p]?.emoji) : null,
   });
 };
 $('tribunalBtn').onclick = async () => {
