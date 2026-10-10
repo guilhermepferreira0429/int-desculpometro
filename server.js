@@ -38,10 +38,21 @@ MODO DESESPERO (credibilidade abaixo de 20):
   29. Perdi as chaves, encontrei as chaves, perdi o carro, ainda não encontrei o carro [carro]
   30. Uma gaivota reconheceu-me de outra vida e tivemos de pôr a conversa em dia [gaivota]
   (A personagem entrevistada pode ser um objeto ou comida, como a rotunda, a francesinha ou o carro, a falar na primeira pessoa.)
+- ÚLTIMO RECURSO: estas são as mais absurdas de todas. Usa-as SÓ quando a credibilidade for exatamente 0 (nenhum facto ajuda em nada) e, nesse caso, escolhe obrigatoriamente uma delas. Com credibilidade de 1 a 19, nunca as uses.
+  11. Fui raptado por um grupo de excursão de reformados e só me deixaram sair depois do almoço em Fátima [excursao]
+  12. Uma gaivota sentou-se no capô do carro e recusou-se a sair, e eu respeito a hierarquia [gaivota]
+  13. Fiquei preso dentro de um Continente porque não encontrava a saída entre os corredores das promoções [supermercado]
+  14. Um senhor de 80 anos desafiou-me para uma partida de sueca e a honra da família estava em jogo [sueca]
+  15. Atravessei a Ponte D. Luís a pé e uma gaivota cobrou-me portagem [gaivota]
+  16. Fui confundido com um influencer e tive de tirar fotos com 40 pessoas [fas]
+  17. Fiquei 45 minutos a tentar dobrar um mapa de turista que alguém me pediu para segurar [mapa]
+  18. O GPS mandou-me virar à direita no Douro [gps]
+  19. Encontrei um pombo e uma gaivota a lutar por um pastel de nata e fui chamado como árbitro [gaivota]
+  20. Adormeci no autocarro e acordei em Espanha, já estou a aprender castelhano [motorista]
 - Se a desculpa envolver gaivotas, chama get_seagull_facts e usa esses factos reais. Nas outras, mistura os factos reais que as outras ferramentas devolveram (tempo, trânsito, transportes, eventos).
 - A mensagem é escrita com total seriedade, como se fosse a coisa mais normal do mundo.
 - Acrescenta ao JSON estes campos de paródia, claramente fictícios e humorísticos:
-  "desculpa_absurda": { "numero": número da lista (ou 0 se for criada por ti), "titulo": frase curta da desculpa, "personagem": uma de gaivota|turista|vizinha|avo|maquinista|padeira|tuna|gato|senhor_do_cafe|rotunda|cao|francesinha|vendedora|carro|outro }
+  "desculpa_absurda": { "numero": número da lista (ou 0 se for criada por ti), "titulo": frase curta da desculpa, "ultimo_recurso": true se for uma das 11 a 20, "personagem": uma de gaivota|turista|vizinha|avo|maquinista|padeira|tuna|gato|senhor_do_cafe|rotunda|cao|francesinha|vendedora|carro|excursao|supermercado|sueca|fas|mapa|gps|motorista|outro }
   "entrevista": { "titulo": string, "entrevistada": nome e descrição da personagem culpada, "perguntas": [5 a 6 objetos { "p": pergunta, "r": resposta } em que a personagem confessa tudo; se for gaivota, com arrogância] }
   Só quando a personagem for gaivota, acrescenta também:
   "diario_do_bico": { "manchete": string sensacionalista em maiúsculas, "subtitulo": string, "lead": string, "corpo": [3 a 4 parágrafos curtos e absurdos, escritos por gaivotas, com factos reais da Wikipédia misturados], "caixa_factos": [3 factos reais da Wikipédia, curtos], "legenda_foto": string }
@@ -70,7 +81,8 @@ async function chamar(params) {
 function pedidoUtilizador({ origem, destino, minutos, destinatario, forcar_desespero, evitar }) {
   const agora = new Date().toLocaleString('pt-PT', { timeZone: 'Europe/Lisbon' });
   let t = `Agora são ${agora}. Estou em: ${origem}. Vou para: ${destino}. Vou chegar ${minutos} minutos atrasado. Tenho de explicar ao/à: ${destinatario}. Investiga e monta a melhor desculpa.`;
-  if (forcar_desespero) t += `\n\n(Demonstração: considera que nenhuma prova chega e ativa o MODO DESESPERO, credibilidade abaixo de 20.)`;
+  if (forcar_desespero === 'ultimo') t += `\n\n(Demonstração: considera que nenhum facto ajuda em nada. Credibilidade exatamente 0, MODO DESESPERO em ÚLTIMO RECURSO.)`;
+  else if (forcar_desespero) t += `\n\n(Demonstração: considera que nenhuma prova chega e ativa o MODO DESESPERO, credibilidade entre 1 e 19.)`;
   if (Array.isArray(evitar) && evitar.length) {
     t += `\n\nJá usei estas desculpas e não as quero repetir. Gera uma diferente, com outro ângulo ou outras provas (no modo desespero, outra desculpa absurda da lista):\n` +
       evitar.slice(-5).map(e => `- ${String(e).slice(0, 300)}`).join('\n');

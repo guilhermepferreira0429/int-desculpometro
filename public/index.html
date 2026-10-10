@@ -99,6 +99,9 @@
   .verdade::before { content:'😇'; }
   .acoes { display:flex; gap:12px; margin-top:16px; flex-wrap:wrap; }
   .absurda { display:inline-block; background: var(--vermelho); color:#fff; border: var(--borda); border-radius: 12px; padding: 4px 14px; font-weight:800; margin-bottom: 12px; box-shadow: 3px 3px 0 var(--ink); }
+  .absurda.ultimo { background: #111; color: var(--amarelo); font-size: 1.15rem; animation: treme .25s linear infinite; }
+  @keyframes treme { 25% { transform: translate(-1px,1px) rotate(-.5deg); } 75% { transform: translate(1px,-1px) rotate(.5deg); } }
+  .chk select { font-size:.9rem; padding:5px 8px; }
 
   /* MODO DESESPERO */
   #flash { position:fixed; inset:0; background: var(--vermelho); z-index:1; opacity:0; pointer-events:none; }
@@ -211,7 +214,7 @@
       </select>
     </label>
     <div class="linha2">
-      <label class="chk"><input type="checkbox" name="forcar_desespero"> Forçar modo desespero (para a demo)</label>
+      <label class="chk">🎬 Modo demo <select name="forcar_desespero"><option value="">normal (o agente decide)</option><option value="desespero">forçar desespero</option><option value="ultimo">forçar último recurso (credibilidade 0)</option></select></label>
       <button id="go">Gerar desculpa 🔎</button>
     </div>
   </form>
@@ -395,7 +398,7 @@ function modoDesespero(on) {
   $('secParodia').classList.toggle('hidden', !on);
 }
 
-const AVATARES = { gaivota: null, turista: '📸', vizinha: '🙋‍♀️', avo: '👵', maquinista: '🚇', padeira: '🥐', tuna: '🎸', gato: '🐈', senhor_do_cafe: '☕', rotunda: '🔄', cao: '🐕', francesinha: '🥪', vendedora: '🧀', carro: '🚙', outro: '🎤' };
+const AVATARES = { gaivota: null, turista: '📸', vizinha: '🙋‍♀️', avo: '👵', maquinista: '🚇', padeira: '🥐', tuna: '🎸', gato: '🐈', senhor_do_cafe: '☕', rotunda: '🔄', cao: '🐕', francesinha: '🥪', vendedora: '🧀', carro: '🚙', excursao: '🚌', supermercado: '🛒', sueca: '🃏', fas: '🤳', mapa: '🗺️', gps: '📡', motorista: '🚍', outro: '🎤' };
 
 function renderJornal(j) {
   const hoje = new Date().toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -448,7 +451,9 @@ function mostrarFinal(d) {
   const desespero = !!d.modo_desespero;
   modoDesespero(desespero);
   $('absurdaSlot').innerHTML = desespero && d.desculpa_absurda
-    ? `<div class="absurda">🚨 Desculpa de emergência${d.desculpa_absurda.numero ? ' n.º ' + esc(d.desculpa_absurda.numero) : ''}: ${esc(d.desculpa_absurda.titulo)}</div>` : '';
+    ? (d.desculpa_absurda.ultimo_recurso || (d.desculpa_absurda.numero >= 11 && d.desculpa_absurda.numero <= 20)
+      ? `<div class="absurda ultimo">☠️ ÚLTIMO RECURSO n.º ${esc(d.desculpa_absurda.numero)}: ${esc(d.desculpa_absurda.titulo)}</div>`
+      : `<div class="absurda">🚨 Desculpa de emergência${d.desculpa_absurda.numero ? ' n.º ' + esc(d.desculpa_absurda.numero) : ''}: ${esc(d.desculpa_absurda.titulo)}</div>`) : '';
   if (desespero) {
     const personagem = d.desculpa_absurda?.personagem || (d.diario_do_bico ? 'gaivota' : 'outro');
     $('jornalWrap').classList.toggle('hidden', !d.diario_do_bico);
@@ -509,7 +514,7 @@ async function investigar(corpo) {
 $('f').addEventListener('submit', ev => {
   ev.preventDefault();
   const fd = new FormData($('f'));
-  pedidoAtual = { origem: fd.get('origem'), destino: fd.get('destino'), minutos: +fd.get('minutos'), destinatario: fd.get('destinatario'), forcar_desespero: fd.get('forcar_desespero') === 'on' };
+  pedidoAtual = { origem: fd.get('origem'), destino: fd.get('destino'), minutos: +fd.get('minutos'), destinatario: fd.get('destinatario'), forcar_desespero: fd.get('forcar_desespero') || false };
   historico = [];
   investigar(pedidoAtual);
 });
