@@ -130,10 +130,12 @@
   .tv-linha.r .bal { background: var(--amarelo); border-bottom-right-radius: 4px; font-size: 1.08rem; }
   @media (max-width: 760px) { .heroi { grid-template-columns: 1fr; text-align:center; } .heroi-titulo { font-size: 1.8rem; } }
   .absurda.irref { background: var(--verde); color: var(--ink); }
-  .exemplos { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin: 0 0 14px; }
-  .exemplos > span { font-weight:800; font-size:.95rem; margin-right:4px; }
-  .exemplos button { background:#fff; color: var(--ink); font-size:.92rem; padding: 6px 12px; box-shadow: 3px 3px 0 var(--ink); }
-  .exemplos button small { display:block; font-size:.68rem; font-weight:700; color: var(--mut); }
+  .exemplos { display:flex; flex-wrap:nowrap; align-items:center; gap:6px; margin: 0 0 14px; overflow-x:auto; padding: 2px 4px 6px 0; scrollbar-width:none; }
+  .exemplos::-webkit-scrollbar { display:none; }
+  .exemplos > span:first-child { font-weight:800; font-size:.8rem; margin-right:2px; white-space:nowrap; flex:none; }
+  .exemplos button { flex:none; white-space:nowrap; background:#fff; color: var(--ink); font-size:.74rem; line-height:1.15; padding: 4px 9px; border-width:2px; border-radius:10px; box-shadow: 2px 2px 0 var(--ink); }
+  .exemplos button:hover { box-shadow: 3px 3px 0 var(--ink); }
+  .exemplos button small { display:block; font-size:.6rem; font-weight:700; color: var(--mut); }
   #go.pronto { animation: pronto .6s ease-in-out 3; }
   @keyframes pronto { 50% { transform: scale(1.08); box-shadow: 0 0 0 8px #ff4f8b55; } }
   .absurda.ultimo { background: #111; color: var(--amarelo); font-size: 1.15rem; animation: treme .25s linear infinite; }
