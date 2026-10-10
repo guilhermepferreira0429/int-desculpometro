@@ -401,8 +401,6 @@
   @keyframes ok { from { transform: translateY(0) rotate(-6deg); } to { transform: translateY(-10px) rotate(6deg); } }
   .slide.ativo .biggull .cabeca { animation: acena 1.1s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: bottom center; }
   @keyframes acena { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
-  .slide.ativo .biggull .bandeira { animation: ondula 1s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: left center; }
-  @keyframes ondula { to { transform: skewY(-5deg) scaleX(.94); } }
 
   /* ---------- 16. fecho ---------- */
   .fecho h2 { font-size: 4.6rem; letter-spacing: -2px; }
@@ -842,7 +840,7 @@
           <path d="M118 224 L136 280 L112 252 Z M182 224 L164 280 L188 252 Z" fill="#2c3a5e" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
           <path d="M142 232 L158 232 L163 246 L157 332 L150 340 L143 332 L137 246 Z" fill="#d62828" stroke="#1d1b4b" stroke-width="3" stroke-linejoin="round"/>
           <!-- bandeira dos EUA no fato -->
-          <g class="bandeira" transform="translate(178 262)">
+          <g class="bandeira" transform="translate(184 262) scale(.75)">
             <rect x="0" y="0" width="48" height="32" fill="#ffffff" stroke="#1d1b4b" stroke-width="2.5"/>
             <g fill="#b22234"><rect x="0" y="0" width="48" height="3.6"/><rect x="0" y="7.2" width="48" height="3.6"/><rect x="0" y="14.4" width="48" height="3.6"/><rect x="0" y="21.6" width="48" height="3.6"/><rect x="0" y="28.4" width="48" height="3.6"/></g>
             <rect x="0" y="0" width="21" height="17.5" fill="#3c3b6e"/>
