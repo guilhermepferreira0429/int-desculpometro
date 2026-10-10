@@ -2,6 +2,8 @@
 // Simuladas (e assinaladas como tal na fonte): get_transport_status, get_events_nearby, e o trânsito sem chave.
 // Todas recebem (input, { lang }) para devolver texto em português ou inglês.
 
+import { INCIDENTES } from "./public/catalogo.js";
+
 const UA = { 'User-Agent': 'Desculpometro/1.0 (hackathon)' };
 
 async function getJSON(url, opts = {}) {
@@ -21,11 +23,16 @@ const L = (lang, pt, en) => (lang === 'en' ? en : pt);
 const SIMULADO = lang => L(lang, 'Dados simulados', 'Simulated data');
 
 // ---------- 1. geocode ----------
+// Nomes populares que o geocoding não resolve sozinho
+const ALIASES = { gaia: 'Vila Nova de Gaia', foz: 'Foz do Douro', ribeira: 'Porto', baixa: 'Porto' };
 export async function geocode({ local }, { lang } = {}) {
   // A Open-Meteo só conhece localidades, não ruas: tenta o texto todo e depois cada parte
-  const partes = [local, ...local.split(',').map(s => s.trim()).reverse()].filter(Boolean);
-  for (const nome of partes) {
-    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(nome)}&count=1&language=${lang === 'en' ? 'en' : 'pt'}&format=json`;
+  const partesBrutas = [local, ...local.split(',').map(s => s.trim()).reverse()].filter(Boolean);
+  const partes = partesBrutas.map(p => ALIASES[p.toLowerCase()] || p);
+  // Procura primeiro em Portugal (senão "Gaia" vai parar à Catalunha), depois em qualquer país
+  const tentativas = partes.flatMap(nome => [[nome, '&countryCode=PT'], [nome, '']]);
+  for (const [nome, pais] of tentativas) {
+    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(nome)}&count=1&language=${lang === 'en' ? 'en' : 'pt'}&format=json${pais}`;
     const d = await getJSON(url);
     const r = d.results?.[0];
     if (r) {
@@ -85,16 +92,14 @@ function trafficSimulado(origem, destino, motivo, lang) {
   const rnd = seeded(origem + destino + new Date().toDateString());
   const normal = 12 + Math.floor(rnd() * 25);
   const atraso = 4 + Math.floor(rnd() * 22);
-  const causa = pick(rnd, L(lang,
-    ['Acidente com dois veículos', 'Obras com corte de faixa', 'Veículo avariado na via', 'Semáforos avariados num cruzamento'],
-    ['Two-vehicle collision', 'Roadworks with a lane closure', 'Broken-down vehicle on the road', 'Faulty traffic lights at a junction']));
-  const via = pick(rnd, ['VCI', 'A28', 'Circunvalação', 'A1', 'Avenida da Boavista', 'IC19', '2ª Circular']);
+  const causa = pick(rnd, INCIDENTES.transito[lang === 'en' ? 'en' : 'pt']);
+  const via = pick(rnd, INCIDENTES.transito.vias);
   return {
     origem, destino,
     tempo_normal_min: normal,
     tempo_com_transito_min: normal + atraso,
     atraso_transito_min: atraso,
-    incidentes: [L(lang, `${causa} na ${via}`, `${causa} on ${via}`)],
+    incidentes: [`${causa} (${via})`],
     fonte: `${SIMULADO(lang)} (${motivo})`,
   };
 }
@@ -129,9 +134,7 @@ export async function get_transport_status({ cidade }, { lang } = {}) {
   const linhas = porto
     ? [L(lang, 'Metro do Porto, linha A (Azul)', 'Porto Metro, line A (Blue)'), L(lang, 'Metro do Porto, linha B (Vermelha, até à Póvoa de Varzim)', 'Porto Metro, line B (Red, to Póvoa de Varzim)'), L(lang, 'Metro do Porto, linha D (Amarela)', 'Porto Metro, line D (Yellow)'), L(lang, 'STCP 500', 'STCP bus 500'), L(lang, 'CP Urbanos do Porto, linha de Braga', 'CP Porto suburban trains, Braga line')]
     : [L(lang, 'Metro de Lisboa, linha Verde', 'Lisbon Metro, Green line'), L(lang, 'Metro de Lisboa, linha Azul', 'Lisbon Metro, Blue line'), L(lang, 'Carris 728', 'Carris bus 728'), L(lang, 'CP Urbanos de Lisboa, linha de Sintra', 'CP Lisbon suburban trains, Sintra line')];
-  const problemas = L(lang,
-    ['avaria técnica numa composição', 'perturbação por pessoa na via', 'greve parcial de maquinistas', 'falha de sinalização', 'intervalos alargados por falta de material'],
-    ['technical fault on a train', 'person on the tracks', 'partial drivers\' strike', 'signalling failure', 'longer intervals due to a shortage of trains']);
+  const problemas = INCIDENTES.transportes[lang === 'en' ? 'en' : 'pt'];
   return {
     cidade,
     linhas: linhas.map(l => {
@@ -150,12 +153,9 @@ export async function get_transport_status({ cidade }, { lang } = {}) {
 export async function get_events_nearby({ cidade }, { lang } = {}) {
   const rnd = seeded('ev' + cidade + new Date().toDateString());
   const porto = /porto|gaia|matosinhos|maia/i.test(cidade);
-  const eventos = porto
-    ? [[L(lang, 'Jogo de futebol no Estádio do Dragão', 'Football match at Estádio do Dragão'), 'Antas'], [L(lang, 'Concerto no Coliseu do Porto', 'Concert at Coliseu do Porto'), 'Baixa'], [L(lang, 'Festival no Parque da Cidade', 'Festival at Parque da Cidade'), 'Foz'], [L(lang, 'Corrida de atletismo com cortes de estrada', 'Road race with road closures'), 'Avenida dos Aliados']]
-    : [[L(lang, 'Jogo de futebol no Estádio da Luz', 'Football match at Estádio da Luz'), 'Benfica'], [L(lang, 'Concerto na MEO Arena', 'Concert at MEO Arena'), 'Parque das Nações'], [L(lang, 'Jogo de futebol em Alvalade', 'Football match at Alvalade'), 'Lumiar'], [L(lang, 'Meia maratona com cortes na Ponte 25 de Abril', 'Half marathon closing the 25 de Abril Bridge'), 'Alcântara']];
-  const impactos = L(lang,
-    ['condicionamento de trânsito nas imediações', 'estacionamento esgotado e filas nos acessos', 'cortes de estrada a partir de 2 horas antes'],
-    ['traffic restrictions in the surrounding area', 'parking full and queues on the access roads', 'road closures starting 2 hours before']);
+  const k = lang === 'en' ? 'en' : 'pt';
+  const eventos = (porto ? INCIDENTES.eventos_porto : INCIDENTES.eventos_lisboa).map(e => [e[k], e.zona]);
+  const impactos = INCIDENTES.impactos[k];
   const n = 1 + Math.floor(rnd() * 2);
   return {
     cidade,

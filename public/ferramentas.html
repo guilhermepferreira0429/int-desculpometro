@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Desculpómetro · Como funciona</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#fff6e0; --ink:#1d1b4b; --card:#ffffff; --mut:#6b6893;
+    --amarelo:#ffd23f; --rosa:#ff4f8b; --azul:#3a86ff; --verde:#06d6a0; --laranja:#ff8c42; --vermelho:#ef233c; --roxo:#8338ec;
+    --borda: 3px solid var(--ink); --sombra: 5px 5px 0 var(--ink);
+  }
+  * { box-sizing:border-box; }
+  html { font-size: 19px; }
+  body { margin:0; font-family: "Baloo 2", "Trebuchet MS", system-ui, sans-serif; background: var(--bg); color: var(--ink);
+         background-image: radial-gradient(#1d1b4b14 1.5px, transparent 1.5px); background-size: 22px 22px; }
+  main { max-width: 1120px; margin: 0 auto; padding: 26px 18px 90px; }
+
+  header { display:flex; align-items:center; gap:16px; margin-bottom:14px; }
+  .logo { font-size: 3.4rem; font-weight:800; line-height:1; margin:0; letter-spacing:-1px; }
+  .logo .o { color: var(--rosa); display:inline-block; animation: abana 2.5s ease-in-out infinite; }
+  @keyframes abana { 50% { transform: rotate(-12deg) translateY(-4px); } }
+  .tag { margin:4px 0 0; font-size:1.1rem; color: var(--mut); font-weight:500; }
+
+  button { font: inherit; font-weight:800; font-size:1.1rem; background: var(--rosa); color:#fff; border: var(--borda); border-radius:14px;
+           padding: 10px 22px; box-shadow: 4px 4px 0 var(--ink); cursor:pointer; transition: transform .1s, box-shadow .1s; }
+  button:hover { transform: translate(-1px,-1px); box-shadow: 6px 6px 0 var(--ink); }
+  button:active { transform: translate(3px,3px); box-shadow: 1px 1px 0 var(--ink); }
+  .lingua { white-space:nowrap; margin-left:auto; align-self:flex-start; background:#fff; color: var(--ink); font-size:1rem; padding: 6px 14px; }
+
+  nav.menu { display:flex; gap:10px; flex-wrap:wrap; margin: 0 0 26px; }
+  nav.menu a { text-decoration:none; color: var(--ink); background:#fff; border: var(--borda); border-radius: 99px; padding: 4px 18px;
+               font-weight:800; font-size:1.02rem; box-shadow: 3px 3px 0 var(--ink); transition: transform .1s, box-shadow .1s; }
+  nav.menu a:hover { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 var(--ink); }
+  nav.menu a.ativo { background: var(--ink); color: var(--amarelo); }
+
+  .card { background: var(--card); border: var(--borda); border-radius: 18px; box-shadow: var(--sombra); }
+  h2 { font-size: 1.7rem; margin: 46px 0 6px; font-weight:800; display:flex; align-items:center; gap:12px; line-height:1.15; }
+  h2 .num { flex:none; width: 44px; height: 44px; border: var(--borda); border-radius: 50%; background: var(--amarelo); display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
+  .intro { font-size: 1.1rem; line-height: 1.5; margin: 0 0 18px; max-width: 900px; }
+  .hero { padding: 20px 26px; background: var(--amarelo); font-size: 1.2rem; line-height:1.5; }
+  .hero b { color: var(--ink); }
+
+  /* ---------- diagrama do ciclo ---------- */
+  .diagrama { padding: 22px; }
+  .linha { display:flex; align-items:stretch; gap: 10px; }
+  .seta { flex:none; display:flex; align-items:center; justify-content:center; font-size: 2rem; font-weight:800; color: var(--rosa); width: 34px; }
+  .passo { flex: 1 1 0; min-width:0; background:#fff; border: var(--borda); border-radius: 16px; padding: 12px 14px; box-shadow: 3px 3px 0 var(--ink);
+           animation: acende 12s ease-in-out infinite; }
+  .passo .e { font-size: 2rem; line-height: 1; }
+  .passo .t { font-weight: 800; font-size: 1.05rem; line-height: 1.2; margin-top: 6px; }
+  .passo .d { font-size: .85rem; line-height: 1.35; color: var(--mut); margin-top: 4px; }
+  .passo.pedido { flex: 0 0 200px; }
+  @keyframes acende { 0%, 14%, 100% { background:#fff; transform:none; } 4%, 10% { background: var(--amarelo); transform: translateY(-4px); } }
+  .p1 { animation-delay: 0s; } .p2 { animation-delay: 1.5s; } .p3 { animation-delay: 3s; } .p4 { animation-delay: 4.5s; }
+  .p5 { animation-delay: 7.5s; } .p6 { animation-delay: 9s; } .p7 { animation-delay: 10.5s; }
+
+  .ciclo { flex: 1 1 auto; position: relative; border: 3px dashed var(--ink); border-radius: 22px; padding: 40px 14px 58px; background: #ffeef4; }
+  .ciclo .rotulo { position:absolute; top: -16px; left: 18px; background: var(--rosa); color:#fff; border: var(--borda); border-radius: 99px; padding: 0 14px; font-weight:800; font-size:.9rem; }
+  .ciclo .volta { position:absolute; left: 30px; right: 30px; bottom: 12px; height: 30px; border: 3px solid var(--ink); border-top: none; border-radius: 0 0 16px 16px;
+                  display:flex; align-items:flex-end; justify-content:center; }
+  .ciclo .volta span { position: relative; z-index: 4; background: #fff; border: 2px solid var(--ink); border-radius: 99px; padding: 0 12px; font-weight:800; font-size:.9rem; transform: translateY(14px); white-space: nowrap; }
+  .ciclo .volta::before { content:'▲'; position:absolute; left:-11px; top:-12px; font-size: 1rem; }
+  .pacote { position:absolute; top: 6px; left: 2%; font-size: 1.6rem; line-height:1; z-index:3; animation: viaja 6s linear infinite; filter: drop-shadow(2px 2px 0 #1d1b4b55); }
+  @keyframes viaja {
+    0% { left: 2%; top: 6px; }
+    45% { left: 92%; top: 6px; }
+    55% { left: 92%; top: calc(100% - 34px); }
+    95% { left: 2%; top: calc(100% - 34px); }
+    100% { left: 2%; top: 6px; }
+  }
+  .ciclo .linha { gap: 8px; }
+  .desce { display:flex; justify-content:flex-end; padding-right: 14%; margin: 6px 0; font-weight:800; font-size: .95rem; align-items:center; gap: 8px; }
+  .desce b { font-size: 1.8rem; color: var(--rosa); }
+  .niveis { display:grid; gap: 5px; margin-top: 8px; }
+  .nivel { font-size: .8rem; line-height:1.25; border: 2px solid var(--ink); border-radius: 10px; padding: 3px 8px; font-weight:700; }
+  .nivel.n1 { background: #d7fbef; } .nivel.n2 { background: #ffd9de; } .nivel.n3 { background: #111; color: var(--amarelo); }
+
+  .regras { display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
+  .regra { padding: 14px 16px; font-size: .98rem; line-height: 1.4; }
+  .regra .e { font-size: 1.7rem; }
+  .regra b { display:block; font-size: 1.08rem; margin: 2px 0 4px; }
+  .regra:nth-child(1) { border-top: 12px solid var(--azul); }
+  .regra:nth-child(2) { border-top: 12px solid var(--verde); }
+  .regra:nth-child(3) { border-top: 12px solid var(--roxo); }
+
+  /* ---------- ferramentas ---------- */
+  .ferr { display:grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .tool { padding: 16px 18px; display:grid; grid-template-columns: 70px 1fr; gap: 14px; align-items:start; }
+  .ico { width:70px; height:70px; border: var(--borda); border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:2.2rem; }
+  .tool:nth-child(6n+1) .ico { background: #dbe8ff; } .tool:nth-child(6n+2) .ico { background: #d7fbef; } .tool:nth-child(6n+3) .ico { background: #ffe3cc; }
+  .tool:nth-child(6n+4) .ico { background: #ece0ff; } .tool:nth-child(6n+5) .ico { background: #ffd9e6; } .tool:nth-child(6n+6) .ico { background: #fff2bf; }
+  .tool .nome { font-family: ui-monospace, Consolas, monospace; font-weight: 700; font-size: 1.05rem; }
+  .tool p { margin: 4px 0 8px; font-size: .97rem; line-height: 1.4; }
+  .tool .meta { font-size: .85rem; line-height: 1.45; border-top: 2px dashed #1d1b4b33; padding-top: 6px; }
+  .tool .meta div { margin-bottom: 2px; }
+  .tool .meta b { color: var(--mut); }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: .88em; background: #1d1b4b12; border-radius: 6px; padding: 0 5px; white-space: nowrap; }
+  .selos { display:flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .selo { display:inline-block; font-size: .8rem; font-weight: 800; border: 2px solid var(--ink); border-radius: 99px; padding: 1px 10px; }
+  .selo.real { background: #c9f7e6; } .selo.sint { background: #fff0a8; }
+
+  /* ---------- sintéticos ---------- */
+  .porque { padding: 20px 24px; font-size: 1.05rem; line-height: 1.55; }
+  .porque p { margin: 0 0 10px; }
+  .porque p:last-child { margin: 0; }
+  .incid { display:grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 18px; }
+  .grupo { padding: 14px 18px; }
+  .grupo h3 { margin: 0 0 6px; font-size: 1.1rem; display:flex; gap: 8px; align-items:center; }
+  .grupo ul { margin: 0; padding-left: 20px; font-size: .92rem; line-height: 1.45; }
+  .grupo .zona { color: var(--mut); }
+  .chips { display:flex; flex-wrap:wrap; gap: 6px; margin-top: 8px; }
+  .chip { font-size: .78rem; font-weight: 700; border: 2px solid var(--ink); border-radius: 8px; padding: 0 8px; background: var(--bg); }
+
+  /* ---------- MCP ---------- */
+  .mcp { padding: 20px 24px; }
+  .mcp p { font-size: 1.05rem; line-height: 1.5; margin: 0 0 12px; }
+  .mcp h3 { font-size: 1.1rem; margin: 18px 0 6px; }
+  .codigo { position: relative; background: #17152f; color: #e9e6ff; border: var(--borda); border-radius: 14px; box-shadow: 4px 4px 0 var(--ink); }
+  .codigo pre { margin: 0; padding: 16px 130px 16px 18px; font-family: ui-monospace, Consolas, monospace; font-size: .9rem; line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
+  .codigo .k { color: #ffd23f; } .codigo .s { color: #7ef0c8; } .codigo .c { color: #ff8fb6; }
+  .codigo button { position: absolute; top: 10px; right: 10px; font-size: .85rem; padding: 4px 12px; background: var(--amarelo); color: var(--ink); box-shadow: 3px 3px 0 #000; border-color: #000; }
+  .codigo button.ok { background: var(--verde); }
+
+  /* ---------- segurança ---------- */
+  .seg { display:grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .seg .card { padding: 14px 18px; display:flex; gap: 14px; align-items:flex-start; font-size: .98rem; line-height: 1.4; }
+  .seg .e { font-size: 2rem; line-height: 1; flex: none; }
+  .seg b { display:block; font-size: 1.08rem; margin-bottom: 2px; }
+
+  footer { margin-top: 40px; color: var(--mut); font-size: .85rem; text-align: center; }
+
+  @media (prefers-reduced-motion: reduce) { .passo, .pacote, .logo .o { animation: none; } }
+  @media (max-width: 900px) {
+    .logo { font-size: 2.5rem; }
+    .linha { flex-direction: column; }
+    .seta { width: auto; transform: rotate(90deg); height: 30px; }
+    .passo.pedido { flex: 1 1 auto; }
+    .pacote { display: none; }
+    .regras, .ferr, .incid, .seg { grid-template-columns: 1fr; }
+    .desce { justify-content: center; padding: 0; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1 class="logo">Desculp<span class="o">ó</span>metro</h1>
+      <p class="tag" data-t="tag"></p>
+    </div>
+    <button type="button" class="lingua" id="lingua"></button>
+  </header>
+
+  <nav class="menu">
+    <a href="index.html" data-t="m_app"></a>
+    <a href="catalogo.html" data-t="m_cat"></a>
+    <a href="ferramentas.html" class="ativo" data-t="m_how"></a>
+  </nav>
+
+  <div class="card hero" data-h="hero"></div>
+
+  <!-- 1. Como o agente decide -->
+  <h2><span class="num">1</span><span data-t="s1"></span></h2>
+  <p class="intro" data-h="s1_intro"></p>
+
+  <div class="card diagrama">
+    <div class="linha">
+      <div class="passo pedido p1"><div class="e">👤</div><div class="t" data-t="p1_t"></div><div class="d" data-t="p1_d"></div></div>
+      <div class="seta">→</div>
+      <div class="ciclo">
+        <div class="rotulo" data-t="ciclo"></div>
+        <div class="pacote">📦</div>
+        <div class="linha">
+          <div class="passo p2"><div class="e">🧠</div><div class="t" data-t="p2_t"></div><div class="d" data-t="p2_d"></div></div>
+          <div class="seta">→</div>
+          <div class="passo p3"><div class="e">⚙️</div><div class="t" data-t="p3_t"></div><div class="d" data-t="p3_d"></div></div>
+          <div class="seta">→</div>
+          <div class="passo p4"><div class="e">📥</div><div class="t" data-t="p4_t"></div><div class="d" data-t="p4_d"></div></div>
+        </div>
+        <div class="volta"><span data-t="volta"></span></div>
+      </div>
+    </div>
+    <div class="desce"><span data-t="desce"></span><b>↓</b></div>
+    <div class="linha">
+      <div class="passo p5"><div class="e">🎯</div><div class="t" data-t="p5_t"></div><div class="d" data-t="p5_d"></div></div>
+      <div class="seta">→</div>
+      <div class="passo p6"><div class="e">🎭</div><div class="t" data-t="p6_t"></div>
+        <div class="niveis">
+          <div class="nivel n1" data-t="n1"></div>
+          <div class="nivel n2" data-t="n2"></div>
+          <div class="nivel n3" data-t="n3"></div>
+        </div>
+      </div>
+      <div class="seta">→</div>
+      <div class="passo p7"><div class="e">💬</div><div class="t" data-t="p7_t"></div><div class="d" data-t="p7_d"></div></div>
+    </div>
+  </div>
+
+  <div class="regras">
+    <div class="card regra"><div class="e">🧭</div><b data-t="r1_t"></b><span data-t="r1_d"></span></div>
+    <div class="card regra"><div class="e">🔒</div><b data-t="r2_t"></b><span data-t="r2_d"></span></div>
+    <div class="card regra"><div class="e">✍️</div><b data-t="r3_t"></b><span data-t="r3_d"></span></div>
+  </div>
+
+  <!-- 2. Ferramentas -->
+  <h2><span class="num">2</span><span data-t="s2"></span></h2>
+  <p class="intro" data-t="s2_intro"></p>
+  <div class="ferr" id="ferr"></div>
+
+  <!-- 3. Porque há dados sintéticos -->
+  <h2><span class="num">3</span><span data-t="s3"></span></h2>
+  <div class="card porque" data-h="s3_txt"></div>
+  <div class="incid" id="incid"></div>
+
+  <!-- 4. MCP -->
+  <h2><span class="num">4</span><span data-t="s4"></span></h2>
+  <div class="card mcp">
+    <p data-h="s4_intro"></p>
+    <h3 data-t="s4_cc"></h3>
+    <div class="codigo"><button type="button" data-copia="cmd1" data-t="copiar"></button><pre id="cmd1">claude mcp add desculpometro -- node C:\Git\desculpometro\mcp-server.js</pre></div>
+    <h3 data-t="s4_cd"></h3>
+    <div class="codigo"><button type="button" data-copia="cmd2" data-t="copiar"></button><pre id="cmd2">{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"desculpometro"</span>: {
+      <span class="k">"command"</span>: <span class="s">"node"</span>,
+      <span class="k">"args"</span>: [<span class="s">"C:\\Git\\desculpometro\\mcp-server.js"</span>]
+    }
+  }
+}</pre></div>
+    <p style="margin-top:14px" data-t="s4_fim"></p>
+  </div>
+
+  <!-- 5. Modelo e segurança -->
+  <h2><span class="num">5</span><span data-t="s5"></span></h2>
+  <div class="seg">
+    <div class="card"><div class="e">🤖</div><div><b data-t="g1_t"></b><span data-h="g1_d"></span></div></div>
+    <div class="card"><div class="e">🛟</div><div><b data-t="g2_t"></b><span data-t="g2_d"></span></div></div>
+    <div class="card"><div class="e">🚫</div><div><b data-t="g3_t"></b><span data-t="g3_d"></span></div></div>
+    <div class="card"><div class="e">🎪</div><div><b data-t="g4_t"></b><span data-t="g4_d"></span></div></div>
+  </div>
+
+  <footer data-t="rodape"></footer>
+</main>
+
+<script type="module">
+import { INCIDENTES } from './catalogo.js';
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+
+// Textos estáticos. Os campos usados com data-h são HTML fixo escrito aqui (não vem do utilizador).
+const T = {
+  pt: {
+    titulo: 'Desculpómetro · Como funciona', lingua: '🌐 English',
+    tag: 'Como o agente decide e que ferramentas usa para montar a desculpa.',
+    m_app: '🔎 Desculpómetro', m_cat: '📚 Catálogo', m_how: '🛠️ Como funciona',
+    hero: 'O Desculpómetro é um <b>agente de IA</b>: recebe o teu atraso (ou o compromisso a que queres fugir), <b>investiga sozinho</b> o tempo, o trânsito, os transportes e os eventos no caminho com <b>6 ferramentas</b>, e só depois escreve a desculpa, apoiada em provas.',
+    s1: 'Como o agente decide',
+    s1_intro: 'O cérebro é o <b>Claude Sonnet 5.5</b>, chamado pela API da Anthropic com <b>tool use</b>. O servidor dá-lhe a lista de ferramentas e deixa-o trabalhar em ciclo, até um máximo de 12 voltas.',
+    p1_t: 'Pedido do utilizador', p1_d: 'De onde, para onde, quantos minutos de atraso e a quem tens de explicar.',
+    ciclo: 'Ciclo do agente',
+    p2_t: 'O modelo escolhe as ferramentas', p2_d: 'Claude decide quais chamar e com que parâmetros.',
+    p3_t: 'O servidor executa-as', p3_d: 'Várias ao mesmo tempo, em paralelo, e devolve todos os resultados de uma vez.',
+    p4_t: 'Os resultados voltam ao modelo', p4_d: 'Claude lê as provas e decide se precisa de mais.',
+    volta: '🔁 repete até ter provas suficientes',
+    desce: 'provas suficientes',
+    p5_t: 'Credibilidade de 0 a 100', p5_d: 'Os factos encontrados explicam mesmo os minutos de atraso? Atraso grande sem justificação dá nota baixa.',
+    p6_t: 'Escolhe a desculpa',
+    n1: '20 a 100: desculpa normal, só com factos',
+    n2: '1 a 19: MODO DESESPERO, desculpa absurda',
+    n3: '0: ÚLTIMO RECURSO, as mais absurdas',
+    p7_t: 'Mensagem no tom certo', p7_d: 'Formal para o chefe, dramático para a mãe, carinhoso para a namorada, respeitoso para o professor.',
+    r1_t: 'Nada está fixo no código', r1_d: 'O modelo decide sozinho a ordem e quais ferramentas usar. O servidor só executa o que ele pede.',
+    r2_t: 'Só factos das ferramentas', r2_d: 'O agente só pode usar factos que as ferramentas devolveram. Cada prova leva a fonte, tal como veio.',
+    r3_t: 'O teu texto não é prova', r3_d: 'O contexto que escreves serve para o tom e para escolher a desculpa. Nunca conta como prova nem como fonte.',
+    s2: 'As ferramentas',
+    s2_intro: 'Seis ferramentas, cada uma com nome, descrição e esquema de parâmetros. É com estas descrições que o modelo decide quando usar cada uma.',
+    params: 'Parâmetros', fonte: 'Fonte', nenhum: 'nenhum',
+    real: '🟢 Dados reais', sint: '🟡 Dados sintéticos',
+    real_chave: '🟢 Dados reais com TOMTOM_API_KEY', sint_chave: '🟡 Dados sintéticos sem chave ou se falhar',
+    tools: {
+      geocode: ['Converte o nome de um local (cidade, bairro) em coordenadas. Se não encontrar o texto todo, tenta cada parte.', 'Open-Meteo Geocoding API (grátis, sem chave)'],
+      get_weather: ['Tempo atual e das próximas 6 horas: estado do céu, temperatura, chuva, rajadas de vento e visibilidade.', 'Open-Meteo Forecast API (grátis, sem chave)'],
+      get_traffic: ['Tempo de viagem de carro e atraso por trânsito entre origem e destino. A fonte diz se os dados são reais ou simulados.', 'TomTom Routing API com trânsito em tempo real; sem chave, dados simulados'],
+      get_transport_status: ['Estado do metro, autocarros e comboios urbanos. No Porto: Metro (linhas A, B e D), STCP e CP; nas outras cidades, linhas de Lisboa.', 'Dados simulados (demo)'],
+      get_events_nearby: ['Jogos, concertos e eventos que estejam a causar trânsito na cidade, com zona, hora e impacto.', 'Dados simulados (demo)'],
+      get_seagull_facts: ['Factos reais sobre a gaivota-de-patas-amarelas, a dona dos telhados do Porto. Só no MODO DESESPERO, quando a desculpa envolve gaivotas.', 'Wikipédia (API MediaWiki)'],
+    },
+    s3: 'Porque há dados sintéticos',
+    s3_txt: '<p>Procurámos APIs para todos os dados que o agente vai buscar. O tempo (Open-Meteo) e as gaivotas (Wikipédia) são <b>grátis e usados a sério</b>. Para o estado do metro e dos comboios em tempo real e para eventos com impacto no trânsito, as APIs que encontrámos são pagas ou exigem contrato, e o trânsito em tempo real precisa de chave.</p><p>Por isso injetamos <b>dados sintéticos plausíveis</b>, estáveis: não mudam a cada clique (trânsito e eventos ficam iguais durante o dia, transportes durante cada hora). O agente recebe-os sempre marcados como <b>"Dados simulados"</b>, e aparecem assim nas provas.</p><p>Trocar por uma API real é mudar uma função. O agente não muda.</p>',
+    g_transito: 'Incidentes de trânsito', g_vias: 'Vias', g_transp: 'Problemas nos transportes',
+    g_ev_porto: 'Eventos no Porto', g_ev_lisboa: 'Eventos em Lisboa', g_imp: 'Impactos dos eventos',
+    s4: 'As ferramentas também como MCP',
+    s4_intro: 'As mesmas 6 ferramentas estão disponíveis como servidor <b>MCP</b> (Model Context Protocol), no ficheiro <code>mcp-server.js</code>. Corre por stdio e liga-se a qualquer cliente MCP.',
+    s4_cc: 'Claude Code', s4_cd: 'Claude Desktop (claude_desktop_config.json)',
+    s4_fim: 'Em MCP, cada ferramenta é exposta com o mesmo nome, descrição e esquema de parâmetros, por isso outro agente pode investigar desculpas com as mesmas ferramentas.',
+    copiar: '📋 Copiar', copiado: '✅ Copiado',
+    s5: 'Modelo e segurança',
+    g1_t: 'Modelo', g1_d: '<code>claude-sonnet-5-5</code> com esforço médio (<code>effort: medium</code>) na investigação.',
+    g2_t: 'Fallback de recusas', g2_d: 'Cada pedido usa o fallback de recusas do lado do servidor. Se a API não aceitar o parâmetro, repete o pedido sem ele.',
+    g3_t: 'Nada que passe por real', g3_d: 'O agente nunca gera documentos que possam passar por reais: atestados médicos, autos de polícia, declarações oficiais ou notícias de meios reais.',
+    g4_t: 'Paródias claramente fictícias', g4_d: 'O Diário do Bico é um tabloide inventado, escrito por gaivotas, e as pessoas das entrevistas são inventadas, nunca figuras públicas reais.',
+    rodape: 'Desculpómetro · Agentic AI Challenge',
+  },
+  en: {
+    titulo: 'Desculpómetro · How it works', lingua: '🌐 Português',
+    tag: 'How the agent decides and which tools it uses to build the excuse.',
+    m_app: '🔎 Desculpómetro', m_cat: '📚 Catalogue', m_how: '🛠️ How it works',
+    hero: 'Desculpómetro is an <b>AI agent</b>: it takes your delay (or the plan you want to escape), <b>investigates on its own</b> the weather, traffic, public transport and events along the way with <b>6 tools</b>, and only then writes the excuse, backed by evidence.',
+    s1: 'How the agent decides',
+    s1_intro: 'The brain is <b>Claude Sonnet 5.5</b>, called through the Anthropic API with <b>tool use</b>. The server hands it the list of tools and lets it work in a loop, up to 12 rounds.',
+    p1_t: 'User request', p1_d: 'From where, to where, how many minutes late and who you have to explain it to.',
+    ciclo: 'Agent loop',
+    p2_t: 'The model picks the tools', p2_d: 'Claude decides which ones to call and with which parameters.',
+    p3_t: 'The server runs them', p3_d: 'Several at once, in parallel, returning all results together.',
+    p4_t: 'Results go back to the model', p4_d: 'Claude reads the evidence and decides whether it needs more.',
+    volta: '🔁 repeats until it has enough evidence',
+    desce: 'enough evidence',
+    p5_t: 'Credibility from 0 to 100', p5_d: 'Do the facts really explain the minutes of delay? A big delay with no justification gets a low score.',
+    p6_t: 'Picks the excuse',
+    n1: '20 to 100: normal excuse, facts only',
+    n2: '1 to 19: DESPERATION MODE, absurd excuse',
+    n3: '0: LAST RESORT, the most absurd ones',
+    p7_t: 'Message in the right tone', p7_d: 'Formal for the boss, dramatic for mum, loving for the girlfriend, respectful for the teacher.',
+    r1_t: 'Nothing is hard-coded', r1_d: 'The model alone decides the order and which tools to use. The server just runs what it asks for.',
+    r2_t: 'Only facts from the tools', r2_d: 'The agent can only use facts the tools returned. Every piece of evidence carries its source, exactly as given.',
+    r3_t: 'Your text is not evidence', r3_d: 'The context you write sets the tone and helps pick the excuse. It never counts as evidence or as a source.',
+    s2: 'The tools',
+    s2_intro: 'Six tools, each with a name, a description and a parameter schema. The model uses these descriptions to decide when to call each one.',
+    params: 'Parameters', fonte: 'Source', nenhum: 'none',
+    real: '🟢 Real data', sint: '🟡 Synthetic data',
+    real_chave: '🟢 Real data with TOMTOM_API_KEY', sint_chave: '🟡 Synthetic data without a key or on failure',
+    tools: {
+      geocode: ['Turns a place name (city, neighbourhood) into coordinates. If the full text is not found, it tries each part.', 'Open-Meteo Geocoding API (free, no key)'],
+      get_weather: ['Current weather and the next 6 hours: sky, temperature, rain, wind gusts and visibility.', 'Open-Meteo Forecast API (free, no key)'],
+      get_traffic: ['Driving time and traffic delay between origin and destination. The source says whether the data is real or simulated.', 'TomTom Routing API with live traffic; without a key, simulated data'],
+      get_transport_status: ['Status of the metro, buses and suburban trains. In Porto: Metro (lines A, B and D), STCP and CP; in other cities, Lisbon lines.', 'Simulated data (demo)'],
+      get_events_nearby: ['Matches, concerts and events causing traffic in the city, with area, time and impact.', 'Simulated data (demo)'],
+      get_seagull_facts: ['Real facts about the yellow-legged gull, ruler of the rooftops of Porto. Only in DESPERATION MODE, when the excuse involves gulls.', 'Wikipedia (MediaWiki API)'],
+    },
+    s3: 'Why there is synthetic data',
+    s3_txt: '<p>We looked for APIs for every piece of data the agent fetches. Weather (Open-Meteo) and gulls (Wikipedia) are <b>free and used for real</b>. For live metro and train status and for events affecting traffic, the APIs we found are paid or require a contract, and live traffic needs a key.</p><p>So we inject <b>plausible synthetic data</b> that is stable: it does not change on every click (traffic and events stay the same all day, transport for each hour). The agent always receives it labelled <b>"Simulated data"</b>, and it shows up that way in the evidence.</p><p>Switching to a real API means changing one function. The agent stays the same.</p>',
+    g_transito: 'Traffic incidents', g_vias: 'Roads', g_transp: 'Transport problems',
+    g_ev_porto: 'Events in Porto', g_ev_lisboa: 'Events in Lisbon', g_imp: 'Event impacts',
+    s4: 'The tools as MCP too',
+    s4_intro: 'The same 6 tools are available as an <b>MCP</b> (Model Context Protocol) server, in the file <code>mcp-server.js</code>. It runs over stdio and plugs into any MCP client.',
+    s4_cc: 'Claude Code', s4_cd: 'Claude Desktop (claude_desktop_config.json)',
+    s4_fim: 'In MCP, each tool is exposed with the same name, description and parameter schema, so another agent can investigate excuses with the very same tools.',
+    copiar: '📋 Copy', copiado: '✅ Copied',
+    s5: 'Model and safety',
+    g1_t: 'Model', g1_d: '<code>claude-sonnet-5-5</code> with medium effort (<code>effort: medium</code>) for the investigation.',
+    g2_t: 'Refusal fallback', g2_d: 'Every request uses the server-side refusal fallback. If the API does not accept the parameter, it retries without it.',
+    g3_t: 'Nothing that could pass as real', g3_d: 'The agent never produces documents that could pass as real: doctor\'s notes, police reports, official statements or news from real outlets.',
+    g4_t: 'Clearly fictional parodies', g4_d: 'Diário do Bico is a made-up tabloid written by gulls, and the people in the interviews are invented, never real public figures.',
+    rodape: 'Desculpómetro · Agentic AI Challenge',
+  },
+};
+
+// As 6 ferramentas, tal como em tools.js
+const FERR = [
+  { nome: 'geocode', ico: '📍', params: ['local: string'], selos: ['real'] },
+  { nome: 'get_weather', ico: '🌦️', params: ['lat: number', 'lon: number'], selos: ['real'] },
+  { nome: 'get_traffic', ico: '🚗', params: ['origem: string', 'destino: string'], selos: ['real_chave', 'sint_chave'] },
+  { nome: 'get_transport_status', ico: '🚇', params: ['cidade: string'], selos: ['sint'] },
+  { nome: 'get_events_nearby', ico: '🎟️', params: ['cidade: string'], selos: ['sint'] },
+  { nome: 'get_seagull_facts', ico: '🐦', params: [], selos: ['real'] },
+];
+
+const qs = new URLSearchParams(location.search).get('lang');
+let lang = qs === 'en' || qs === 'pt' ? qs : (localStorage.getItem('lang') === 'en' ? 'en' : 'pt');
+const t = k => T[lang][k] ?? k;
+
+function desenhaFerramentas() {
+  document.getElementById('ferr').innerHTML = FERR.map(f => {
+    const [desc, fonte] = T[lang].tools[f.nome];
+    const params = f.params.length ? f.params.map(p => `<code>${esc(p)}</code>`).join(' ') : `<i>${esc(t('nenhum'))}</i>`;
+    const selos = f.selos.map(s => `<span class="selo ${s.startsWith('real') ? 'real' : 'sint'}">${esc(t(s))}</span>`).join('');
+    return `<div class="card tool"><div class="ico">${f.ico}</div><div>
+      <div class="nome">${esc(f.nome)}</div>
+      <p>${esc(desc)}</p>
+      <div class="meta"><div><b>${esc(t('params'))}:</b> ${params}</div><div><b>${esc(t('fonte'))}:</b> ${esc(fonte)}</div></div>
+      <div class="selos">${selos}</div></div></div>`;
+  }).join('');
+}
+
+function desenhaIncidentes() {
+  const li = arr => `<ul>${arr.map(x => `<li>${x}</li>`).join('')}</ul>`;
+  const ev = lista => li(lista.map(e => `${esc(e[lang])} <span class="zona">(${esc(e.zona)})</span>`));
+  const grupos = [
+    ['🚗', t('g_transito'), li(INCIDENTES.transito[lang].map(esc)) + `<div class="chips">${INCIDENTES.transito.vias.map(v => `<span class="chip">${esc(v)}</span>`).join('')}</div>`],
+    ['🚇', t('g_transp'), li(INCIDENTES.transportes[lang].map(esc))],
+    ['🏟️', t('g_ev_porto'), ev(INCIDENTES.eventos_porto)],
+    ['🎤', t('g_ev_lisboa'), ev(INCIDENTES.eventos_lisboa)],
+  ];
+  const imp = `<div class="chips" style="margin-top:0">${INCIDENTES.impactos[lang].map(v => `<span class="chip">${esc(v)}</span>`).join('')}</div>`;
+  document.getElementById('incid').innerHTML =
+    grupos.map(([e, titulo, corpo]) => `<div class="card grupo"><h3>${e} ${esc(titulo)} <span class="selo sint">${esc(t('sint'))}</span></h3>${corpo}</div>`).join('') +
+    `<div class="card grupo" style="grid-column:1/-1"><h3>⚠️ ${esc(t('g_imp'))}</h3>${imp}</div>`;
+}
+
+function aplicarLingua() {
+  document.documentElement.lang = lang === 'en' ? 'en-GB' : 'pt-PT';
+  document.title = t('titulo');
+  document.getElementById('lingua').textContent = t('lingua');
+  document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t(el.dataset.t); });
+  document.querySelectorAll('[data-h]').forEach(el => { el.innerHTML = t(el.dataset.h); });
+  document.querySelectorAll('nav.menu a').forEach(a => {
+    const u = new URL(a.getAttribute('href').split('?')[0], location.href);
+    u.searchParams.set('lang', lang);
+    a.href = u.pathname.split('/').pop() + u.search;
+  });
+  desenhaFerramentas();
+  desenhaIncidentes();
+}
+
+document.getElementById('lingua').onclick = () => {
+  lang = lang === 'pt' ? 'en' : 'pt';
+  localStorage.setItem('lang', lang);
+  const u = new URL(location.href);
+  if (u.searchParams.has('lang')) { u.searchParams.set('lang', lang); history.replaceState(null, '', u); }
+  aplicarLingua();
+};
+
+document.querySelectorAll('[data-copia]').forEach(b => b.addEventListener('click', async () => {
+  const texto = document.getElementById(b.dataset.copia).textContent;
+  try { await navigator.clipboard.writeText(texto); }
+  catch {
+    const ta = document.createElement('textarea'); ta.value = texto; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); ta.remove();
+  }
+  b.textContent = t('copiado'); b.classList.add('ok');
+  setTimeout(() => { b.textContent = t('copiar'); b.classList.remove('ok'); }, 1600);
+}));
+
+aplicarLingua();
+</script>
+</body>
+</html>

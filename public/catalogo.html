@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catálogo · Desculpómetro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#fff6e0; --ink:#1d1b4b; --card:#ffffff; --mut:#6b6893;
+    --amarelo:#ffd23f; --rosa:#ff4f8b; --azul:#3a86ff; --verde:#06d6a0; --laranja:#ff8c42; --vermelho:#ef233c; --roxo:#8338ec;
+    --borda: 3px solid var(--ink); --sombra: 5px 5px 0 var(--ink);
+  }
+  * { box-sizing:border-box; }
+  html { font-size: 19px; }
+  body { margin:0; font-family: "Baloo 2", "Trebuchet MS", system-ui, sans-serif; background: var(--bg); color: var(--ink);
+         background-image: radial-gradient(#1d1b4b14 1.5px, transparent 1.5px); background-size: 22px 22px; }
+  main { max-width: 1120px; margin: 0 auto; padding: 26px 18px 90px; }
+  .hidden { display:none !important; }
+
+  header { display:flex; align-items:center; gap:16px; margin-bottom:14px; flex-wrap:wrap; }
+  .logo { font-size: 3.4rem; font-weight:800; line-height:1; margin:0; letter-spacing:-1px; }
+  .logo .o { color: var(--rosa); display:inline-block; animation: abana 2.5s ease-in-out infinite; }
+  @keyframes abana { 50% { transform: rotate(-12deg) translateY(-4px); } }
+  .tag { margin:4px 0 0; font-size:1.1rem; color: var(--mut); font-weight:500; }
+
+  .card { background: var(--card); border: var(--borda); border-radius: 18px; box-shadow: var(--sombra); }
+
+  button { font: inherit; font-weight:800; font-size:1.1rem; background: var(--rosa); color:#fff; border: var(--borda); border-radius:14px;
+           padding: 10px 22px; box-shadow: 4px 4px 0 var(--ink); cursor:pointer; transition: transform .1s, box-shadow .1s; }
+  button:hover { transform: translate(-1px,-1px); box-shadow: 6px 6px 0 var(--ink); }
+  button:active { transform: translate(3px,3px); box-shadow: 1px 1px 0 var(--ink); }
+  .lingua { white-space:nowrap; margin-left:auto; align-self:flex-start; background:#fff; color: var(--ink); font-size:1rem; padding: 6px 14px; }
+
+  /* menu partilhado entre páginas */
+  nav.menu { display:flex; gap:10px; flex-wrap:wrap; margin: 0 0 26px; }
+  nav.menu a { text-decoration:none; color: var(--ink); font-weight:800; font-size:1.05rem; background:#fff; border: var(--borda); border-radius:14px;
+               padding: 6px 16px; box-shadow: 3px 3px 0 var(--ink); transition: transform .1s, box-shadow .1s; }
+  nav.menu a:hover { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 var(--ink); }
+  nav.menu a.ativo { background: var(--ink); color: var(--amarelo); }
+
+  /* secções */
+  section { margin-top: 44px; }
+  h2 { font-size: 1.9rem; margin: 0 0 6px; font-weight:800; display:flex; align-items:center; gap:12px; flex-wrap:wrap; line-height:1.1; }
+  h2 .pill { font-size:.75rem; background:var(--amarelo); border:2px solid var(--ink); border-radius:99px; padding:0 10px; font-weight:700; }
+  .intro { margin: 0 0 16px; color: var(--mut); font-size:1rem; max-width: 760px; line-height:1.4; }
+  h3.grupo { font-size:1.25rem; margin: 22px 0 10px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  h3.grupo .pill { font-size:.7rem; background:#fff; border:2px solid var(--ink); border-radius:99px; padding:0 10px; }
+
+  /* personagens */
+  .grelha { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap:16px; }
+  .pers { padding: 14px 16px 14px; display:flex; flex-direction:column; gap:4px; }
+  .pers:nth-child(5n+1) { background: #fff3c4; }
+  .pers:nth-child(5n+2) { background: #ffe0ec; }
+  .pers:nth-child(5n+3) { background: #dcebff; }
+  .pers:nth-child(5n+4) { background: #d4f7ec; }
+  .pers:nth-child(5n+5) { background: #ece0ff; }
+  .pers .emo { font-size: 3.4rem; line-height:1.1; display:inline-block; transform-origin: 50% 80%; width:max-content; }
+  .pers:hover .emo { animation: abanaEmo .5s ease-in-out infinite; }
+  @keyframes abanaEmo { 25% { transform: rotate(-14deg); } 75% { transform: rotate(14deg); } }
+  .pers .nome { font-weight:800; font-size:1.15rem; line-height:1.15; }
+  .pers .desc { font-size:.92rem; line-height:1.35; }
+  .pers .conta { margin-top:auto; padding-top:6px; font-size:.78rem; font-weight:800; }
+  .pers .conta span { background:#fff; border:2px solid var(--ink); border-radius:99px; padding:1px 10px; }
+  .pers .conta.zero span { background: transparent; border-style:dashed; color: var(--mut); }
+
+  /* filtros */
+  .filtros { padding: 14px 16px; background: var(--amarelo); display:flex; flex-direction:column; gap:12px; margin-bottom: 6px; }
+  .pesquisa { font: inherit; font-size:1.05rem; font-weight:500; color: var(--ink); background:#fff; border: var(--borda); border-radius:12px; padding:8px 12px; width:100%; }
+  .pesquisa:focus { outline: 3px solid var(--rosa); outline-offset: 2px; }
+  .chips { display:flex; gap:8px; flex-wrap:wrap; }
+  .chips button { background:#fff; color: var(--ink); font-size:.85rem; padding: 3px 12px; border-radius:99px; box-shadow: 2px 2px 0 var(--ink); }
+  .chips button.ativo { background: var(--ink); color: var(--amarelo); }
+
+  /* desculpas */
+  .lista { display:grid; grid-template-columns: repeat(auto-fill, minmax(330px,1fr)); gap:14px; }
+  .desc-item { display:grid; grid-template-columns: 46px 1fr; gap:12px; align-items:center; padding: 12px 14px; }
+  .desc-item .n { width:46px; height:46px; border: var(--borda); border-radius:50%; background: var(--rosa); color:#fff; font-weight:800;
+                  display:flex; align-items:center; justify-content:center; font-size:1.05rem; }
+  .desc-item .t { font-size:1rem; line-height:1.35; }
+  .desc-item .t .pe { font-size:1.4rem; margin-right:4px; vertical-align:-3px; }
+  .desc-item.ultimo { padding-right: 30px; background:#111; color: var(--amarelo); border-color:#111; box-shadow: 5px 5px 0 var(--vermelho); position:relative; }
+  .desc-item.ultimo .n { background: var(--amarelo); color:#111; border-color: var(--amarelo); }
+  .desc-item.ultimo::after { content:'☠️'; position:absolute; top:-14px; right:-10px; font-size:1.3rem; background: var(--vermelho); border:3px solid #111;
+                             border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; transform: rotate(12deg); }
+  .vazio { color: var(--mut); padding: 22px; text-align:center; border: 3px dashed #1d1b4b55; border-radius:18px; grid-column: 1 / -1; }
+
+  /* destinatários */
+  .grelha.dests { grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); }
+  .dest { padding: 14px 16px; display:flex; gap: 14px; align-items:flex-start; }
+  .dest .corpo { display:flex; flex-direction:column; gap:6px; min-width:0; }
+  .dest .emo { flex:none; width:64px; height:64px; border: var(--borda); border-radius:16px; background: var(--amarelo); display:flex; align-items:center; justify-content:center; font-size:2.2rem; }
+  .dest .nome { font-weight:800; font-size:1.15rem; line-height:1.15; }
+  .dest .campo { font-size:.9rem; line-height:1.35; }
+  .dest .campo b { display:block; font-size:.7rem; letter-spacing:1px; text-transform:uppercase; color: var(--mut); }
+
+  /* incidentes */
+  .simulado { display:inline-block; background: var(--laranja); color: var(--ink); border:2px solid var(--ink); border-radius:8px; padding:0 8px; font-weight:800; font-size:.8rem; }
+  .grelha.incs { grid-template-columns: repeat(auto-fill, minmax(195px,1fr)); }
+  .inc { padding: 14px 14px; }
+  .inc:nth-child(5n+1) { border-top: 12px solid var(--vermelho); }
+  .inc:nth-child(5n+2) { border-top: 12px solid var(--azul); }
+  .inc:nth-child(5n+3) { border-top: 12px solid var(--verde); }
+  .inc:nth-child(5n+4) { border-top: 12px solid var(--roxo); }
+  .inc:nth-child(5n+5) { border-top: 12px solid var(--laranja); }
+  .inc h3 { margin:0 0 6px; font-size:1.15rem; }
+  .inc ul { margin:0; padding-left: 20px; font-size:.92rem; line-height:1.4; }
+  .inc li { margin-bottom: 3px; }
+  .inc .zona { color: var(--mut); font-size:.8rem; font-weight:700; }
+  .vias { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .vias span { font-size:.78rem; font-weight:800; background: var(--ink); color:#fff; border-radius:6px; padding: 0 8px; }
+  .vias-t { font-size:.75rem; font-weight:800; color: var(--mut); margin-top:10px; text-transform:uppercase; letter-spacing:1px; }
+
+  footer { margin-top: 50px; text-align:center; color: var(--mut); font-size:.85rem; }
+
+  @media (max-width: 700px) {
+    .logo { font-size: 2.5rem; }
+    .lista { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { .logo .o, .pers:hover .emo { animation:none; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1 class="logo">Desculp<span class="o">ó</span>metro</h1>
+      <p class="tag" data-t="tag"></p>
+    </div>
+    <button type="button" class="lingua" id="lingua"></button>
+  </header>
+
+  <nav class="menu">
+    <a href="index.html" data-t="menu_inicio"></a>
+    <a href="catalogo.html" class="ativo" data-t="menu_catalogo"></a>
+    <a href="ferramentas.html" data-t="menu_ferramentas"></a>
+  </nav>
+
+  <section id="s-personagens">
+    <h2><span data-t="pers_titulo"></span> <span class="pill" id="pers-total"></span></h2>
+    <p class="intro" data-t="pers_intro"></p>
+    <div class="grelha" id="personagens"></div>
+  </section>
+
+  <section id="s-desculpas">
+    <h2><span data-t="desc_titulo"></span> <span class="pill" id="desc-total"></span></h2>
+    <p class="intro" data-t="desc_intro"></p>
+    <div class="card filtros">
+      <input type="search" class="pesquisa" id="pesquisa" autocomplete="off">
+      <div class="chips" id="chips"></div>
+    </div>
+    <h3 class="grupo"><span data-t="grupo_desespero"></span> <span class="pill" id="cont-desespero"></span></h3>
+    <div class="lista" id="lista-desespero"></div>
+    <h3 class="grupo">☠️ <span data-t="grupo_ultimo"></span> <span class="pill" id="cont-ultimo"></span></h3>
+    <div class="lista" id="lista-ultimo"></div>
+  </section>
+
+  <section id="s-destinatarios">
+    <h2><span data-t="dest_titulo"></span> <span class="pill" id="dest-total"></span></h2>
+    <p class="intro" data-t="dest_intro"></p>
+    <div class="grelha dests" id="destinatarios"></div>
+  </section>
+
+  <section id="s-incidentes">
+    <h2><span data-t="inc_titulo"></span> <span class="simulado" data-t="simulado"></span></h2>
+    <p class="intro" data-t="inc_intro"></p>
+    <div class="grelha incs" id="incidentes"></div>
+  </section>
+
+  <footer data-t="rodape"></footer>
+</main>
+
+<script type="module">
+import { DESTINATARIOS, PERSONAGENS, DESCULPAS, INCIDENTES } from './catalogo.js';
+
+const T = {
+  pt: {
+    titulo: 'Catálogo · Desculpómetro',
+    tag: 'O catálogo oficial de tudo o que pode correr mal (e de quem tem a culpa).',
+    lingua: '🌐 English',
+    menu_inicio: '🔎 Desculpómetro', menu_catalogo: '📚 Catálogo', menu_ferramentas: '🛠️ Como funciona',
+    pers_titulo: '🎭 Personagens',
+    pers_intro: 'O elenco do modo desespero. Passa o rato por cima para os veres a abanar.',
+    n_pers: n => `${n} personagens`,
+    conta: n => n === 0 ? 'Só aparece no desfile' : n === 1 ? '1 desculpa' : `${n} desculpas`,
+    desc_titulo: '🤯 Desculpas absurdas',
+    desc_intro: 'Quando a credibilidade cai a pique, o agente desiste da verdade e recorre a isto.',
+    n_desc: n => `${n} desculpas`,
+    pesquisa: 'Pesquisar desculpas… (ex.: gaivota, Gaia, francesinha)',
+    todas: 'Todas',
+    grupo_desespero: '🚨 Modo desespero (credibilidade 1 a 19)',
+    grupo_ultimo: 'Último recurso (só com credibilidade 0)',
+    mostra: (a, b) => `${a} de ${b}`,
+    nada: 'Nenhuma desculpa encontrada. Até o Desculpómetro tem limites.',
+    dest_titulo: '📨 Destinatários',
+    dest_intro: 'A quem podes mandar a desculpa. O agente ajusta o tom a cada um e, na simulação de mensagens, cada um responde à sua maneira.',
+    n_dest: n => `${n} destinatários`,
+    tom: 'Tom da desculpa', estilo: 'Como responde',
+    inc_titulo: '🧪 Incidentes sintéticos',
+    simulado: 'Dados simulados',
+    inc_intro: 'Quando não há uma API gratuita para consultar, as ferramentas do agente inventam a partir destes dados, e o resultado aparece sempre marcado como "Dados simulados".',
+    inc_transito: '🚗 Trânsito', inc_vias: 'Vias possíveis',
+    inc_transportes: '🚇 Transportes', inc_porto: '🏟️ Eventos no Porto', inc_lisboa: '🎤 Eventos em Lisboa', inc_impactos: '💥 Impactos',
+    rodape: 'Desculpómetro · Todas as personagens são fictícias. As gaivotas não.',
+  },
+  en: {
+    titulo: 'Catalogue · Desculpómetro',
+    tag: 'The official catalogue of everything that can go wrong (and who is to blame).',
+    lingua: '🌐 Português',
+    menu_inicio: '🔎 Desculpómetro', menu_catalogo: '📚 Catalogue', menu_ferramentas: '🛠️ How it works',
+    pers_titulo: '🎭 Characters',
+    pers_intro: 'The cast of desperation mode. Hover over them to see them wobble.',
+    n_pers: n => `${n} characters`,
+    conta: n => n === 0 ? 'Only appears in the parade' : n === 1 ? '1 excuse' : `${n} excuses`,
+    desc_titulo: '🤯 Absurd excuses',
+    desc_intro: 'When credibility nosedives, the agent gives up on the truth and turns to these.',
+    n_desc: n => `${n} excuses`,
+    pesquisa: 'Search excuses… (e.g. gull, Gaia, francesinha)',
+    todas: 'All',
+    grupo_desespero: '🚨 Desperation mode (credibility 1 to 19)',
+    grupo_ultimo: 'Last resort (only at credibility 0)',
+    mostra: (a, b) => `${a} of ${b}`,
+    nada: 'No excuses found. Even the Desculpómetro has its limits.',
+    dest_titulo: '📨 Recipients',
+    dest_intro: 'Who you can send the excuse to. The agent adjusts its tone for each one and, in the message simulation, each replies in their own way.',
+    n_dest: n => `${n} recipients`,
+    tom: 'Excuse tone', estilo: 'How they reply',
+    inc_titulo: '🧪 Synthetic incidents',
+    simulado: 'Simulated data',
+    inc_intro: 'When there is no free API to query, the agent\'s tools make things up from this data, and the result is always labelled "Simulated data".',
+    inc_transito: '🚗 Traffic', inc_vias: 'Possible roads',
+    inc_transportes: '🚇 Public transport', inc_porto: '🏟️ Events in Porto', inc_lisboa: '🎤 Events in Lisbon', inc_impactos: '💥 Impacts',
+    rodape: 'Desculpómetro · All characters are fictional. The gulls are not.',
+  },
+};
+
+// Tradução curta dos campos "tom" e "estilo" (só existem em português em catalogo.js)
+const DEST_EN = {
+  chefe: { tom: 'formal and professional', estilo: 'suspicious and curt, short sentences, no emojis' },
+  mae: { tom: 'dramatic and loving', estilo: 'dramatic and worried, asks if you have eaten, lots of emojis' },
+  namorada: { tom: 'affectionate', estilo: 'loving but jealous, especially of gulls and of any character in the excuse' },
+  professor: { tom: 'respectful', estilo: 'polite but demands evidence and sources, talks like someone marking a test' },
+  sogra: { tom: 'extremely polite, weighing every word', estilo: 'passive-aggressive, impeccably polite, reminds you what happened last time' },
+  amigo: { tom: 'relaxed, with jokes', estilo: 'mocks everything, replies with "hahaha" and imaginary voice notes' },
+  cliente: { tom: 'professional and reassuring', estilo: 'corporate, talks about deadlines and "aligning expectations"' },
+  senhorio: { tom: 'friendly but firm', estilo: 'only cares about the rent and when you can let the plumber in' },
+  treinador: { tom: 'motivated and energetic', estilo: 'everything is an excuse for push-ups, writes in capitals' },
+  grupo: { tom: 'for several people at once', estilo: 'several people replying at once, the aunt sends chain messages, the cousin sends memes' },
+};
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const $ = id => document.getElementById(id);
+
+const urlLang = new URLSearchParams(location.search).get('lang');
+let lang = (urlLang === 'en' || urlLang === 'pt') ? urlLang : (localStorage.getItem('lang') === 'en' ? 'en' : 'pt');
+let filtro = null;   // id da personagem ou null
+let termo = '';
+
+const contagem = {};
+for (const d of DESCULPAS) contagem[d.p] = (contagem[d.p] || 0) + 1;
+
+function textosFixos() {
+  const t = T[lang];
+  document.documentElement.lang = lang === 'en' ? 'en' : 'pt-PT';
+  document.title = t.titulo;
+  document.querySelectorAll('[data-t]').forEach(el => { const v = t[el.dataset.t]; if (typeof v === 'string') el.textContent = v; });
+  $('lingua').textContent = t.lingua;
+  $('pesquisa').placeholder = t.pesquisa;
+  $('pers-total').textContent = t.n_pers(Object.keys(PERSONAGENS).length);
+  $('dest-total').textContent = t.n_dest(DESTINATARIOS.length);
+}
+
+function personagens() {
+  const t = T[lang];
+  $('personagens').innerHTML = Object.entries(PERSONAGENS).map(([id, p]) => {
+    const n = contagem[id] || 0;
+    return `<div class="card pers">
+      <span class="emo" aria-hidden="true">${esc(p.emoji)}</span>
+      <div class="nome">${esc(p[lang])}</div>
+      <div class="desc">${esc(lang === 'en' ? p.desc_en : p.desc_pt)}</div>
+      <div class="conta${n ? '' : ' zero'}"><span>${esc(t.conta(n))}</span></div>
+    </div>`;
+  }).join('');
+}
+
+function chips() {
+  const t = T[lang];
+  const usadas = Object.keys(PERSONAGENS).filter(id => contagem[id]);
+  const html = [`<button type="button" data-p="" class="${filtro ? '' : 'ativo'}">${esc(t.todas)}</button>`]
+    .concat(usadas.map(id => `<button type="button" data-p="${esc(id)}" class="${filtro === id ? 'ativo' : ''}">${esc(PERSONAGENS[id].emoji)} ${esc(PERSONAGENS[id][lang])} (${contagem[id]})</button>`));
+  $('chips').innerHTML = html.join('');
+}
+
+const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+function desculpas() {
+  const t = T[lang];
+  const q = norm(termo.trim());
+  const passa = d => (!filtro || d.p === filtro) &&
+    (!q || norm(d[lang]).includes(q) || norm(PERSONAGENS[d.p]?.[lang] || '').includes(q));
+  let total = 0;
+  for (const tier of ['desespero', 'ultimo']) {
+    const todas = DESCULPAS.filter(d => d.tier === tier).sort((a, b) => a.n - b.n);
+    const vis = todas.filter(passa);
+    total += vis.length;
+    $('cont-' + tier).textContent = t.mostra(vis.length, todas.length);
+    $('lista-' + tier).innerHTML = vis.length ? vis.map(d => {
+      const p = PERSONAGENS[d.p] || {};
+      return `<div class="card desc-item ${tier === 'ultimo' ? 'ultimo' : ''}">
+        <div class="n">${esc(d.n)}</div>
+        <div class="t"><span class="pe" title="${esc(p[lang])}">${esc(p.emoji)}</span>${esc(d[lang])}</div>
+      </div>`;
+    }).join('') : `<div class="vazio">${esc(t.nada)}</div>`;
+  }
+  $('desc-total').textContent = t.n_desc(DESCULPAS.length);
+}
+
+function destinatarios() {
+  const t = T[lang];
+  $('destinatarios').innerHTML = DESTINATARIOS.map(d => {
+    const tr = lang === 'en' ? (DEST_EN[d.id] || d) : d;
+    return `<div class="card dest">
+      <div class="emo" aria-hidden="true">${esc(d.emoji)}</div>
+      <div class="corpo">
+        <div class="nome">${esc(d[lang])}</div>
+        <div class="campo"><b>${esc(t.tom)}</b>${esc(tr.tom)}</div>
+        <div class="campo"><b>${esc(t.estilo)}</b>${esc(tr.estilo)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function incidentes() {
+  const t = T[lang];
+  const I = INCIDENTES;
+  const lista = arr => `<ul>${arr.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+  const eventos = arr => `<ul>${arr.map(e => `<li>${esc(e[lang])} <span class="zona">· ${esc(e.zona)}</span></li>`).join('')}</ul>`;
+  const blocos = [];
+  if (I.transito) blocos.push(`<div class="card inc"><h3>${esc(t.inc_transito)}</h3>${lista(I.transito[lang] || [])}
+      <div class="vias-t">${esc(t.inc_vias)}</div><div class="vias">${(I.transito.vias || []).map(v => `<span>${esc(v)}</span>`).join('')}</div></div>`);
+  if (I.transportes) blocos.push(`<div class="card inc"><h3>${esc(t.inc_transportes)}</h3>${lista(I.transportes[lang] || [])}</div>`);
+  if (I.eventos_porto) blocos.push(`<div class="card inc"><h3>${esc(t.inc_porto)}</h3>${eventos(I.eventos_porto)}</div>`);
+  if (I.eventos_lisboa) blocos.push(`<div class="card inc"><h3>${esc(t.inc_lisboa)}</h3>${eventos(I.eventos_lisboa)}</div>`);
+  if (I.impactos) blocos.push(`<div class="card inc"><h3>${esc(t.inc_impactos)}</h3>${lista(I.impactos[lang] || [])}</div>`);
+  $('incidentes').innerHTML = blocos.join('');
+}
+
+function tudo() { textosFixos(); personagens(); chips(); desculpas(); destinatarios(); incidentes(); }
+
+$('lingua').addEventListener('click', () => {
+  lang = lang === 'pt' ? 'en' : 'pt';
+  localStorage.setItem('lang', lang);
+  const u = new URL(location.href);
+  if (u.searchParams.has('lang')) { u.searchParams.set('lang', lang); history.replaceState(null, '', u); }
+  tudo();
+});
+$('chips').addEventListener('click', e => {
+  const b = e.target.closest('button[data-p]');
+  if (!b) return;
+  filtro = b.dataset.p || null;
+  chips(); desculpas();
+});
+$('pesquisa').addEventListener('input', e => { termo = e.target.value; desculpas(); });
+
+tudo();
+</script>
+</body>
+</html>
