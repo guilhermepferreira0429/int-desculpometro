@@ -281,6 +281,12 @@
   .passo-m { display: flex; gap: .8rem; align-items: flex-start; padding: .8rem 1rem; font-size: 1.1rem; line-height: 1.4; }
   .passo-m .e { flex: none; font-size: 1.6rem; line-height: 1.1; }
 
+  .traducao-wrap { margin: -1.6rem 0 1.4rem 34%; }
+  .traducao { display: inline-block; transform: rotate(-4deg); background: var(--amarelo); color: var(--ink); border: var(--borda); border-radius: 12px; padding: .15rem .9rem; font-weight: 700; font-size: 1.15rem; box-shadow: 4px 4px 0 var(--ink); }
+  .traducao b { font-weight: 800; color: var(--rosa); }
+  .slide.ativo .traducao { animation: autocolante .5s cubic-bezier(.2,1.8,.4,1) both .6s; }
+  @keyframes autocolante { from { transform: rotate(-4deg) scale(2.2); opacity: 0; } }
+
   /* ---------- 11. a verdade, e a gaivota que a destrói ---------- */
   .botoes { display: flex; gap: .8rem; flex-wrap: wrap; }
   .botoes span { font-weight: 800; border: var(--borda); border-radius: 14px; padding: .25rem 1rem; box-shadow: 4px 4px 0 var(--ink); }
@@ -447,7 +453,7 @@
     <div class="in">
       <span class="eyebrow ink salta">Agentic AI Challenge · Team Tiki Taska</span>
       <h1 class="logo salta" style="--i:1">Desculp<span class="o">ó</span>metro</h1>
-      <p class="salta traducao" style="--i:1; margin:-.2em 0 .8em .3em; font-size:.95rem; font-weight:700; letter-spacing:3px; color:var(--mut, #6b6893)">excuse-o-meter</p>
+      <div class="salta traducao-wrap" style="--i:1"><span class="traducao">a.k.a. the <b>Excuse-o-meter</b></span></div>
       <p class="lead salta" style="--i:2">Running late? An <b>AI agent</b> checks what is really happening on your way and builds the most believable excuse possible. <b>Using only true facts.</b></p>
       <div class="equipa salta" style="--i:3" data-equipa></div>
     </div>
