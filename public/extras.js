@@ -1,4 +1,5 @@
 // Cronómetro de culpa e Tribunal das Desculpas.
+import { boneco } from './bonecos.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const espera = ms => new Promise(r => setTimeout(r, ms));
@@ -12,7 +13,8 @@ const TXT = {
     trib: '⚖️ Tribunal das Desculpas', sessao: 'A sessão vai começar. Todos de pé!', delibera: 'a deliberar...',
     passa: 'PASSA', chumba: 'CHUMBA', veredito_passa: '🔨 VEREDITO: A DESCULPA PASSA', veredito_chumba: '🔨 VEREDITO: A DESCULPA CHUMBA',
     erro: 'O tribunal foi adiado por falta de quórum.', nota: 'nota',
-    juizes: { avo: ['👵', 'Avó Rosa', 'Juíza do Coração'], gaivota: ['🐦', 'Juíza Gertrudes', 'Gaivota da Ribeira'], chefe: ['👔', 'Dr. Fernandes', 'Juiz dos Factos'] },
+    juizes: { avo: ['avo', 'Avó Rosa', 'Juíza do Coração'], gaivota: ['gaivota', 'Juíza Gertrudes', 'Gaivota da Ribeira'], chefe: ['chefe', 'Dr. Fernandes', 'Juiz dos Factos'] },
+    preso: '🔒 PRESO ATÉ DIZERES A VERDADE', livre: '🎉 ABSOLVIDO! ESTÁS LIVRE', sair: '😇 Dizer a verdade para sair',
   },
   en: {
     cron: '⏱️ Guilt timer', atraso: 'Total delay', sem_resposta: 'No word from you for', perdao: 'Forgiveness index',
@@ -22,7 +24,8 @@ const TXT = {
     trib: '⚖️ The Court of Excuses', sessao: 'The court is now in session. All rise!', delibera: 'deliberating...',
     passa: 'PASSES', chumba: 'FAILS', veredito_passa: '🔨 VERDICT: THE EXCUSE PASSES', veredito_chumba: '🔨 VERDICT: THE EXCUSE FAILS',
     erro: 'The court was adjourned for lack of quorum.', nota: 'score',
-    juizes: { avo: ['👵', 'Granny Rosa', 'Judge of the Heart'], gaivota: ['🐦', 'Judge Gertrudes', 'Gull of the Ribeira'], chefe: ['👔', 'Dr. Fernandes', 'Judge of the Facts'] },
+    juizes: { avo: ['avo', 'Granny Rosa', 'Judge of the Heart'], gaivota: ['gaivota', 'Judge Gertrudes', 'Gull of the Ribeira'], chefe: ['chefe', 'Dr. Fernandes', 'Judge of the Facts'] },
+    preso: '🔒 LOCKED UP UNTIL YOU TELL THE TRUTH', livre: '🎉 ACQUITTED! YOU ARE FREE', sair: '😇 Tell the truth to get out',
   },
 };
 
@@ -47,7 +50,8 @@ const CSS = `
   .juiz { background: #fff6e0; color: var(--ink); border: var(--borda); border-radius: 16px; padding: 14px; text-align: center; position: relative; animation: juiz-entra .5s cubic-bezier(.2,1.5,.4,1) both; }
   .juiz:nth-child(2) { animation-delay: .15s; } .juiz:nth-child(3) { animation-delay: .3s; }
   @keyframes juiz-entra { from { transform: translateY(30px); opacity: 0; } }
-  .juiz .cara { font-size: 3.4rem; line-height: 1; }
+  .juiz .cara { font-size: 3.4rem; line-height: 1; height: 110px; display: flex; justify-content: center; align-items: flex-end; }
+  .juiz .cara svg { width: 96px; height: 112px; }
   .juiz .toga { width: 70px; height: 18px; margin: -4px auto 6px; background: #1d1b4b; border-radius: 0 0 30px 30px; }
   .juiz .nome { font-weight: 800; font-size: 1.05rem; }
   .juiz .cargo { font-size: .75rem; color: var(--mut); }
@@ -63,6 +67,26 @@ const CSS = `
   .veredito-final.chumba { background: var(--vermelho); color: #fff; }
   .martelo { display: inline-block; animation: martela .35s ease-in 3; transform-origin: bottom right; }
   @keyframes martela { 50% { transform: rotate(-35deg); } }
+  .cena { position: relative; height: 240px; margin-top: 16px; border: 3px solid #1d1b4b; border-radius: 16px; overflow: hidden; }
+  .cena.prisao { background: #4a4a5a; background-image: linear-gradient(#0000 0 46px, #0003 46px 50px), linear-gradient(90deg, #0000 0 96px, #0003 96px 100px); background-size: 100px 50px; }
+  .cena.festa { background: linear-gradient(#bde0fe, #fff6e0); }
+  .cena .reu { position: absolute; left: 50%; bottom: 8px; width: 120px; transform: translateX(-50%); }
+  .cena .reu svg { width: 120px; height: 140px; display: block; }
+  .cena.prisao .reu { animation: reu-treme .2s linear infinite; }
+  @keyframes reu-treme { 50% { transform: translateX(calc(-50% + 2px)); } }
+  .cena .grades { position: absolute; left: 50%; bottom: 0; width: 220px; height: 210px; transform: translate(-50%, -120%); animation: grades-cai .7s .3s cubic-bezier(.5,0,.5,1.4) forwards; }
+  @keyframes grades-cai { to { transform: translate(-50%, 0); } }
+  .cena .guarda { position: absolute; bottom: 6px; right: -160px; width: 140px; animation: guarda-entra 1.4s 1s ease-out forwards; }
+  .cena .guarda svg { width: 140px; height: 160px; display: block; transform: scaleX(-1); }
+  @keyframes guarda-entra { to { right: 8%; } }
+  .cena .placa { position: absolute; top: 14px; left: 50%; transform: translateX(-50%) rotate(-3deg) scale(0); background: #ffd23f; color: #1d1b4b; border: 3px solid #1d1b4b; border-radius: 10px; padding: 4px 14px; font-weight: 800; font-size: 1.1rem; white-space: nowrap; animation: placa-entra .4s 2.2s cubic-bezier(.2,1.8,.4,1) forwards; z-index: 2; }
+  @keyframes placa-entra { to { transform: translateX(-50%) rotate(-3deg) scale(1); } }
+  .cena .sair { position: absolute; left: 14px; bottom: 14px; z-index: 3; font-size: .95rem; padding: 8px 14px; opacity: 0; transform: scale(0); animation: sair-entra .4s 2.8s cubic-bezier(.2,1.8,.4,1) forwards; }
+  @keyframes sair-entra { to { opacity: 1; transform: scale(1); } }
+  .cena.festa .reu { animation: reu-salta .5s ease-in-out infinite alternate; }
+  @keyframes reu-salta { to { transform: translate(-50%, -26px); } }
+  .cena .confete { position: absolute; top: -30px; font-size: 1.6rem; animation: confete-cai linear infinite; }
+  @keyframes confete-cai { to { transform: translateY(300px) rotate(540deg); } }
   @media (max-width: 760px) { .bancada { grid-template-columns: 1fr; } }
 `;
 function css() {
@@ -121,7 +145,7 @@ export function pararCronometro(remover = false) {
 }
 
 /* ---------- Tribunal das Desculpas ---------- */
-export async function abrirTribunal({ onde, lang, resultado }) {
+export async function abrirTribunal({ onde, lang, resultado, onVerdade }) {
   css();
   const T = TXT[lang] || TXT.pt;
   onde.innerHTML = `<h2>${esc(T.trib)}</h2>
@@ -129,7 +153,7 @@ export async function abrirTribunal({ onde, lang, resultado }) {
       <div class="sessao">${esc(T.sessao)}</div>
       <div class="bancada">${Object.entries(T.juizes).map(([id, [cara, nome, cargo]]) => `
         <div class="juiz" id="juiz-${id}">
-          <div class="cara">${cara}</div><div class="toga"></div>
+          <div class="cara">${boneco(cara)}</div><div class="toga"></div>
           <div class="nome">${esc(nome)}</div><div class="cargo">${esc(cargo)}</div>
           <div class="pensa">${esc(T.delibera)}</div>
         </div>`).join('')}</div>
@@ -161,4 +185,11 @@ export async function abrirTribunal({ onde, lang, resultado }) {
   const sim = resp.votos.filter(v => v.voto === 'passa').length, passa = sim >= 2;
   document.getElementById('veredito-final').innerHTML =
     `<div class="veredito-final ${passa ? 'passa' : 'chumba'}"><span class="martelo">🔨</span> ${esc((passa ? T.veredito_passa : T.veredito_chumba).replace('🔨 ', ''))} (${sim}-${resp.votos.length - sim})</div>`;
+  await espera(1100);
+  const grades = `<svg class="grades" viewBox="0 0 220 210"><rect x="4" y="4" width="212" height="14" rx="4" fill="#555" stroke="#1d1b4b" stroke-width="3"/>${[20, 50, 80, 110, 140, 170, 200].map(x => `<rect x="${x - 5}" y="16" width="10" height="194" rx="4" fill="#777" stroke="#1d1b4b" stroke-width="3"/>`).join('')}<rect x="4" y="110" width="212" height="10" rx="4" fill="#555" stroke="#1d1b4b" stroke-width="3"/></svg>`;
+  document.getElementById('veredito-final').insertAdjacentHTML('beforeend', passa
+    ? `<div class="cena festa"><div class="placa">${esc(T.livre)}</div><div class="reu">${boneco('tu')}</div>${Array.from({ length: 14 }, (_, i) => `<span class="confete" style="left:${i * 7 + 2}%; animation-duration:${1.6 + (i % 5) * 0.4}s; animation-delay:${-(i % 7) * 0.3}s">${['🎉', '🎊', '✨', '🥳'][i % 4]}</span>`).join('')}</div>`
+    : `<div class="cena prisao"><div class="placa">${esc(T.preso)}</div><div class="reu">${boneco('tu')}</div>${grades}<div class="guarda">${boneco('guarda')}</div><button type="button" class="sair">${esc(T.sair)}</button></div>`);
+  const sair = onde.querySelector('.cena .sair');
+  if (sair && onVerdade) sair.onclick = onVerdade;
 }

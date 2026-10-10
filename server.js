@@ -85,7 +85,7 @@ app.post('/conversa', async (req, res) => {
   ].filter(Boolean).join('\n');
   try {
     const r = await chamar({
-      model: MODEL, max_tokens: 3000, system: SYSTEM_CONVERSA, output_config: { effort: 'low' },
+      model: MODEL, max_tokens: 3000, system: SYSTEM_CONVERSA + LINGUA_SISTEMA(b.lang), output_config: { effort: 'low' },
       messages: [{ role: 'user', content: pedido }],
     });
     if (r.stop_reason === 'refusal') throw new Error('O destinatário recusou responder');
@@ -97,6 +97,10 @@ app.post('/conversa', async (req, res) => {
 });
 
 // Tribunal das Desculpas: três juízes independentes, cada um uma chamada à IA, em paralelo
+const LINGUA_SISTEMA = lang => lang === 'en'
+  ? ' IMPORTANT: reply ONLY in British English, even though these instructions are in Portuguese. Keep Portuguese place and food names as they are.'
+  : ' Responde só em português de Portugal (nunca do Brasil).';
+
 const JUIZES = {
   avo: 'És a Avó Rosa, 84 anos, juíza no Tribunal das Desculpas. Tens um coração mole, perdoas quase tudo a quem comeu bem, mas não suportas mentiras à mãe nem desculpas sem educação. Falas com carinho e ditados populares.',
   gaivota: 'És a Juíza Gertrudes, gaivota-de-patas-amarelas da Ribeira, juíza no Tribunal das Desculpas. És arrogante e territorial. Avalias sobretudo como as gaivotas são retratadas: se a desculpa culpa uma gaivota sem respeito, chumbas; se a gaivota sai como génio do crime, adoras. Se não houver gaivotas, achas a desculpa aborrecida.',
@@ -118,7 +122,7 @@ app.post('/tribunal', async (req, res) => {
       try {
         const r = await chamar({
           model: MODEL, max_tokens: 800, output_config: { effort: 'low' },
-          system: `${persona} Isto é uma demo humorística de hackathon.`,
+          system: `${persona} Isto é uma demo humorística de hackathon.${LINGUA_SISTEMA(b.lang)}`,
           messages: [{ role: 'user', content: caso }],
         });
         const v = extrairJSON(r.content.filter(c => c.type === 'text').map(c => c.text).join(''));

@@ -559,12 +559,14 @@ function cartaoFim(e) {
 /* ---------- modo desespero e paródias ---------- */
 function desfile(on, culpado, ultimo) {
   const el = $('desfile');
-  if (!on) { el.innerHTML = ''; return; }
-  const outros = Object.keys(PERSONAGENS).filter(k => k !== culpado && k !== 'gaivota');
-  const elenco = [culpado, culpado, ...outros.sort(() => Math.random() - 0.5).slice(0, ultimo ? 12 : 7)].filter(k => PERSONAGENS[k]);
-  el.innerHTML = elenco.map((k, i) => {
-    const rtl = i % 2 ? ' rtl' : '', dur = (ultimo ? 5 : 8) + Math.random() * 7, atraso = -Math.random() * dur;
-    return `<span class="${i < 2 ? 'culpado' : ''}${rtl}" style="top:${[4, 16, 66, 78][i % 4] + Math.random() * 4}vh; animation-duration:${dur.toFixed(1)}s; animation-delay:${atraso.toFixed(1)}s">${boneco(k, PERSONAGENS[k].emoji)}</span>`;
+  if (!on || !PERSONAGENS[culpado]) { el.innerHTML = ''; return; }
+  // só quem faz parte da história: o culpado a fugir e tu atrás dele, em faixas no topo e no fundo
+  const faixas = [5, 70, 18, 80].slice(0, ultimo ? 4 : 2);
+  el.innerHTML = faixas.map((top, i) => {
+    const rtl = i % 2 ? ' rtl' : '', dur = (ultimo ? 6 : 9) + Math.random() * 3, atraso = -Math.random() * dur;
+    const estilo = d => `top:${top}vh; animation-duration:${dur.toFixed(1)}s; animation-delay:${d.toFixed(1)}s`;
+    return `<span class="culpado${rtl}" style="${estilo(atraso)}">${boneco(culpado, PERSONAGENS[culpado].emoji)}</span>` +
+      `<span class="${rtl}" style="${estilo(atraso + 1.6)}">${boneco('tu')}</span>`;
   }).join('');
 }
 
@@ -572,7 +574,7 @@ function modoDesespero(on, culpado = 'gaivota', ultimo = false) {
   desfile(on, culpado, ultimo);
   document.body.classList.toggle('desespero', on);
   $('sirene').classList.toggle('hidden', !on);
-  $('gaivota').classList.toggle('hidden', !on);
+  $('gaivota').classList.toggle('hidden', !on || culpado !== 'gaivota');
   $('secParodia').classList.toggle('hidden', !on);
 }
 
@@ -757,7 +759,7 @@ $('enviarBtn').onclick = () => {
 $('tribunalBtn').onclick = async () => {
   if (!ultimoResultado) return;
   $('tribunalBtn').disabled = true;
-  try { await abrirTribunal({ onde: $('secTribunal'), lang, resultado: ultimoResultado }); }
+  try { await abrirTribunal({ onde: $('secTribunal'), lang, resultado: ultimoResultado, onVerdade: () => $('verdadeBtn').click() }); }
   finally { $('tribunalBtn').disabled = false; }
 };
 document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharMessenger(); });

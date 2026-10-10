@@ -240,6 +240,12 @@ const B = {
     { comprido: true, letreiro: `<text x="50" y="96" font-size="8" font-weight="800" fill="#fff" text-anchor="middle" font-family="sans-serif">ESPAÑA</text>` }),
 };
 delete B.gato_teclado;
+// juiz do Tribunal das Desculpas: chefe de fato e gravata
+B.chefe = () => pessoa({ cabelo: 'curto', corCabelo: '#9e9e9e', roupa: '#2b2d42', calcas: '#2b2d42',
+  extra: `<path d="M54 52 L60 58 L66 52" fill="#fff" ${S} stroke-width="2"/><path d="M60 58 L56 76 L60 82 L64 76 Z" fill="#ef233c" ${S} stroke-width="2"/>`,
+  mao: `<rect x="80" y="88" width="18" height="14" rx="2" fill="#8a5a2b" ${S} stroke-width="2"/><path d="M86 88 v-3 h6 v3" fill="none" ${S} stroke-width="2"/>` });
+// a gaivota guarda da prisão, com boné
+B.guarda = () => B.gaivota().replace('</svg>', `<path d="M74 46 Q86 30 100 44 Z" fill="#1d1b4b" ${S}/><path d="M96 44 h12" ${S} stroke-width="5"/><circle cx="86" cy="40" r="3" fill="#ffd23f"/></svg>`);
 // o protagonista (quem dá a desculpa), usado nos vídeos
 B.tu = () => pessoa({ cabelo: 'curto', corCabelo: '#2b2b2b', roupa: '#9aa3b5', calcas: '#3a3a5a', pele: '#f1c27d' });
 
