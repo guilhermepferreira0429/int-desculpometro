@@ -1,3 +1,5 @@
+> **Arquivado.** Este repositório já não é atualizado; o desenvolvimento continua num repositório privado.
+
 # Desculpómetro (a.k.a. the Excuse-o-meter)
 
 Agentic AI Challenge · Team Tiki Taska.
